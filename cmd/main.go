@@ -21,8 +21,6 @@ func main() {
 		logger.MainLog.Fatalf("Failed to load config: %+v", err)
 	}
 
-	logger.MainLog.Infof("System initializing with Redis Addr: %s", cfg.Redis.Addr)
-
 	f := factory.NewFactory(cfg)
 
 	ctx, cancel := context.WithCancel(context.Background())
