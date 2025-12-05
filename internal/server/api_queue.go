@@ -10,38 +10,51 @@ import (
 	"github.com/gin-gonic/gin"
 	"web_test/internal/logger" // Import logger
 	"web_test/pkg/models"
+	"web_test/pkg/queue"
 )
 
 // 1. 取得佇列
 func GetQueueHandler(c *gin.Context) {
-	// TODO
-	// delete when get queue finished
-	ctx := context.Background()
-	val, err := DB.LRange(ctx, "task_queue", 0, -1).Result()
-	if err != nil {
-		logger.WebLog.Errorf("GetQueueHandler: Failed to retrieve task queue from Redis: %v", err)
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to retrieve task queue"})
+	if queue.GlobalQueue == nil {
+		c.JSON(500, gin.H{"error": "task queue is not initialized"})
 		return
 	}
-	var tasks []models.InternalMessage
-	for _, v := range val {
+	ctx := context.Background()
+	var tasks []*models.Task
+	var err error
+	tasks, err := queue.GlobalQueue.GetTasks(ctx)
+	if err != nil {
+		logger.WebLog.Errorf("GetQueueHandler: Failed to get tasks from queue: %v", err)
+		c.JSON(500, gin.H{"error": "failed to get tasks from queue"})
+		return
+	}
+	var return_tasks []models.InternalMessage
+	for _, task := range tasks {
 		var t models.InternalMessage
-		if err := json.Unmarshal([]byte(v), &t); err != nil {
+		var tmp models.Task
+		if err := json.Unmarshal([]byte(task), &tmp); err != nil {
 			logger.WebLog.Warnf("GetQueueHandler: Failed to unmarshal task from queue: %v", err)
 			continue
 		}
-		tasks = append(tasks, t)
+		params := make(map[string]string)
+		for _, p := range task.Params {
+			params[p.NF] = p.PRVersion
+		}
+		t := models.InternalMessage{
+			TaskID: strconv.Atoi(tmp.ID),
+			Params: params,
+		}
+		return_tasks = append(return_tasks, t)
 	}
-	/*--------------delete above when delete task finish-----------------*/
-	// TODO
-	// put get queue there
-	// var tasks []models.InternalMessage
-	// tasks = get_queue()
-	c.JSON(200, tasks)
+	c.JSON(200, return_tasks)
 }
 
 // 2. 刪除佇列任務
 func DeleteFromQueueHandler(c *gin.Context) {
+	if queue.GlobalQueue == nil {
+		c.JSON(500, gin.H{"error": "task queue is not initialized"})
+		return
+	}
 	ctx := context.Background()
 	taskIDStr := c.Param("taskID") // Get taskID from path parameter
 	targetID, err := strconv.Atoi(taskIDStr)
@@ -59,29 +72,11 @@ func DeleteFromQueueHandler(c *gin.Context) {
 	}
 
 	deleted := false
-	// TODO
-	// delete when delete task finished
-	for _, rawJSON := range allTasks {
-		var t models.InternalMessage
-		if err := json.Unmarshal([]byte(rawJSON), &t); err != nil {
-			logger.MainLog.Warnf("DeleteFromQueueHandler: Failed to unmarshal task from queue: %v", err)
-			continue // Skip malformed entries
-		}
-		if t.TaskID == targetID {
-			_, err := DB.LRem(ctx, "task_queue", 1, rawJSON).Result()
-			if err != nil {
-				logger.MainLog.Errorf("DeleteFromQueueHandler: Failed to remove task %d from Redis: %v", targetID, err)
-				c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to delete task from queue"})
-				return
-			}
-			deleted = true
-			break
-		}
+	if err := queue.GlobalQueue.RemoveTask(ctx, taskIDStr); err == nil {
+		deleted = true
+	} else {
+		logger.WebLog.Errorf("DeleteFromQueueHandler: Failed to remove task %d from queue: %v", targetID, err)
 	}
-	/*--------------delete above when delete task finish-----------------*/
-	// TODO
-	// add new delete task there
-	// delete = delete_task(targetID)
 	if deleted {
 		c.JSON(http.StatusOK, gin.H{"status": "deleted"})
 	} else {

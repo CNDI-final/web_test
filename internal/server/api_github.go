@@ -9,6 +9,8 @@ import (
 	"github.com/gin-gonic/gin"
 
 	"web_test/pkg/models"
+	"web_test/pkg/web/scripts/github"
+	"web_test/pkg/queue"
 )
 
 // 3. 加入 GitHub 抓取任務
@@ -55,8 +57,10 @@ func GetCachedPRsHandler(c *gin.Context) {
 
 // 5. 執行 PR 任務 (加入佇列)
 func RunPRTaskHandler(c *gin.Context) {
-	// TODO
-	// remove when add task finished
+	if queue.GlobalQueue == nil {
+		c.JSON(500, gin.H{"error": "task queue is not initialized"})
+		return
+	}
 	ctx := context.Background()
 	var req models.RunPRRequest
 	if err := c.ShouldBindJSON(&req); err != nil {
@@ -69,22 +73,21 @@ func RunPRTaskHandler(c *gin.Context) {
 		c.JSON(500, gin.H{"error": "failed to generate task ID"})
 		return
 	}
-	taskName := fmt.Sprintf("PR #%d [%s] - Action: %s", req.PRNumber, req.PRTitle, req.Action)
-	task := models.InternalMessage{
-		TaskID:   taskID, // Assign the generated unique TaskID
-		TaskName: taskName,
-		Params:   req.Params, // 轉發參數
+	var params []models.TaskParams
+	for nf, PRNumber := range req.Params {
+		params = append(params, models.TaskParams{
+			NF:   nf,
+			PRVersion: PRNumber,
+		})
+	}
+	task := models.Task{
+		ID:   fmt.Sprintf("%d",taskID), // Assign the generated unique TaskID
+		Params:   params, // 轉發參數
 	}
 	taskJSON, _ := json.Marshal(task)
-	DB.RPush(ctx, "task_queue", taskJSON)
-	/*--------------delete above when add task finished-----------------*/
-	// TODO
-	// put add task there
-	// taskID, err := GenerateUniqueTaskID() // Use the new unique ID generator
-	// if err != nil {
-	// 		c.JSON(500, gin.H{"error": "failed to generate task ID"})
-	//		return
-	//	}
-	// add_task(taskID,req.Params)
+	if err := queue.GlobalQueue.PushTask(ctx, &task); err != nil {
+		c.JSON(500, gin.H{"error": fmt.Sprintf("failed to enqueue task: %v", err)})
+		return
+	}
 	c.JSON(200, gin.H{"reply": "任務已加入佇列，參數已傳送。"})
 }

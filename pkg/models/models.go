@@ -43,7 +43,6 @@ type WorkerResponse struct {
 
 type InternalMessage struct {
 	TaskID   int               `json:"task_id"`
-	TaskName string            `json:"task_name"`
 	Params   map[string]string `json:"params"`
 }
 
@@ -60,9 +59,6 @@ type GitHubRequest struct {
 }
 
 type RunPRRequest struct {
-	PRNumber int               `json:"pr_number"`
-	PRTitle  string            `json:"pr_title"`
-	Action   string            `json:"action"`
 	Params   map[string]string `json:"params"`
 }
 

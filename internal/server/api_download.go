@@ -20,10 +20,7 @@ func DownloadTextFileHandler(c *gin.Context) {
 	}
 
 	ctx := context.Background()
-	// TODO
-	// remove when getresult finished
-	// Assume task results are stored in Redis under "task_result:<taskID>"
-	fileContent, err := DB.Get(ctx, fmt.Sprintf("task_result:%d", taskID)).Result()
+	fileContent, err := DB.GetResult(ctx, taskIDStr)
 	if err != nil {
 		if err == go_redis.Nil { // go_redis.Nil means key does not exist
 			c.JSON(http.StatusNotFound, gin.H{"error": fmt.Sprintf("Task result for ID %d not found", taskID)})
@@ -32,15 +29,7 @@ func DownloadTextFileHandler(c *gin.Context) {
 		}
 		return
 	}
-	/*--------------delete above when getresult finished-----------------*/
-	// TODO
-	// put getresult there
-	// fileContent, err := get_result(taskID)
-	// if err != nil {
-	//     c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to retrieve task result"})
-	//     return
-	// }
-	fileName := fmt.Sprintf("task_%d_result.txt", taskID)
+	fileName := fmt.Sprintf("task_%d_result.json", taskID)
 
 	// Set headers for file download
 	c.Header("Content-Description", "File Transfer")

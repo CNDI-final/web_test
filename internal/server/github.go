@@ -15,7 +15,7 @@ func FetchGitHubInfo(owner, repo string) (models.WorkerResponse, error) {
 	client := &http.Client{Timeout: 5 * time.Second}
 
 	var prs []models.PullRequest
-	prURL := fmt.Sprintf("https://api.github.com/repos/%s/%s/pulls?state=open&per_page=100", owner, repo)
+	prURL := fmt.Sprintf("https://api.github.com/repos/%s/%s/pulls?state=open&per_page=20", owner, repo)
 	req, _ := http.NewRequest("GET", prURL, nil)
 	req.Header.Set("User-Agent", "Go-Worker")
 	res, err := client.Do(req)
