@@ -1,0 +1,13 @@
+redis:
+  addr: "localhost:6379"
+  task_queue_key: "task_queue"
+  result_key_prefix: "task_result"
+  password: ""
+  db: 0
+
+executor:
+  task_timeout: "300s"
+  retry_delay: "1s"
+
+webserver:
+  port: "8080"

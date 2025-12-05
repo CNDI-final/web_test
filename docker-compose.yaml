@@ -1,0 +1,25 @@
+services:
+  # 1. 資料庫
+  redis:
+    image: redis:alpine
+    container_name: my-redis
+    ports:
+      - "6379:6379" # 暴露出來方便你本機 debug，不暴露也可以
+    networks:
+      - my-net
+
+  # 2. 後端 (API Gateway)
+  backend:
+    build: .
+    container_name: web
+    command: ./main
+    ports:
+      - "8080:8080" # 只有後端需要對外開放網頁
+    depends_on:
+      - redis
+    networks:
+      - my-net
+
+networks:
+  my-net:
+    driver: bridge
