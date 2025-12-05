@@ -4,7 +4,6 @@ import (
 	"context"
 	"web_test/pkg/models"
 )
-
 // ResultStore 定義結果儲存介面
 type ResultStore interface {
 	// 儲存任務結果
@@ -15,4 +14,6 @@ type ResultStore interface {
 	GetRunningTasks(ctx context.Context) ([]*models.TaskResult, error)
 	// 刪除任務指定狀態的結果
 	DeleteResult(ctx context.Context, taskID string, status string) error
+	// 取得所有任務歷史紀錄
+	GetHistory(ctx context.Context) ([]*models.TaskResult, error)
 }
