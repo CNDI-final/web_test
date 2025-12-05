@@ -42,8 +42,8 @@ func AddService(engine *gin.Engine, rdb *database.RedisDB) *gin.RouterGroup {
 	group.GET("/download/:taskID", DownloadTextFileHandler) // Route for downloading a text file with a taskID
 
 	// serve static assets under a non-conflicting prefix
-	engine.Static("/static", "./frontend")
-	engine.Static("/js", "./frontend/js")
+	engine.Static("/static", "./internal/server/public")
+	engine.Static("/js", "./internal/server/public/js")
 	// For SPA frontends, fallback to index.html for non-API routes using NoRoute.
 	// This avoids registering a catch-all wildcard route which conflicts with /api.
 	engine.NoRoute(func(c *gin.Context) {
@@ -53,7 +53,7 @@ func AddService(engine *gin.Engine, rdb *database.RedisDB) *gin.RouterGroup {
 			return
 		}
 		// Serve SPA entrypoint
-		c.File("./frontend/index.html")
+		c.File("./internal/server/public/index.html")
 	})
 
 	return group
