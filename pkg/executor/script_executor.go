@@ -15,13 +15,13 @@ import (
 
 type TaskExecutor struct {
 	queue queue.TaskQueue
-	db    database.RedisDB
+	db    *database.RedisDB
 }
 
 func NewTaskExecutor(q queue.TaskQueue, db *database.RedisDB) *TaskExecutor {
 	return &TaskExecutor{
 		queue: q,
-		db:    *db,
+		db:    db,
 	}
 }
 
@@ -55,6 +55,7 @@ func (e *TaskExecutor) processNextTask(ctx context.Context) error {
 
 	// 建構日誌訊息
 	var paramStrs []string
+	logger.ExecutorLog.Infof("Processing task %s with params: []", task.Params)
 	for _, p := range task.Params {
 		paramStrs = append(paramStrs, fmt.Sprintf("%s:%s", p.NF, p.PRVersion))
 	}
