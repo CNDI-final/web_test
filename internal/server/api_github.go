@@ -9,7 +9,6 @@ import (
 	"github.com/gin-gonic/gin"
 
 	"web_test/pkg/models"
-	"web_test/pkg/web/scripts/github"
 	"web_test/pkg/queue"
 )
 
@@ -26,15 +25,15 @@ func AddGitHubTaskHandler(c *gin.Context) {
 		resp, err := FetchGitHubInfo(req.Owner, req.Repo)
 		if err == nil {
 			// 存歷史
-			recBytes, _ := json.Marshal(models.HistoryRecord{
+			rec := models.HistoryRecord{
 				Time:     time.Now().Format("15:04:05"),
 				TaskName: "GitHub Fetch",
 				Result:   resp.Summary,
-			})
-			DB.LPush(ctx, "task_history", recBytes)
+			}
+			DB.SaveHistory(ctx,&rec)
 			// 存快取
 			prsJSON, _ := json.Marshal(resp.PRs)
-			DB.Set(ctx, "cached_prs", prsJSON, 0)
+			DB.SavePrCache(ctx, prsJSON)
 		}
 	}() // 立即執行抓取任務
 
@@ -44,7 +43,7 @@ func AddGitHubTaskHandler(c *gin.Context) {
 // 4. 取得 PR 快取
 func GetCachedPRsHandler(c *gin.Context) {
 	ctx := context.Background()
-	val, err := DB.Get(ctx, "cached_prs").Result()
+	val, err := DB.GetPrCache(ctx)
 	if err != nil {
 		c.JSON(200, []interface{}{})
 		return
@@ -84,7 +83,7 @@ func RunPRTaskHandler(c *gin.Context) {
 		ID:   fmt.Sprintf("%d",taskID), // Assign the generated unique TaskID
 		Params:   params, // 轉發參數
 	}
-	taskJSON, _ := json.Marshal(task)
+
 	if err := queue.GlobalQueue.PushTask(ctx, &task); err != nil {
 		c.JSON(500, gin.H{"error": fmt.Sprintf("failed to enqueue task: %v", err)})
 		return

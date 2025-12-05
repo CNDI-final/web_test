@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"net/http"
 	"strconv" // Add strconv for string to int conversion
+	"encoding/json"
 
 	"github.com/gin-gonic/gin"
 	go_redis "github.com/redis/go-redis/v9" // Import go_redis for go_redis.Nil
@@ -29,14 +30,26 @@ func DownloadTextFileHandler(c *gin.Context) {
 		}
 		return
 	}
-	fileName := fmt.Sprintf("task_%d_result.json", taskID)
 
-	// Set headers for file download
-	c.Header("Content-Description", "File Transfer")
-	c.Header("Content-Disposition", fmt.Sprintf("attachment; filename=%s", fileName))
-	c.Header("Content-Type", "text/plain")
-	c.Header("Content-Length", fmt.Sprintf("%d", len(fileContent)))
+	if fileContent == nil {
+        c.JSON(http.StatusNotFound, gin.H{"error": "Task result is empty"})
+        return
+    }
 
-	// Write the file content to the response body
-	c.String(http.StatusOK, fileContent)
+    jsonBytes, err := json.MarshalIndent(fileContent, "", "  ") // Indent 讓 JSON 排版好讀
+    if err != nil {
+        c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to serialize task result"})
+        return
+    }
+
+    downloadContent := string(jsonBytes)
+
+    fileName := fmt.Sprintf("task_%d_result.json", taskID) // 副檔名改 json
+
+    c.Header("Content-Description", "File Transfer")
+    c.Header("Content-Disposition", fmt.Sprintf("attachment; filename=%s", fileName))
+    c.Header("Content-Type", "application/json; charset=utf-8")
+    c.Header("Content-Length", fmt.Sprintf("%d", len(downloadContent)))
+
+    c.String(http.StatusOK, downloadContent)
 }

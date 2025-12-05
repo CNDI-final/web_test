@@ -14,6 +14,18 @@ type ResultStore interface {
 	GetRunningTasks(ctx context.Context) ([]*models.TaskResult, error)
 	// 刪除任務指定狀態的結果
 	DeleteResult(ctx context.Context, taskID string, status string) error
-	// 取得所有任務歷史紀錄
-	GetHistory(ctx context.Context) ([]*models.TaskResult, error)
 }
+
+type ApiTaskStore interface {
+	// 其他API相關的方法可以在這裡定義
+	IncrementTaskID(ctx context.Context) (int, error)
+	// 儲存歷史紀錄
+	SaveHistory(ctx context.Context, record *models.HistoryRecord ) error
+	// 取得所有任務歷史紀錄
+	GetHistory(ctx context.Context) ([]*models.HistoryRecord, error)
+	// 儲存PR快取
+	SavePrCache(ctx context.Context, Prs []byte ) error
+	// 取得PR快取
+	GetPrCache(ctx context.Context) ([]byte, error)
+
+}	

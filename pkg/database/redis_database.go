@@ -3,6 +3,8 @@ package database
 import (
 	"context"
 	"encoding/json"
+	"fmt"
+	"time"
 	"web_test/pkg/models"
 
 	"github.com/redis/go-redis/v9"
@@ -27,6 +29,9 @@ func NewRedisDB(addr, password string, db int) *RedisDB {
 const (
 	taskResultsHashKey = "task_results"
 	runningTasksSetKey = "running_tasks"
+	taskIDCounterKey  = "task_id_counter"
+	historyListKey    = "task_history_list" // Use a list for history to maintain order
+	prCacheKey        = "pr_cache"
 )
 
 // SaveResult saves a task result to Redis.
@@ -50,6 +55,11 @@ func (r *RedisDB) SaveResult(ctx context.Context, result *models.TaskResult) err
 		if err := r.client.SRem(ctx, runningTasksSetKey, result.TaskID).Err(); err != nil {
 			return err
 		}
+		r.SaveHistory(ctx, &models.HistoryRecord{
+			Time:     time.Unix(result.Timestamp, 0).Format("2006-01-02 15:04:05"),
+			TaskName: fmt.Sprintf("Test Task %s", result.TaskID),
+			Result:   result.Status,
+		})
 	}
 
 	return nil
@@ -103,21 +113,60 @@ func (r *RedisDB) DeleteResult(ctx context.Context, taskID string, status string
 	}
 }
 
-// GetHistory retrieves all historical task results from Redis.
-func (r *RedisDB) GetHistory(ctx context.Context) ([]*models.TaskResult, error) {
-	resultsMap, err := r.client.HGetAll(ctx, taskResultsHashKey).Result()
+// SaveHistory saves a history record to Redis.
+func (r *RedisDB) SaveHistory(ctx context.Context, record *models.HistoryRecord) error {
+	data, err := json.Marshal(record)
+	if err != nil {
+		return err
+	}
+	// Use RPush to add to the end of the list
+	if err := r.client.RPush(ctx, historyListKey, data).Err(); err != nil {
+		return err
+	}
+	return nil
+}
+
+// GetHistory retrieves all historical task records from Redis.
+func (r *RedisDB) GetHistory(ctx context.Context) ([]*models.HistoryRecord, error) {
+	// Use LRange to get all elements from the list
+	data, err := r.client.LRange(ctx, historyListKey, 0, -1).Result()
 	if err != nil {
 		return nil, err
 	}
 
-	var results []*models.TaskResult
-	for _, data := range resultsMap {
-		var result models.TaskResult
-		if err := json.Unmarshal([]byte(data), &result); err != nil {
+	var history []*models.HistoryRecord
+	for _, item := range data {
+		var record models.HistoryRecord
+		if err := json.Unmarshal([]byte(item), &record); err != nil {
 			// Log the error for this specific entry and continue with others
 			continue
 		}
-		results = append(results, &result)
+		history = append(history, &record)
 	}
-	return results, nil
+	return history, nil
+}
+
+// SavePrCache saves the PRs cache to Redis.
+func (r *RedisDB) SavePrCache(ctx context.Context, Prs []byte) error {
+	return r.client.Set(ctx, prCacheKey, Prs, 0).Err()
+}
+
+// GetPrCache retrieves the PRs cache from Redis.
+func (r *RedisDB) GetPrCache(ctx context.Context) ([]byte, error) {
+	data, err := r.client.Get(ctx, prCacheKey).Bytes()
+	if err == redis.Nil {
+		return nil, nil // Key does not exist
+	}
+	if err != nil {
+		return nil, err
+	}
+	return data, nil
+}
+
+func (r *RedisDB) IncrementTaskID(ctx context.Context) (int, error) {
+	result, err := r.client.Incr(ctx, taskIDCounterKey).Result()
+	if err != nil {
+		return 0, err
+	}
+	return int(result), nil
 }

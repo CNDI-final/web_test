@@ -20,8 +20,7 @@ func GetQueueHandler(c *gin.Context) {
 		return
 	}
 	ctx := context.Background()
-	var tasks []*models.Task
-	var err error
+
 	tasks, err := queue.GlobalQueue.GetTasks(ctx)
 	if err != nil {
 		logger.WebLog.Errorf("GetQueueHandler: Failed to get tasks from queue: %v", err)
@@ -30,9 +29,14 @@ func GetQueueHandler(c *gin.Context) {
 	}
 	var return_tasks []models.InternalMessage
 	for _, task := range tasks {
-		var t models.InternalMessage
+		taskBytes, err := json.Marshal(task)
+		if err != nil {
+			logger.WebLog.Warnf("序列化失敗: %v", err)
+			c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to encode task"})
+			return
+		}
 		var tmp models.Task
-		if err := json.Unmarshal([]byte(task), &tmp); err != nil {
+		if err := json.Unmarshal([]byte(taskBytes), &tmp); err != nil {
 			logger.WebLog.Warnf("GetQueueHandler: Failed to unmarshal task from queue: %v", err)
 			continue
 		}
@@ -40,8 +44,9 @@ func GetQueueHandler(c *gin.Context) {
 		for _, p := range task.Params {
 			params[p.NF] = p.PRVersion
 		}
+		taskId,_ := strconv.Atoi(tmp.ID)
 		t := models.InternalMessage{
-			TaskID: strconv.Atoi(tmp.ID),
+			TaskID: taskId,
 			Params: params,
 		}
 		return_tasks = append(return_tasks, t)
@@ -61,13 +66,6 @@ func DeleteFromQueueHandler(c *gin.Context) {
 	if err != nil {
 		logger.WebLog.Errorf("DeleteFromQueueHandler: Invalid task ID received: %s, error: %v", taskIDStr, err)
 		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid task ID"})
-		return
-	}
-
-	allTasks, err := DB.LRange(ctx, "task_queue", 0, -1).Result()
-	if err != nil {
-		logger.WebLog.Errorf("DeleteFromQueueHandler: Failed to retrieve task queue from Redis: %v", err)
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to retrieve task queue"})
 		return
 	}
 
