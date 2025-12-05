@@ -75,9 +75,7 @@ func (f *Factory) NewTaskQueue() queue.TaskQueue {
 }
 
 func (f *Factory) NewTaskExecutor(redisDB *database.RedisDB, taskQueue queue.TaskQueue) *executor.TaskExecutor {
-	// 2. 初始化 Executor
 	exec := executor.NewTaskExecutor(redisDB, taskQueue)
-
 	return exec
 }
 
