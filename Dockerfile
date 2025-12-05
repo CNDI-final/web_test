@@ -10,7 +10,7 @@ RUN go mod tidy
 
 # 複製後端原始碼並編譯
 COPY . .
-RUN CGO_ENABLED=0 go build -o main main.go
+RUN CGO_ENABLED=0 go build -o main ./cmd
 
 # Run Stage (使用輕量級 Alpine Linux)
 FROM alpine:latest
@@ -21,8 +21,10 @@ WORKDIR /root/
 COPY --from=builder /app/main .
 
 # ★ 重要：把前端檔案也複製過來，不然網頁會 404
-COPY frontend ./frontend
-COPY config ./config
+# COPY frontend ./frontend
+# COPY config ./config
+COPY pkg/web/public ./frontend
+COPY config.yml ./config/config.yml
 
 # 預設指令 (雖然 Compose 會覆蓋它，但留著當預設也好)
 CMD ["./main"]
