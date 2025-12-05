@@ -12,6 +12,14 @@ import (
 	"web_test/pkg/web/scripts/github"
 )
 
+var taipeiLocation = func() *time.Location {
+	loc, err := time.LoadLocation("Asia/Taipei")
+	if err != nil {
+		return time.FixedZone("CST", 8*3600)
+	}
+	return loc
+}()
+
 // 3. 加入 GitHub 抓取任務
 func AddGitHubTaskHandler(c *gin.Context) {
 	ctx := context.Background()
@@ -26,7 +34,7 @@ func AddGitHubTaskHandler(c *gin.Context) {
 		if err == nil {
 			// 存歷史
 			recBytes, _ := json.Marshal(models.HistoryRecord{
-				Time:     time.Now().Format("15:04:05"),
+				Time:     time.Now().In(taipeiLocation).Format("15:04:05"),
 				TaskName: "GitHub Fetch",
 				Result:   resp.Summary,
 			})

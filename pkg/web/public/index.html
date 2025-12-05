@@ -2,6 +2,7 @@
 <html lang="zh-Hant">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>DevOps 自動化控制台</title>
     <style>
         body { font-family: "Microsoft JhengHei", sans-serif; max-width: 1200px; margin: 20px auto; padding: 0 20px; }
@@ -58,42 +59,74 @@
 <body>
     <h1>DevOps 自動化控制台</h1>
 
-    <div class="card" style="background: #e3f2fd; border-color: #90caf9;">
-        <h3>🐙 Step 1: GitHub 抓取</h3>
-        <input type="text" id="gh-owner" placeholder="Owner (e.g. golang)" value="golang">
-        <input type="text" id="gh-repo" placeholder="Repo (e.g. go)" value="go">
-        <button id="gh-btn" class="btn-gh">抓取資料</button>
-    </div>
-
     <div class="card" style="background: #fff3e0; border-color: #ffcc80;">
-        <h3>▶️ Step 2: 執行 PR 任務</h3>
+        <h3>▶️ 選擇與添加任務</h3>
         
-        <div style="display: flex; gap: 20px;">
+        <!-- 上區塊: 選擇 NF 與 PR -->
+        <div style="display: flex; gap: 10px; align-items: flex-end; background: #fff; padding: 15px; border-radius: 4px; border: 1px solid #eee;">
+            <div style="flex: 0 0 150px;">
+                <label>NF (free5gc):</label><br>
+                <select id="nf-select" style="width: 100%; margin-top: 5px; padding: 8px;">
+                    <option value="" disabled selected>-- 選擇 NF --</option>
+                    <option value="amf">amf</option>
+                    <option value="ausf">ausf</option>
+                    <option value="chf">chf</option>
+                    <option value="nef">nef</option>
+                    <option value="nrf">nrf</option>
+                    <option value="nssf">nssf</option>
+                    <option value="pcf">pcf</option>
+                    <option value="smf">smf</option>
+                    <option value="udm">udm</option>
+                    <option value="udr">udr</option>
+                    <option value="go-upf">upf</option>
+                    <option value="webconsole">webconsole</option>
+                </select>
+            </div>
+
             <div style="flex: 1;">
                 <label>選擇 PR:</label><br>
-                <select id="pr-select" style="width: 100%; margin-top: 5px;">
-                    <option value="">-- 請先抓取 GitHub --</option>
+                <select id="pr-select" style="width: 100%; margin-top: 5px; padding: 8px;">
+                    <option value="">-- 請先選擇 NF --</option>
                 </select>
             </div>
-            <div style="flex: 1;">
+
+            <div style="flex: 0 0 150px;">
                 <label>動作:</label><br>
-                <select id="action-select" style="width: 100%; margin-top: 5px;">
-                    <option value="CI Build">CI Build (建置)</option>
-                    <option value="Unit Test">Unit Test (測試)</option>
-                    <option value="Deploy">Deploy (部署)</option>
+                <select id="action-select" style="width: 100%; margin-top: 5px; padding: 8px;">
+                    <option value="CI Build">CI Build</option>
+                    <option value="Unit Test">Unit Test</option>
+                    <option value="Deploy">Deploy</option>
                 </select>
+            </div>
+
+            <div>
+                <button id="add-to-list-btn" class="btn-gh" style="height: 38px;">添加</button>
             </div>
         </div>
 
-        <div style="margin-top: 15px; padding: 10px; background: #fff; border: 1px dashed #ccc; border-radius: 4px;">
-            <label style="font-weight: bold; color: #666;">參數:</label>
-            <div id="params-container"></div>
-            <button id="add-param-btn" class="btn-add-param">+ 參數</button>
+        <!-- 下區塊: 待執行列表 -->
+        <div style="margin-top: 20px;">
+            <h4>待執行列表</h4>
+            <div class="scroll-wrapper" style="max-height: 200px; background: #fff;">
+                <table style="width:100%">
+                    <thead class="sticky-header">
+                        <tr>
+                            <th>NF</th>
+                            <th>PR</th>
+                            <th>動作</th>
+                            <th>操作</th>
+                        </tr>
+                    </thead>
+                    <tbody id="selected-tasks-body">
+                        <!-- 動態加入 -->
+                    </tbody>
+                </table>
+            </div>
         </div>
 
-        <div style="margin-top: 15px;">
-            <button id="run-pr-btn" class="btn-run">執行任務</button>
-            <span id="run-msg" style="color: brown; font-weight: bold; margin-left: 10px;"></span>
+        <div style="margin-top: 15px; text-align: right;">
+            <span id="run-msg" style="color: brown; font-weight: bold; margin-right: 10px;"></span>
+            <button id="run-all-btn" class="btn-run">執行任務</button>
         </div>
     </div>
 
