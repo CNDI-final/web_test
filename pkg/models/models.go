@@ -8,8 +8,8 @@ type TaskParams struct {
 
 // Task 定義從 Web Server 收到的任務
 type Task struct {
-	ID     string     `json:"id"`
-	Params TaskParams `json:"params"`
+	ID     string       `json:"id"`
+	Params []TaskParams `json:"params"`
 }
 
 // TaskResult 定義回傳給 Web Server 的結果
