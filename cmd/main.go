@@ -51,8 +51,6 @@ func main() {
 		cancel()
 	}()
 
-	// 7. 啟動 Executor
-	logger.MainLog.Info("Worker started, waiting for tasks...")
 	// 啟動 Executor
 	wg.Add(1)
 	go func() {
