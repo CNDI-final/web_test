@@ -4,10 +4,10 @@ import (
 	"fmt"
 	"os"
 
+	"web_test/internal/executor"
+	"web_test/internal/server"
 	"web_test/pkg/database"
-	"web_test/pkg/executor"
 	"web_test/pkg/queue"
-	"web_test/pkg/server"
 
 	"github.com/pkg/errors"
 	"gopkg.in/yaml.v3"
