@@ -18,10 +18,10 @@ type TaskExecutor struct {
 	db    *database.RedisDB
 }
 
-func NewTaskExecutor(q queue.TaskQueue, db *database.RedisDB) *TaskExecutor {
+func NewTaskExecutor(db *database.RedisDB, q queue.TaskQueue) *TaskExecutor {
 	return &TaskExecutor{
-		queue: q,
 		db:    db,
+		queue: q,
 	}
 }
 

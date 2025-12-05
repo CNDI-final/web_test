@@ -1,15 +1,15 @@
-package WebUI
+package server
 
 import (
 	"net/http"
 	"strings"
+	"web_test/pkg/database"
 
 	"github.com/gin-gonic/gin"
-	go_redis "github.com/redis/go-redis/v9"
 )
 
 // DB is the injected Redis client used by handlers.
-var DB *go_redis.Client
+var DB *database.RedisDB
 
 // Route is the information for every URI.
 type Route struct {
@@ -23,7 +23,7 @@ type Routes []Route
 
 // AddService registers all the API routes into the provided gin engine.
 // It accepts a Redis client to inject into the WebUI package.
-func AddService(engine *gin.Engine, rdb *go_redis.Client) *gin.RouterGroup {
+func AddService(engine *gin.Engine, rdb *database.RedisDB) *gin.RouterGroup {
 	// set package-level DB for handlers
 	DB = rdb
 

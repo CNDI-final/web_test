@@ -1,4 +1,4 @@
-package github
+package server
 
 import (
 	"encoding/json"

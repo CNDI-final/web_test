@@ -7,6 +7,7 @@ import (
 	"web_test/pkg/database"
 	"web_test/pkg/executor"
 	"web_test/pkg/queue"
+	"web_test/pkg/server"
 
 	"github.com/pkg/errors"
 	"gopkg.in/yaml.v3"
@@ -69,11 +70,17 @@ func (f *Factory) NewRedisDB() *database.RedisDB {
 	)
 }
 
-func (f *Factory) NewTaskExecutor(redisDB *database.RedisDB) *executor.TaskExecutor {
-	// 1. 初始化 ListQueue（記憶體佇列）
-	var taskQueue queue.TaskQueue = queue.NewQueue()
+func (f *Factory) NewTaskQueue() queue.TaskQueue {
+	return queue.NewQueue()
+}
+
+func (f *Factory) NewTaskExecutor(redisDB *database.RedisDB, taskQueue queue.TaskQueue) *executor.TaskExecutor {
 	// 2. 初始化 Executor
-	exec := executor.NewTaskExecutor(taskQueue, redisDB)
+	exec := executor.NewTaskExecutor(redisDB, taskQueue)
 
 	return exec
+}
+
+func (f *Factory) NewWebServer(redisDB *database.RedisDB, taskQueue queue.TaskQueue) *server.WebServer {
+	return server.NewWebServer(f.cfg.WebServer.Port, redisDB, taskQueue)
 }

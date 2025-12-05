@@ -1,4 +1,4 @@
-package WebUI
+package server
 
 import (
 	"context" // Add context import for Redis operations

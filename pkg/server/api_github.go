@@ -1,4 +1,4 @@
-package WebUI
+package server
 
 import (
 	"context"
@@ -9,7 +9,6 @@ import (
 	"github.com/gin-gonic/gin"
 
 	"web_test/pkg/models"
-	"web_test/pkg/web/scripts/github"
 )
 
 // 3. 加入 GitHub 抓取任務
@@ -22,7 +21,7 @@ func AddGitHubTaskHandler(c *gin.Context) {
 	}
 
 	defer func() {
-		resp, err := github.FetchGitHubInfo(req.Owner, req.Repo)
+		resp, err := FetchGitHubInfo(req.Owner, req.Repo)
 		if err == nil {
 			// 存歷史
 			recBytes, _ := json.Marshal(models.HistoryRecord{

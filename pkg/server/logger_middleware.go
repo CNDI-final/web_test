@@ -1,4 +1,4 @@
-package WebUI
+package server
 
 import (
 	"time"
