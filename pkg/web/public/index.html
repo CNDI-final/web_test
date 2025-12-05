@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+    <meta charset="UTF-8">
+    <title>DevOps 自動化控制台</title>
+    <style>
+        body { font-family: "Microsoft JhengHei", sans-serif; max-width: 1200px; margin: 20px auto; padding: 0 20px; }
+        
+        /* 卡片樣式 */
+        .card { border: 1px solid #ccc; padding: 20px; border-radius: 8px; margin-bottom: 20px; background: #f9f9f9; }
+        
+        /* 三欄佈局 */
+        .container { display: flex; gap: 15px; }
+        .panel { flex: 1; border: 1px solid #ccc; padding: 0 15px 15px 15px; border-radius: 8px; background: #fdfdfd; display: flex; flex-direction: column; }
+        
+        h3 { margin-top: 15px; border-bottom: 2px solid #ddd; padding-bottom: 10px; }
+        
+        /* 表單元素 */
+        button { padding: 8px 16px; cursor: pointer; border-radius: 4px; border:none; color: white; transition: 0.2s; }
+        button:hover { opacity: 0.9; }
+        input, select { padding: 8px; border: 1px solid #ccc; border-radius: 4px; }
+        
+        /* 表格共用樣式 */
+        table { width: 100%; border-collapse: collapse; margin-top: 10px; }
+        td, th { border-bottom: 1px solid #eee; padding: 8px; text-align: left; font-size: 0.9em; }
+        
+        /* --- 歷史紀錄捲動條與固定標題 --- */
+        .scroll-wrapper {
+            max-height: 350px; 
+            overflow-y: auto;  
+            border: 1px solid #eee;
+        }
+        
+        .sticky-header th {
+            position: sticky;
+            top: 0;
+            background-color: #f1f1f1;
+            z-index: 2;
+            box-shadow: 0 2px 2px -1px rgba(0,0,0,0.1);
+        }
+
+        /* 美化捲軸 */
+        .scroll-wrapper::-webkit-scrollbar { width: 8px; }
+        .scroll-wrapper::-webkit-scrollbar-track { background: #f1f1f1; }
+        .scroll-wrapper::-webkit-scrollbar-thumb { background: #ccc; border-radius: 4px; }
+        .scroll-wrapper::-webkit-scrollbar-thumb:hover { background: #999; }
+
+        /* 按鈕顏色 */
+        .btn-gh { background: #673ab7; }
+        .btn-run { background: #ff9800; }
+        .btn-del { background: #dc3545; padding: 4px 8px; font-size: 0.8em; }
+        .btn-add-param { background: #795548; font-size: 0.8em; margin-top: 5px; }
+        
+        /* 參數列樣式 */
+        .param-row { margin-top: 5px; display: flex; gap: 5px; align-items: center; }
+    </style>
+</head>
+<body>
+    <h1>DevOps 自動化控制台</h1>
+
+    <div class="card" style="background: #e3f2fd; border-color: #90caf9;">
+        <h3>🐙 Step 1: GitHub 抓取</h3>
+        <input type="text" id="gh-owner" placeholder="Owner (e.g. golang)" value="golang">
+        <input type="text" id="gh-repo" placeholder="Repo (e.g. go)" value="go">
+        <button id="gh-btn" class="btn-gh">抓取資料</button>
+    </div>
+
+    <div class="card" style="background: #fff3e0; border-color: #ffcc80;">
+        <h3>▶️ Step 2: 執行 PR 任務</h3>
+        
+        <div style="display: flex; gap: 20px;">
+            <div style="flex: 1;">
+                <label>選擇 PR:</label><br>
+                <select id="pr-select" style="width: 100%; margin-top: 5px;">
+                    <option value="">-- 請先抓取 GitHub --</option>
+                </select>
+            </div>
+            <div style="flex: 1;">
+                <label>動作:</label><br>
+                <select id="action-select" style="width: 100%; margin-top: 5px;">
+                    <option value="CI Build">CI Build (建置)</option>
+                    <option value="Unit Test">Unit Test (測試)</option>
+                    <option value="Deploy">Deploy (部署)</option>
+                </select>
+            </div>
+        </div>
+
+        <div style="margin-top: 15px; padding: 10px; background: #fff; border: 1px dashed #ccc; border-radius: 4px;">
+            <label style="font-weight: bold; color: #666;">參數:</label>
+            <div id="params-container"></div>
+            <button id="add-param-btn" class="btn-add-param">+ 參數</button>
+        </div>
+
+        <div style="margin-top: 15px;">
+            <button id="run-pr-btn" class="btn-run">執行任務</button>
+            <span id="run-msg" style="color: brown; font-weight: bold; margin-left: 10px;"></span>
+        </div>
+    </div>
+
+    <div class="container">
+        
+        <div class="panel">
+            <h3>⏳ 排隊中</h3>
+            <div class="scroll-wrapper">
+                <table style="width:100%">
+                    <thead class="sticky-header"><tr><th>ID</th><th>任務</th><th>操作</th></tr></thead>
+                    <tbody id="queue-table-body"></tbody>
+                </table>
+            </div>
+        </div>
+
+        <div class="panel" style="background: #e1f5fe; border-color: #b3e5fc;">
+            <h3>🚀 執行中</h3>
+            <div class="scroll-wrapper">
+                <table style="width:100%">
+                    <thead class="sticky-header"><tr><th>任務</th><th>進度</th><th>倒數</th></tr></thead>
+                    <tbody id="running-list"></tbody>
+                </table>
+            </div>
+        </div>
+
+        <div class="panel">
+            <h3>✅ 歷史</h3>
+            <div class="scroll-wrapper">
+                <table style="width:100%">
+                    <thead class="sticky-header"><tr><th>時間</th><th>任務</th><th>結果</th></tr></thead>
+                    <tbody id="history-list"></tbody>
+                </table>
+            </div>
+        </div>
+
+    </div>
+
+    <script src="/js/app.js"></script>
+</body>
+</html>
