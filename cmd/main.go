@@ -39,6 +39,9 @@ func main() {
 	sigChan := make(chan os.Signal, 1)
 	signal.Notify(sigChan, os.Interrupt, syscall.SIGTERM)
 
+	redisDB := f.NewRedisDB()
+	logger.MainLog.Info("Redis DB initialized")
+
 	// WaitGroup 用來等待所有 goroutine 完成
 	var wg sync.WaitGroup
 
@@ -54,7 +57,7 @@ func main() {
 	wg.Add(1)
 	go func() {
 		defer wg.Done()
-		exec := f.NewTaskExecutor()
+		exec := f.NewTaskExecutor(redisDB)
 		logger.MainLog.Info("Executor started, waiting for tasks...")
 		if err := exec.Start(ctx); err != nil && err != context.Canceled {
 			logger.MainLog.Infof("Executor failed: %v", err)

@@ -61,15 +61,17 @@ func NewFactory(cfg *Config) *Factory {
 	}
 }
 
-func (f *Factory) NewTaskExecutor() *executor.TaskExecutor {
-	// 1. 初始化 ListQueue（記憶體佇列）
-	var taskQueue queue.TaskQueue = queue.NewQueue()
-	redisDB := database.NewRedisDB(
+func (f *Factory) NewRedisDB() *database.RedisDB {
+	return database.NewRedisDB(
 		f.cfg.Redis.Addr,
 		f.cfg.Redis.Password,
 		f.cfg.Redis.DB,
 	)
+}
 
+func (f *Factory) NewTaskExecutor(redisDB *database.RedisDB) *executor.TaskExecutor {
+	// 1. 初始化 ListQueue（記憶體佇列）
+	var taskQueue queue.TaskQueue = queue.NewQueue()
 	// 2. 初始化 Executor
 	exec := executor.NewTaskExecutor(taskQueue, redisDB)
 
