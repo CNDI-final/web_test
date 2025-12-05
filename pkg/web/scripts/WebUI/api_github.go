@@ -73,12 +73,25 @@ func RunPRTaskHandler(c *gin.Context) {
 		return
 	}
 
+	if req.Params == nil {
+		c.JSON(400, gin.H{"error": "missing params"})
+		return
+	}
+
+	prNumber := req.Params["pr_number"]
+	prTitle := req.Params["pr_title"]
+	action := req.Params["action"]
+	if prNumber == "" || prTitle == "" || action == "" {
+		c.JSON(400, gin.H{"error": "missing required param fields"})
+		return
+	}
+
 	taskID, err := GenerateUniqueTaskID() // Use the new unique ID generator
 	if err != nil {
 		c.JSON(500, gin.H{"error": "failed to generate task ID"})
 		return
 	}
-	taskName := fmt.Sprintf("PR #%d [%s] - Action: %s", req.PRNumber, req.PRTitle, req.Action)
+	taskName := fmt.Sprintf("PR #%s %s - Action: %s", prNumber, prTitle, action)
 	task := models.InternalMessage{
 		TaskID:   taskID, // Assign the generated unique TaskID
 		TaskName: taskName,

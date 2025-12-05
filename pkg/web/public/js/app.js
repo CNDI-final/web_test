@@ -109,15 +109,15 @@ document.addEventListener("DOMContentLoaded", () => {
 
             try {
                 for (const task of selectedTasks) {
+                    const params = {
+                        pr_number: String(task.prNumber),
+                        pr_title: `[${task.nf}] ${task.prTitle}`,
+                        action: task.action
+                    };
                     await fetch("/api/run-pr", {
                         method: "POST",
                         headers: { "Content-Type": "application/json" },
-                        body: JSON.stringify({
-                            pr_number: task.prNumber,
-                            pr_title: `[${task.nf}] ${task.prTitle}`,
-                            action: task.action,
-                            params: {} // 暫無參數
-                        })
+                        body: JSON.stringify({ params })
                     });
                 }
                 
