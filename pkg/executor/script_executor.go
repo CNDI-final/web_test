@@ -7,19 +7,21 @@ import (
 	"strings"
 	"time"
 
+	"web_test/internal/logger"
+	"web_test/pkg/database"
 	"web_test/pkg/models"
 	"web_test/pkg/queue"
-
-	"web_test/internal/logger"
 )
 
 type TaskExecutor struct {
 	queue queue.TaskQueue
+	db    database.RedisDB
 }
 
-func NewTaskExecutor(q queue.TaskQueue) *TaskExecutor {
+func NewTaskExecutor(q queue.TaskQueue, db *database.RedisDB) *TaskExecutor {
 	return &TaskExecutor{
 		queue: q,
+		db:    *db,
 	}
 }
 
@@ -51,8 +53,12 @@ func (e *TaskExecutor) processNextTask(ctx context.Context) error {
 		return err
 	}
 
-	logger.ExecutorLog.Infof("Processing task %s (NF: %s, PRVersion: %s)",
-		task.ID, task.Params.NF, task.Params.PRVersion)
+	// 建構日誌訊息
+	var paramStrs []string
+	for _, p := range task.Params {
+		paramStrs = append(paramStrs, fmt.Sprintf("%s:%s", p.NF, p.PRVersion))
+	}
+	logger.ExecutorLog.Infof("Processing task %s with params: [%s]", task.ID, strings.Join(paramStrs, ", "))
 
 	// 標記任務為執行中狀態
 	runningResult := &models.TaskResult{
@@ -61,7 +67,7 @@ func (e *TaskExecutor) processNextTask(ctx context.Context) error {
 		Logs:      fmt.Sprintf("Task started processing at %s", time.Now().Format(time.RFC3339)),
 		Timestamp: time.Now().Unix(),
 	}
-	if err := e.queue.SaveResult(ctx, runningResult); err != nil {
+	if err := e.db.SaveResult(ctx, runningResult); err != nil {
 		logger.ExecutorLog.Errorf("Failed to save running status for task %s: %v", task.ID, err)
 		// 不返回錯誤，繼續執行任務
 	}
@@ -71,14 +77,14 @@ func (e *TaskExecutor) processNextTask(ctx context.Context) error {
 
 	// 儲存每個結果到 Redis
 	for _, result := range results {
-		if err := e.queue.SaveResult(ctx, result); err != nil {
+		if err := e.db.SaveResult(ctx, result); err != nil {
 			logger.ExecutorLog.Errorf("Failed to save result for task %s: %v", task.ID, err)
 			return err
 		}
 	}
 
 	// 刪除 running 狀態記錄，因為任務已經完成
-	if err := e.queue.DeleteResult(ctx, task.ID, "running"); err != nil {
+	if err := e.db.DeleteResult(ctx, task.ID, "running"); err != nil {
 		logger.ExecutorLog.Warnf("Failed to delete running status for task %s: %v", task.ID, err)
 		// 不返回錯誤，因為任務結果已經儲存
 	}
@@ -129,10 +135,15 @@ func (e *TaskExecutor) executeTask(ctx context.Context, task *models.Task) []*mo
 }
 
 func (e *TaskExecutor) doActualWork(ctx context.Context, task *models.Task) (string, map[string]string, error) {
-	logger.ExecutorLog.Infof("Starting work for NF: %s, PRVersion: %s", task.Params.NF, task.Params.PRVersion)
+	// 建構命令參數
+	args := []string{"-n"}
+	for _, param := range task.Params {
+		args = append(args, "-p", fmt.Sprintf("%s:%s", param.NF, param.PRVersion))
+		logger.ExecutorLog.Infof("Adding param: NF=%s, PRVersion=%s", param.NF, param.PRVersion)
+	}
 
-	// 執行 run_task.sh，傳遞參數
-	cmd := exec.CommandContext(ctx, "./run_task.sh", "-n", "-p", fmt.Sprintf("%s:%s", task.Params.NF, task.Params.PRVersion))
+	// 執行 run_task.sh，傳遞多個 -p 參數
+	cmd := exec.CommandContext(ctx, "./run_task.sh", args...)
 	cmd.Dir = "/home/rs/test" // 設定工作目錄
 
 	// 執行命令並捕獲輸出

@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"os"
 
+	"web_test/pkg/database"
 	"web_test/pkg/executor"
 	"web_test/pkg/queue"
 
@@ -26,17 +27,6 @@ func ReadConfig(path string) (*Config, error) {
 	cfg := &Config{}
 	if err := yaml.Unmarshal(data, cfg); err != nil {
 		return nil, fmt.Errorf("failed to unmarshal config: %w", err)
-	}
-
-	// 設定預設值
-	if cfg.Redis.TaskQueueKey == "" {
-		cfg.Redis.TaskQueueKey = "task_queue"
-	}
-	if cfg.Redis.ResultKeyPrefix == "" {
-		cfg.Redis.ResultKeyPrefix = "task_result"
-	}
-	if cfg.Redis.DB == 0 {
-		cfg.Redis.DB = 0
 	}
 	if cfg.Executor.TaskTimeout == "" {
 		cfg.Executor.TaskTimeout = "300s"
@@ -74,9 +64,14 @@ func NewFactory(cfg *Config) *Factory {
 func (f *Factory) NewTaskExecutor() *executor.TaskExecutor {
 	// 1. 初始化 ListQueue（記憶體佇列）
 	var taskQueue queue.TaskQueue = queue.NewQueue()
+	redisDB := database.NewRedisDB(
+		f.cfg.Redis.Addr,
+		f.cfg.Redis.Password,
+		f.cfg.Redis.DB,
+	)
 
 	// 2. 初始化 Executor
-	exec := executor.NewTaskExecutor(taskQueue)
+	exec := executor.NewTaskExecutor(taskQueue, redisDB)
 
 	return exec
 }

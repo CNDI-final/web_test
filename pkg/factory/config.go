@@ -18,11 +18,9 @@ type AppConfig struct {
 }
 
 type RedisConfig struct {
-	Addr            string `yaml:"addr" valid:"required"`
-	TaskQueueKey    string `yaml:"task_queue_key"`
-	ResultKeyPrefix string `yaml:"result_key_prefix"`
-	Password        string `yaml:"password"`
-	DB              int    `yaml:"db"`
+	Addr     string `yaml:"addr" valid:"required"`
+	Password string `yaml:"password"`
+	DB       int    `yaml:"db"`
 }
 
 type WebServer struct {
