@@ -1,0 +1,8 @@
+=== RUN   TestULCLMultiPathCi1
+=== RUN   TestULCLMultiPathCi1/DN
+=== RUN   TestULCLMultiPathCi1/MEC
+--- PASS: TestULCLMultiPathCi1 (15.06s)
+    --- PASS: TestULCLMultiPathCi1/DN (2.14s)
+    --- PASS: TestULCLMultiPathCi1/MEC (5.11s)
+PASS
+ok  	test	15.060s

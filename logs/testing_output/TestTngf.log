@@ -1,0 +1,1087 @@
+2025-12-05T18:59:14.898141722Z[36m [INFO][UPF][Main] [0mUPF version:  
+	free5GC version: v4.1.0-26-gf454591
+	build time:      2025-12-05T18:52:44Z
+	commit hash:     +f9b9500
+	commit time:     2025-12-05T05:43:16Z
+	go version:      go1.24.2 linux/amd64
+2025-12-05T18:59:14.898202291Z[36m [INFO][UPF][CFG] [0mRead config from [./config/upfcfg.test.yaml]
+2025-12-05T18:59:14.898424408Z[36m [INFO][UPF][CFG] [0m==================================================
+2025-12-05T18:59:14.898438185Z[36m [INFO][UPF][CFG] [0m(*factory.Config)(0xc00049acd0)({
+	Version: (string) (len=5) "1.0.3",
+	Description: (string) (len=31) "UPF initial local configuration",
+	Pfcp: (*factory.Pfcp)(0xc0004996e0)({
+		Addr: (string) (len=14) "10.200.200.101",
+		NodeID: (string) (len=14) "10.200.200.101",
+		RetransTimeout: (time.Duration) 1s,
+		MaxRetrans: (uint8) 3
+	}),
+	Gtpu: (*factory.Gtpu)(0xc000499890)({
+		Forwarder: (string) (len=5) "gtp5g",
+		IfList: ([]factory.IfInfo) (len=1 cap=1) {
+			(factory.IfInfo) {
+				Addr: (string) (len=14) "10.200.200.102",
+				Type: (string) (len=2) "N3",
+				Name: (string) "",
+				IfName: (string) "",
+				MTU: (uint32) 0
+			}
+		}
+	}),
+	DnnList: ([]factory.DnnList) (len=1 cap=1) {
+		(factory.DnnList) {
+			Dnn: (string) (len=8) "internet",
+			Cidr: (string) (len=12) "10.60.0.0/16",
+			NatIfName: (string) ""
+		}
+	},
+	Logger: (*factory.Logger)(0xc00070dd20)({
+		Enable: (bool) true,
+		Level: (string) (len=4) "info",
+		ReportCaller: (bool) false
+	})
+})
+2025-12-05T18:59:14.898441468Z[36m [INFO][UPF][CFG] [0m==================================================
+2025-12-05T18:59:14.898444992Z[36m [INFO][UPF][Main] [0mLog level is set to [info]
+2025-12-05T18:59:14.898451087Z[36m [INFO][UPF][Main] [0mReport Caller is set to [false]
+2025-12-05T18:59:14.898487670Z[36m [INFO][UPF][Main] [0mstarting Gtpu Forwarder [gtp5g]
+2025-12-05T18:59:14.898490778Z[36m [INFO][UPF][Main] [0mGTP Address: "10.200.200.102:2152"
+2025-12-05T18:59:14.900028768Z[36m [INFO][UPF][BUFF] [0mbuff netlink server started
+2025-12-05T18:59:14.900049440Z[36m [INFO][UPF][Gtp5g] [0mForwarder started
+2025-12-05T18:59:14.900124826Z[36m [INFO][UPF][Perio] [0mperio server started
+2025-12-05T18:59:14.900138374Z[36m [INFO][UPF][PFCP][LAddr:10.200.200.101:8805] [0mstarting pfcp server
+2025-12-05T18:59:14.900142029Z[36m [INFO][UPF][PFCP][LAddr:10.200.200.101:8805] [0mpfcp server started
+2025-12-05T18:59:14.900144600Z[36m [INFO][UPF][Main] [0mUPF started
+Run TestCN
+os.Args: [/tmp/go-build2516132335/b001/test.test -test.paniconexit0 -test.v=true -test.timeout=0s -test.run=TestCN]
+2025-12-05T18:59:18.035272039Z[36m [INFO][NRF][Main] [0mLog enable is set to [true]
+2025-12-05T18:59:18.035305284Z[36m [INFO][NRF][Main] [0mLog level is set to [info]
+2025-12-05T18:59:18.035308469Z[36m [INFO][NRF][Main] [0mReport Caller is set to [false]
+2025-12-05T18:59:18.035313459Z[36m [INFO][NRF][Init] [0mnrfconfig Info: Version[1.0.2] Description[NRF initial test configuration]
+2025-12-05T18:59:18.035322892Z[36m [INFO][NRF][SBI] [0mBinding addr: [127.0.0.10:8000]
+AMF Config failed: invalid T3555: non zero value required
+2025-12-05T18:59:18.035924343Z[36m [INFO][AMF][Main] [0mLog enable is set to [true]
+2025-12-05T18:59:18.035931281Z[36m [INFO][AMF][Main] [0mLog level is set to [info]
+2025-12-05T18:59:18.035934400Z[36m [INFO][AMF][Main] [0mReport Caller is set to [false]
+2025-12-05T18:59:18.035996403Z[36m [INFO][AMF][SBI] [0mBinding addr: [127.0.0.18:8000]
+2025-12-05T18:59:18.036674960Z[36m [INFO][SMF][Main] [0mLog enable is set to [true]
+2025-12-05T18:59:18.036678604Z[36m [INFO][SMF][Main] [0mLog level is set to [info]
+2025-12-05T18:59:18.036681121Z[36m [INFO][SMF][Main] [0mReport Caller is set to [false]
+2025-12-05T18:59:18.036687599Z[36m [INFO][SMF][CTX] [0msmfconfig Info: Version[1.0.7] Description[SMF initial single test configuration]
+2025-12-05T18:59:18.036701037Z[36m [INFO][SMF][CTX] [0mEndpoints: [10.200.200.102]
+2025-12-05T18:59:18.036904556Z[36m [INFO][UDR][Util] [0mudrconfig Info: Version[1.1.0] Description[UDR initial test configuration]
+2025-12-05T18:59:18.036919307Z[36m [INFO][UDR][Main] [0mLog enable is set to [true]
+2025-12-05T18:59:18.036923794Z[36m [INFO][UDR][Main] [0mLog level is set to [info]
+2025-12-05T18:59:18.036926256Z[36m [INFO][UDR][Main] [0mReport Caller is set to [false]
+2025-12-05T18:59:18.368739955Z[36m [INFO][PCF][Main] [0mLog enable is set to [true]
+2025-12-05T18:59:18.368776844Z[36m [INFO][PCF][Main] [0mLog level is set to [info]
+2025-12-05T18:59:18.368787393Z[36m [INFO][PCF][Main] [0mReport Caller is set to [false]
+2025-12-05T18:59:18.368812048Z[36m [INFO][PCF][Util] [0mpcfconfig Info: Version[1.0.2] Description[PCF initial test configuration]
+2025-12-05T18:59:18.369073018Z[36m [INFO][PCF][SBI] [0mBinding addr: [127.0.0.7:8000]
+2025-12-05T18:59:18.369590657Z[36m [INFO][UDM][Main] [0mLog enable is set to [true]
+2025-12-05T18:59:18.369598382Z[36m [INFO][UDM][Main] [0mLog level is set to [info]
+2025-12-05T18:59:18.369601052Z[36m [INFO][UDM][Main] [0mReport Caller is set to [false]
+2025-12-05T18:59:18.369604784Z[36m [INFO][UDM][Util] [0mudmconfig Info: Version[1.0.3] Description[UDM initial test configuration]
+2025-12-05T18:59:18.369684986Z[36m [INFO][UDM][SBI] [0mBinding addr: [127.0.0.3:8000]
+2025-12-05T18:59:18.369698457Z[36m [INFO][NSSF][Main] [0mLog enable is set to [true]
+2025-12-05T18:59:18.369701991Z[36m [INFO][NSSF][Main] [0mLog level is set to [info]
+2025-12-05T18:59:18.369704760Z[36m [INFO][NSSF][Main] [0mReport Caller is set to [false]
+2025-12-05T18:59:18.369833111Z[36m [INFO][AUSF][Main] [0mLog enable is set to [true]
+2025-12-05T18:59:18.369836098Z[36m [INFO][AUSF][Main] [0mLog level is set to [info]
+2025-12-05T18:59:18.369838462Z[36m [INFO][AUSF][Main] [0mReport Caller is set to [false]
+2025-12-05T18:59:18.369848256Z[36m [INFO][AUSF][Init] [0mausfconfig Info: Version[1.0.3] Description[AUSF initial test configuration]
+ausf context =  &{{{} {{{} 0} {0 0} {[] {} <nil>} <nil> <nil> 0}} {{} {{{} 0} {0 0} {[] {} <nil>} <nil> <nil> 0}} 7911fb88-b9c4-4f48-b303-c19e559261ec ausfGroup001 8000 127.0.0.9 127.0.0.9 http://127.0.0.9:8000 http http://127.0.0.10:8000 ../cert/nrf.pem map[nausf-auth:{7911fb88-b9c4-4f48-b303-c19e559261ec nausf-auth [{v1 1.0.3 <nil>}] http REGISTERED   [{127.0.0.9   8000}]  [] [] [] [] [] [] map[] map[] 0 0 0 <nil> <nil>  [] [] []  map[] false <nil>}] [{208 93} {123 45}]  0xc0008b0dc0 false false}
+2025-12-05T18:59:18.369901647Z[36m [INFO][AUSF][SBI] [0mBinding addr: [127.0.0.9:8000]
+CHF Config failed: invalid Cgf.PassiveTransferPortRange.End: non zero value required;Cgf.PassiveTransferPortRange.Start: non zero value required
+2025-12-05T18:59:18.370020434Z[36m [INFO][CHF][Main] [0mLog enable is set to [true]
+2025-12-05T18:59:18.370023082Z[36m [INFO][CHF][Main] [0mLog level is set to [info]
+2025-12-05T18:59:18.370025391Z[36m [INFO][CHF][Main] [0mReport Caller is set to [false]
+2025-12-05T18:59:18.370031453Z[36m [INFO][CHF][Init] [0mchfconfig Info: Version[1.0.3] Description[CHF initial test configuration]
+2025-12-05T18:59:18.370041915Z[36m [INFO][CHF][SBI] [0mBinding addr: [127.0.0.113:8000]
+NfStart 9
+2025-12-05T18:59:18.370104274Z[36m [INFO][NRF][Init] [0mServer starting
+2025-12-05T18:59:18.370117723Z[36m [INFO][NRF][SBI] [0mSBI server started
+2025-12-05T18:59:18.575279187Z[36m [INFO][AMF][Util] [0mamfconfig Info: Version[1.0.9]
+2025-12-05T18:59:18.575332490Z[36m [INFO][AMF][Init] [0mServer started
+2025-12-05T18:59:18.575462576Z[36m [INFO][AMF][Ngap] [0mListen on 10.200.200.1:38412
+2025-12-05T18:59:18.576801573Z[36m [INFO][NRF][NFM] [0mHandle NFRegisterRequest
+2025-12-05T18:59:18.578776383Z[36m [INFO][NRF][NFM] [0murilist update
+2025-12-05T18:59:18.589736669Z[36m [INFO][NRF][NFM] [0mCreate NF Profile: f25ab5e8-5ccf-4514-8a68-202c7eaff7e0
+2025-12-05T18:59:18.591358607Z[36m [INFO][NRF][GIN] [0m| 201 |       127.0.0.1 | PUT     | /nnrf-nfm/v1/nf-instances/f25ab5e8-5ccf-4514-8a68-202c7eaff7e0 |  |
+2025-12-05T18:59:18.591521232Z[36m [INFO][AMF][Main] [0mOAuth2 setting receive from NRF: false
+2025-12-05T18:59:18.591528049Z[36m [INFO][AMF][SBI] [0mStart SBI server (listen on 127.0.0.18:8000)
+2025-12-05T18:59:19.032231500Z[36m [INFO][SMF][Init] [0mServer started
+2025-12-05T18:59:19.032780825Z[36m [INFO][NRF][NFM] [0mHandle NFRegisterRequest
+2025-12-05T18:59:19.033808858Z[36m [INFO][NRF][NFM] [0murilist update
+2025-12-05T18:59:19.034342742Z[36m [INFO][NRF][NFM] [0mCreate NF Profile: 82905c04-55d5-42f6-8da0-a57ca52e5462
+2025-12-05T18:59:19.035150695Z[36m [INFO][NRF][GIN] [0m| 201 |       127.0.0.1 | PUT     | /nnrf-nfm/v1/nf-instances/82905c04-55d5-42f6-8da0-a57ca52e5462 |  |
+2025-12-05T18:59:19.035298054Z[36m [INFO][SMF][Main] [0mOAuth2 setting receive from NRF: false
+2025-12-05T18:59:19.035715674Z[36m [INFO][SMF][Init] [0mSMF Registration to NRF {82905c04-55d5-42f6-8da0-a57ca52e5462  SMF REGISTERED [] 0 [{208 93}] [] [{1 fedcba [] false} {1 112233 [] false}] [] []   [127.0.0.2] [] [] [] [] [] [] 0 0 0 <nil> area1 <nil> map[] <nil> map[] <nil> map[] <nil> map[] 0xc000740420 map[] <nil> map[] <nil> map[] <nil> map[] <nil> map[] <nil> <nil> <nil> map[] <nil> map[] map[] map[] map[oauth2:false] <nil> false [{82905c04-55d5-42f6-8da0-a57ca52e5462nsmf-pdusession nsmf-pdusession [{v1 https://127.0.0.2:8000/nsmf-pdusession/v1 2025-12-05 18:59:18.036714519 +0000 UTC}] https REGISTERED   [{127.0.0.2   8000}] http://127.0.0.2:8000 [] [] [] [] [] [] map[] map[] 0 0 0 <nil> <nil>  [] [] []  map[] false <nil>} {82905c04-55d5-42f6-8da0-a57ca52e5462nsmf-event-exposure nsmf-event-exposure [{v1 https://127.0.0.2:8000/nsmf-pdusession/v1 2025-12-05 18:59:18.036714519 +0000 UTC}] https REGISTERED   [{127.0.0.2   8000}] http://127.0.0.2:8000 [] [] [] [] [] [] map[] map[] 0 0 0 <nil> <nil>  [] [] []  map[] false <nil>} {82905c04-55d5-42f6-8da0-a57ca52e5462nsmf-oam nsmf-oam [{v1 https://127.0.0.2:8000/nsmf-pdusession/v1 2025-12-05 18:59:18.036714519 +0000 UTC}] https REGISTERED   [{127.0.0.2   8000}] http://127.0.0.2:8000 [] [] [] [] [] [] map[] map[] 0 0 0 <nil> <nil>  [] [] []  map[] false <nil>}] map[] false false [] <nil> <nil> [] [] false false map[] map[] [] <nil> <nil>  map[] map[] <nil> <nil> map[] <nil> map[] map[] map[] map[] <nil> <nil> [] <nil> <nil>}
+2025-12-05T18:59:19.035760453Z[36m [INFO][SMF][PFCP] [0mListen on 10.200.200.1:8805
+2025-12-05T18:59:19.035766581Z[36m [INFO][SMF][PFCP] [0mPfcp running... [2025-12-05 18:59:19.035763429 +0000 UTC m=+1.238614723]
+2025-12-05T18:59:19.035774306Z[36m [INFO][SMF][SBI] [0mStart SBI server (listen on 127.0.0.2:8000)
+2025-12-05T18:59:19.232916677Z[36m [INFO][NRF][NFM] [0mHandle NFRegisterRequest
+2025-12-05T18:59:19.233834492Z[36m [INFO][NRF][NFM] [0murilist update
+2025-12-05T18:59:19.234329769Z[36m [INFO][NRF][NFM] [0mCreate NF Profile: 6018888e-ae59-4a1a-8f00-5f1c9f9f4d70
+2025-12-05T18:59:19.235055572Z[36m [INFO][NRF][GIN] [0m| 201 |       127.0.0.1 | PUT     | /nnrf-nfm/v1/nf-instances/6018888e-ae59-4a1a-8f00-5f1c9f9f4d70 |  |
+2025-12-05T18:59:19.235161238Z[36m [INFO][UDR][Main] [0mOAuth2 setting receive from NRF: false
+2025-12-05T18:59:19.235166152Z[36m [INFO][UDR][Init] [0mregister to NRF successfully
+2025-12-05T18:59:19.235169008Z[36m [INFO][UDR][Init] [0mServer started
+2025-12-05T18:59:19.235171853Z[36m [INFO][UDR][Init] [0mUDR Config Info: Version[1.1.0] Description[UDR initial test configuration]
+2025-12-05T18:59:19.235174687Z[36m [INFO][UDR][SBI] [0mStarting server...
+2025-12-05T18:59:19.435341951Z[36m [INFO][PCF][Init] [0mServer started
+2025-12-05T18:59:19.435817925Z[36m [INFO][NRF][NFM] [0mHandle NFRegisterRequest
+2025-12-05T18:59:19.436843015Z[36m [INFO][NRF][NFM] [0murilist update
+2025-12-05T18:59:19.437434658Z[36m [INFO][NRF][NFM] [0mCreate NF Profile: 39308db1-213b-4a83-9d5b-327e73b8231b
+2025-12-05T18:59:19.437994267Z[36m [INFO][NRF][GIN] [0m| 201 |       127.0.0.1 | PUT     | /nnrf-nfm/v1/nf-instances/39308db1-213b-4a83-9d5b-327e73b8231b |  |
+2025-12-05T18:59:19.438134907Z[36m [INFO][PCF][Main] [0mOAuth2 setting receive from NRF: false
+2025-12-05T18:59:19.438141889Z[36m [INFO][PCF][SBI] [0mStart SBI server (listen on 127.0.0.7:8000)
+2025-12-05T18:59:19.648274287Z[36m [INFO][UDM][Init] [0mServer started
+2025-12-05T18:59:19.648314076Z[36m [INFO][UDM][SBI] [0mStarting server...
+2025-12-05T18:59:19.648882329Z[36m [INFO][NRF][NFM] [0mHandle NFRegisterRequest
+2025-12-05T18:59:19.649950177Z[36m [INFO][NRF][NFM] [0murilist update
+2025-12-05T18:59:19.650497274Z[36m [INFO][NRF][NFM] [0mCreate NF Profile: 51dfaed0-c1db-400f-95dc-6cecb7a93631
+2025-12-05T18:59:19.651150530Z[36m [INFO][NRF][GIN] [0m| 201 |       127.0.0.1 | PUT     | /nnrf-nfm/v1/nf-instances/51dfaed0-c1db-400f-95dc-6cecb7a93631 |  |
+2025-12-05T18:59:19.651281267Z[36m [INFO][UDM][Main] [0mOAuth2 setting receive from NRF: false
+2025-12-05T18:59:19.651286990Z[36m [INFO][UDM][SBI] [0mStart SBI server (listen on 127.0.0.3:8000)
+2025-12-05T18:59:19.849435163Z[36m [INFO][NRF][NFM] [0mHandle NFRegisterRequest
+2025-12-05T18:59:19.850538852Z[36m [INFO][NRF][NFM] [0murilist update
+2025-12-05T18:59:19.851297870Z[36m [INFO][NRF][NFM] [0mCreate NF Profile: af1ea80d-21b3-40ef-b98b-baf9d5bd5c4a
+2025-12-05T18:59:19.852022965Z[36m [INFO][NRF][GIN] [0m| 201 |       127.0.0.1 | PUT     | /nnrf-nfm/v1/nf-instances/af1ea80d-21b3-40ef-b98b-baf9d5bd5c4a |  |
+2025-12-05T18:59:19.852137101Z[36m [INFO][NSSF][Main] [0mOAuth2 setting receive from NRF: false
+2025-12-05T18:59:19.852141653Z[36m [INFO][NSSF][Main] [0mregister to NRF successfully
+2025-12-05T18:59:19.852144531Z[36m [INFO][NSSF][SBI] [0mStarting server...
+2025-12-05T18:59:20.036796659Z[36m [INFO][SMF][Main] [0mSending PFCP Association Request to UPF[10.200.200.101]
+2025-12-05T18:59:20.037018895Z[36m [INFO][UPF][PFCP][LAddr:10.200.200.101:8805] [0mhandleAssociationSetupRequest
+2025-12-05T18:59:20.037070174Z[36m [INFO][UPF][PFCP][LAddr:10.200.200.101:8805][CPNodeID:10.200.200.1] [0mNew node
+2025-12-05T18:59:20.037172628Z[36m [INFO][SMF][Main] [0mReceived PFCP Association Setup Accepted Response from UPF[10.200.200.101]
+2025-12-05T18:59:20.037181974Z[36m [INFO][SMF][Main] [0mUPF(10.200.200.101) setup association
+2025-12-05T18:59:20.100264650Z[36m [INFO][AUSF][Init] [0mServer started
+2025-12-05T18:59:20.100598107Z[36m [INFO][NRF][NFM] [0mHandle NFRegisterRequest
+2025-12-05T18:59:20.101633604Z[36m [INFO][NRF][NFM] [0murilist update
+2025-12-05T18:59:20.102060437Z[36m [INFO][NRF][NFM] [0mCreate NF Profile: 7911fb88-b9c4-4f48-b303-c19e559261ec
+2025-12-05T18:59:20.102857146Z[36m [INFO][NRF][GIN] [0m| 201 |       127.0.0.1 | PUT     | /nnrf-nfm/v1/nf-instances/7911fb88-b9c4-4f48-b303-c19e559261ec |  |
+2025-12-05T18:59:20.102973219Z[36m [INFO][AUSF][Main] [0mOAuth2 setting receive from NRF: false
+2025-12-05T18:59:20.102979938Z[36m [INFO][AUSF][SBI] [0mStart SBI server (listen on 127.0.0.9:8000)
+2025-12-05T18:59:20.402754261Z[36m [INFO][CHF][Init] [0mServer started
+2025-12-05T18:59:20.403251951Z[36m [INFO][CHF][Acct] [0mOpen Account Balance Management Server
+2025-12-05T18:59:20.404634945Z[36m [INFO][NRF][NFM] [0mHandle NFRegisterRequest
+2025-12-05T18:59:20.405991237Z[36m [INFO][NRF][NFM] [0murilist update
+2025-12-05T18:59:20.406744928Z[36m [INFO][NRF][NFM] [0mCreate NF Profile: 4c2df37a-cde1-49b8-ac2d-28739fb0e898
+2025-12-05T18:59:20.407727819Z[36m [INFO][NRF][GIN] [0m| 201 |       127.0.0.1 | PUT     | /nnrf-nfm/v1/nf-instances/4c2df37a-cde1-49b8-ac2d-28739fb0e898 |  |
+2025-12-05T18:59:20.407868109Z[36m [INFO][CHF][Main] [0mOAuth2 setting receive from NRF: false
+2025-12-05T18:59:20.407884228Z[36m [INFO][CHF][SBI] [0mStart SBI server (listen on 127.0.0.113:8000)
+=== RUN   TestCN
+2025-12-05T18:59:27.127504552Z[36m [INFO][TNGF][Main] [0mTNGF version:  
+	free5GC version: v4.1.0-26-gf454591
+	build time:      2025-12-05T18:52:46Z
+	commit hash:     afd36f63
+	commit time:     2025-09-27T14:44:37Z
+	go version:      go1.24.2 linux/amd64
+2025-12-05T18:59:27.128013825Z[36m [INFO][TNGF][CFG] [0mRead config from [./config/tngfcfg.test.yaml]
+2025-12-05T18:59:29.334093966Z[33m [WARN][TNGF][Context] [0mParse PKCS8 private key failed: x509: failed to parse private key (use ParsePKCS1PrivateKey instead for this key format)
+2025-12-05T18:59:29.334149943Z[36m [INFO][TNGF][Context] [0mParse using PKCS1...
+2025-12-05T18:59:29.335071047Z[36m [INFO][TNGF][Main] [0mLog enable is set to[true]
+2025-12-05T18:59:29.335086378Z[36m [INFO][TNGF][Main] [0mLog level is set to [info]
+2025-12-05T18:59:29.335089683Z[36m [INFO][TNGF][Main] [0mReport Caller is set to [false]
+2025-12-05T18:59:29.335093469Z[36m [INFO][TNGF][Init] [0mServer started
+2025-12-05T18:59:29.335670469Z[33m [WARN][TNGF][Init] [0mnetlink.RouteAdd: file exists
+2025-12-05T18:59:29.335684870Z[36m [INFO][TNGF][Init] [0mSetup XFRM interface xfrmi-default
+2025-12-05T18:59:29.338170438Z[36m [INFO][AMF][Ngap] [0m[AMF] SCTP Accept from: 10.200.200.1/10.0.2.15/172.17.0.1/10.60.0.1/10.200.200.2/192.168.127.1/10.0.0.1:57316
+2025-12-05T18:59:29.338185192Z[36m [INFO][TNGF][Init] [0mNGAP service running.
+2025-12-05T18:59:29.338398138Z[36m [INFO][TNGF][Init] [0mNAS TCP server successfully started.
+2025-12-05T18:59:29.338511618Z[36m [INFO][TNGF][Init] [0mListening NWt user plane traffic
+2025-12-05T18:59:29.338617339Z[36m [INFO][TNGF][Init] [0mIKE service running.
+2025-12-05T18:59:29.338626192Z[36m [INFO][TNGF][Radius] [0mRadius packet received
+2025-12-05T18:59:29.338664208Z[36m [INFO][TNGF][Init] [0mRadius service running.
+2025-12-05T18:59:29.338668235Z[36m [INFO][TNGF][Init] [0mTNGF running...
+2025-12-05T18:59:29.338685153Z[36m [INFO][TNGF][NGAP] [0m[TNGF] Send NG Setup Request
+2025-12-05T18:59:29.338891453Z[36m [INFO][AMF][Ngap] [0mCreate a new NG connection for: 10.200.200.1/10.0.2.15/172.17.0.1/10.60.0.1/10.200.200.2/192.168.127.1/10.0.0.1:57316
+2025-12-05T18:59:29.339039819Z[36m [INFO][AMF][Ngap][ran_addr:10.200.200.1/10.0.2.15/172.17.0.1/10.60.0.1/10.200.200.2/192.168.127.1/10.0.0.1:57316] [0mHandle NGSetupRequest
+2025-12-05T18:59:29.339049373Z[33m [WARN][AMF][Ngap][ran_addr:10.200.200.1/10.0.2.15/172.17.0.1/10.60.0.1/10.200.200.2/192.168.127.1/10.0.0.1:57316] [0mMissing IE PagingDRX
+2025-12-05T18:59:29.339079761Z[36m [INFO][AMF][Ngap][ran_addr:10.200.200.1/10.0.2.15/172.17.0.1/10.60.0.1/10.200.200.2/192.168.127.1/10.0.0.1:57316] [0mSend NG-Setup response
+2025-12-05T18:59:29.339350167Z[36m [INFO][TNGF][NGAP] [0m[TNGF] Handle NG Setup Response
+Run TestTngfUE
+os.Args: [/tmp/go-build95614431/b001/test.test -test.paniconexit0 -test.v=true -test.timeout=0s -test.run=TestTngfUE noinit]
+MongoDB Set
+=== RUN   TestTngfUE
+2025-12-05T18:59:31.822359625Z[36m [INFO][TNGF][Radius] [0mHandle Radius Access Request
+2025-12-05T18:59:31.822416179Z[36m [INFO][TNGF][Radius] [0mHandle EAP-Res/Identity
+2025-12-05T18:59:31.822449314Z[36m [INFO][TNGF][Radius] [0mSend Radius message to UE
+2025-12-05T18:59:31.822452291Z[36m [INFO][TNGF][Radius] [0mEncoding...
+2025-12-05T18:59:31.822621599Z[36m [INFO][TNGF][Radius] [0mHandle Radius Access Request
+2025-12-05T18:59:31.822636634Z[36m [INFO][TNGF][Radius] [0mHandle EAP-Res/5G-NAS
+2025-12-05T18:59:31.822682322Z[36m [INFO][TNGF][Radius] [0mSelected AMF Name: AMF
+2025-12-05T18:59:31.822690781Z[36m [INFO][TNGF][NGAP] [0m[TNGF] Send Initial UE Message
+2025-12-05T18:59:31.822917272Z[36m [INFO][AMF][Ngap][ran_addr:10.200.200.1/10.0.2.15/172.17.0.1/10.60.0.1/10.200.200.2/192.168.127.1/10.0.0.1:57316] [0mHandle InitialUEMessage
+2025-12-05T18:59:31.822959829Z[36m [INFO][AMF][Ngap][amf_ue_ngap_id:RU:0,AU:1(Non3GPP)][ran_addr:10.200.200.1/10.0.2.15/172.17.0.1/10.60.0.1/10.200.200.2/192.168.127.1/10.0.0.1:57316] [0mNew RanUe [RanUeNgapID:0][AmfUeNgapID:1]
+2025-12-05T18:59:31.822990809Z[36m [INFO][AMF][Ngap][ran_addr:10.200.200.1/10.0.2.15/172.17.0.1/10.60.0.1/10.200.200.2/192.168.127.1/10.0.0.1:57316] [0m5GSMobileIdentity ["SUCI":"suci-0-208-93-0-0-0-0000007487", err: <nil>]
+2025-12-05T18:59:31.823030894Z[36m [INFO][AMF][CTX] [0mNew AmfUe [supi:][guti:20893cafe0000000001]
+2025-12-05T18:59:31.823054531Z[36m [INFO][AMF][Gmm] [0mHandle event[Gmm Message], transition from [Deregistered] to [Deregistered]
+2025-12-05T18:59:31.823058437Z[36m [INFO][AMF][Gmm][amf_ue_ngap_id:RU:0,AU:1(Non3GPP)][supi:SUPI:] [0mHandle Registration Request
+2025-12-05T18:59:31.823062388Z[36m [INFO][AMF][Gmm][amf_ue_ngap_id:RU:0,AU:1(Non3GPP)][supi:SUPI:] [0mRegistrationType: Initial Registration
+2025-12-05T18:59:31.823076132Z[36m [INFO][AMF][Gmm][amf_ue_ngap_id:RU:0,AU:1(Non3GPP)][supi:SUPI:] [0mMobileIdentity5GS: SUCI[suci-0-208-93-0-0-0-0000007487]
+2025-12-05T18:59:31.823083606Z[36m [INFO][AMF][Gmm] [0mHandle event[Start Authentication], transition from [Deregistered] to [Authentication]
+2025-12-05T18:59:31.823087611Z[36m [INFO][AMF][Gmm][amf_ue_ngap_id:RU:0,AU:1(Non3GPP)][supi:SUPI:] [0mAuthentication procedure
+2025-12-05T18:59:31.823564269Z[36m [INFO][NRF][DISC] [0mHandle NFDiscoveryRequest
+2025-12-05T18:59:31.824836951Z[36m [INFO][NRF][GIN] [0m| 200 |       127.0.0.1 | GET     | /nnrf-disc/v1/nf-instances?requester-nf-type=AMF&target-nf-type=AUSF |  |
+2025-12-05T18:59:31.825451885Z[36m [INFO][AUSF][UeAuth] [0mHandleUeAuthPostRequest
+2025-12-05T18:59:31.825461810Z[36m [INFO][AUSF][UeAuth] [0mServing network authorized
+2025-12-05T18:59:31.825646271Z[36m [INFO][NRF][DISC] [0mHandle NFDiscoveryRequest
+2025-12-05T18:59:31.826549024Z[36m [INFO][NRF][GIN] [0m| 200 |       127.0.0.1 | GET     | /nnrf-disc/v1/nf-instances?requester-nf-type=AUSF&service-names=nudm-ueau&target-nf-type=UDM |  |
+2025-12-05T18:59:31.827744918Z[36m [INFO][UDM][UEAU] [0mHandle GenerateAuthDataRequest
+2025-12-05T18:59:31.827777419Z[36m [INFO][UDM][Suci] [0mscheme 0
+2025-12-05T18:59:31.827780910Z[36m [INFO][UDM][Suci] [0mSUPI type is IMSI
+2025-12-05T18:59:31.828267175Z[36m [INFO][NRF][DISC] [0mHandle NFDiscoveryRequest
+2025-12-05T18:59:31.828946783Z[36m [INFO][NRF][GIN] [0m| 200 |       127.0.0.1 | GET     | /nnrf-disc/v1/nf-instances?requester-nf-type=UDM&target-nf-type=UDR |  |
+2025-12-05T18:59:31.829864080Z[36m [INFO][UDR][GIN] [0m| 200 |       127.0.0.1 | GET     | /nudr-dr/v2/subscription-data/imsi-208930000007487/authentication-data/authentication-subscription |  |
+2025-12-05T18:59:31.830031301Z[36m [INFO][UDM][Proc] [0mModifyAuthenticationSubscriptionRequest:  [{replace /sequenceNumber  { 16f3b3f70fc3 map[] 0 }}]
+2025-12-05T18:59:31.831204125Z[36m [INFO][UDR][GIN] [0m| 204 |       127.0.0.1 | PATCH   | /nudr-dr/v2/subscription-data/imsi-208930000007487/authentication-data/authentication-subscription |  |
+2025-12-05T18:59:31.831314114Z[36m [INFO][UDM][GIN] [0m| 200 |       127.0.0.1 | POST    | /nudm-ueau/v1/suci-0-208-93-0-0-0-0000007487/security-information/generate-auth-data |  |
+2025-12-05T18:59:31.831383110Z[36m [INFO][AUSF][UeAuth] [0mAdd SuciSupiPair (suci-0-208-93-0-0-0-0000007487, imsi-208930000007487) to map.
+2025-12-05T18:59:31.831387607Z[36m [INFO][AUSF][UeAuth] [0mUse 5G AKA auth method
+2025-12-05T18:59:31.831393560Z[36m [INFO][AUSF][5gAka] [0mXresStar = 6638613965373935383766643833646136336534316230343962623534633032
+2025-12-05T18:59:31.831428545Z[36m [INFO][AUSF][GIN] [0m| 201 |       127.0.0.1 | POST    | /nausf-auth/v1/ue-authentications |  |
+2025-12-05T18:59:31.831489389Z[36m [INFO][AMF][Gmm][amf_ue_ngap_id:RU:0,AU:1(Non3GPP)][supi:SUPI:] [0mSend Authentication Request
+2025-12-05T18:59:31.831509688Z[36m [INFO][AMF][Ngap][amf_ue_ngap_id:RU:0,AU:1(Non3GPP)][ran_addr:10.200.200.1/10.0.2.15/172.17.0.1/10.60.0.1/10.200.200.2/192.168.127.1/10.0.0.1:57316] [0mSend Downlink Nas Transport
+2025-12-05T18:59:31.831585140Z[36m [INFO][AMF][Gmm][amf_ue_ngap_id:RU:0,AU:1(Non3GPP)][supi:SUPI:] [0mStart T3560 timer
+2025-12-05T18:59:31.831674805Z[36m [INFO][TNGF][NGAP] [0m[TNGF] Handle Downlink NAS Transport
+2025-12-05T18:59:31.831717647Z[36m [INFO][TNGF][Radius] [0mSend Radius message to UE
+2025-12-05T18:59:31.831721553Z[36m [INFO][TNGF][Radius] [0mEncoding...
+2025-12-05T18:59:31.831879987Z[36m [INFO][TNGF][Radius] [0mHandle Radius Access Request
+2025-12-05T18:59:31.831888227Z[36m [INFO][TNGF][Radius] [0mHandle EAP-Res/5G-NAS
+2025-12-05T18:59:31.831896949Z[36m [INFO][TNGF][NGAP] [0m[TNGF] Send Uplink NAS Transport
+2025-12-05T18:59:31.832019082Z[36m [INFO][AMF][Ngap][ran_addr:10.200.200.1/10.0.2.15/172.17.0.1/10.60.0.1/10.200.200.2/192.168.127.1/10.0.0.1:57316] [0mHandle UplinkNASTransport
+2025-12-05T18:59:31.832038341Z[36m [INFO][AMF][Ngap][amf_ue_ngap_id:RU:0,AU:1(Non3GPP)][ran_addr:10.200.200.1/10.0.2.15/172.17.0.1/10.60.0.1/10.200.200.2/192.168.127.1/10.0.0.1:57316] [0mHandle UplinkNASTransport (RAN UE NGAP ID: 0)
+2025-12-05T18:59:31.832065688Z[36m [INFO][AMF][Gmm] [0mHandle event[Gmm Message], transition from [Authentication] to [Authentication]
+2025-12-05T18:59:31.832069080Z[36m [INFO][AMF][Gmm][amf_ue_ngap_id:RU:0,AU:1(Non3GPP)][supi:SUPI:] [0mHandle Authentication Response
+2025-12-05T18:59:31.832072812Z[36m [INFO][AMF][Gmm][amf_ue_ngap_id:RU:0,AU:1(Non3GPP)][supi:SUPI:] [0mStop T3560 timer
+2025-12-05T18:59:31.832240801Z[36m [INFO][AUSF][5gAka] [0mAuth5gAkaComfirmRequest
+2025-12-05T18:59:31.832250289Z[36m [INFO][AUSF][5gAka] [0mres*: 6638613965373935383766643833646136336534316230343962623534633032
+Xres*: 6638613965373935383766643833646136336534316230343962623534633032
+2025-12-05T18:59:31.832253747Z[36m [INFO][AUSF][5gAka] [0m5G AKA confirmation succeeded
+2025-12-05T18:59:31.832983301Z[36m [INFO][UDM][UEAU] [0mHandle ConfirmAuthDataRequest
+2025-12-05T18:59:31.834058302Z[36m [INFO][UDR][GIN] [0m| 204 |       127.0.0.1 | PUT     | /nudr-dr/v2/subscription-data/imsi-208930000007487/authentication-data/authentication-status |  |
+2025-12-05T18:59:31.834166431Z[36m [INFO][UDM][GIN] [0m| 201 |       127.0.0.1 | POST    | /nudm-ueau/v1/imsi-208930000007487/auth-events |  |
+2025-12-05T18:59:31.834268507Z[36m [INFO][AUSF][GIN] [0m| 200 |       127.0.0.1 | PUT     | /nausf-auth/v1/ue-authentications/suci-0-208-93-0-0-0-0000007487/5g-aka-confirmation |  |
+2025-12-05T18:59:31.834425726Z[36m [INFO][AMF][Gmm] [0mHandle event[Authentication Success], transition from [Authentication] to [SecurityMode]
+2025-12-05T18:59:31.834444865Z[36m [INFO][AMF][Gmm][amf_ue_ngap_id:RU:0,AU:1(Non3GPP)][supi:SUPI:imsi-208930000007487] [0mSend Security Mode Command
+2025-12-05T18:59:31.834462407Z[36m [INFO][AMF][Ngap][amf_ue_ngap_id:RU:0,AU:1(Non3GPP)][ran_addr:10.200.200.1/10.0.2.15/172.17.0.1/10.60.0.1/10.200.200.2/192.168.127.1/10.0.0.1:57316] [0mSend Downlink Nas Transport
+2025-12-05T18:59:31.834508477Z[36m [INFO][AMF][Gmm][amf_ue_ngap_id:RU:0,AU:1(Non3GPP)][supi:SUPI:imsi-208930000007487] [0mStart T3560 timer
+2025-12-05T18:59:31.834581287Z[36m [INFO][TNGF][NGAP] [0m[TNGF] Handle Downlink NAS Transport
+2025-12-05T18:59:31.834596750Z[36m [INFO][TNGF][Radius] [0mSend Radius message to UE
+2025-12-05T18:59:31.834600492Z[36m [INFO][TNGF][Radius] [0mEncoding...
+2025-12-05T18:59:31.834854825Z[36m [INFO][TNGF][Radius] [0mHandle Radius Access Request
+2025-12-05T18:59:31.834870342Z[36m [INFO][TNGF][Radius] [0mHandle EAP-Res/5G-NAS
+2025-12-05T18:59:31.834880410Z[36m [INFO][TNGF][NGAP] [0m[TNGF] Send Uplink NAS Transport
+2025-12-05T18:59:31.834959851Z[36m [INFO][AMF][Ngap][ran_addr:10.200.200.1/10.0.2.15/172.17.0.1/10.60.0.1/10.200.200.2/192.168.127.1/10.0.0.1:57316] [0mHandle UplinkNASTransport
+2025-12-05T18:59:31.834969612Z[36m [INFO][AMF][Ngap][amf_ue_ngap_id:RU:0,AU:1(Non3GPP)][ran_addr:10.200.200.1/10.0.2.15/172.17.0.1/10.60.0.1/10.200.200.2/192.168.127.1/10.0.0.1:57316] [0mHandle UplinkNASTransport (RAN UE NGAP ID: 0)
+2025-12-05T18:59:31.834988336Z[36m [INFO][AMF][Gmm] [0mHandle event[Gmm Message], transition from [SecurityMode] to [SecurityMode]
+2025-12-05T18:59:31.834991476Z[36m [INFO][AMF][Gmm][amf_ue_ngap_id:RU:0,AU:1(Non3GPP)][supi:SUPI:imsi-208930000007487] [0mHandle Security Mode Complete
+2025-12-05T18:59:31.834994705Z[36m [INFO][AMF][Gmm][amf_ue_ngap_id:RU:0,AU:1(Non3GPP)][supi:SUPI:imsi-208930000007487] [0mStop T3560 timer
+2025-12-05T18:59:31.835011841Z[36m [INFO][AMF][Gmm] [0mHandle event[SecurityMode Success], transition from [SecurityMode] to [ContextSetup]
+2025-12-05T18:59:31.835017280Z[36m [INFO][AMF][Gmm][amf_ue_ngap_id:RU:0,AU:1(Non3GPP)][supi:SUPI:imsi-208930000007487] [0mHandle InitialRegistration
+2025-12-05T18:59:31.835342431Z[36m [INFO][NRF][DISC] [0mHandle NFDiscoveryRequest
+2025-12-05T18:59:31.836151368Z[36m [INFO][NRF][GIN] [0m| 200 |       127.0.0.1 | GET     | /nnrf-disc/v1/nf-instances?requester-nf-type=AMF&supi=imsi-208930000007487&target-nf-type=UDM |  |
+2025-12-05T18:59:31.836696261Z[36m [INFO][UDM][Consumer] [0mTwoLayerPathHandlerFunc,  imsi-208930000007487 nssai
+2025-12-05T18:59:31.836714842Z[36m [INFO][UDM][SDM] [0mHandle GetNssai
+2025-12-05T18:59:31.838149098Z[36m [INFO][UDR][DataRepo] [0mQueryAmDataProcedure: ueId: imsi-208930000007487, servingPlmnId: 20893
+2025-12-05T18:59:31.838778920Z[36m [INFO][UDR][GIN] [0m| 200 |       127.0.0.1 | GET     | /nudr-dr/v2/subscription-data/imsi-208930000007487/20893/provisioned-data/am-data?supported-features= |  |
+2025-12-05T18:59:31.838880187Z[36m [INFO][UDM][GIN] [0m| 200 |       127.0.0.1 | GET     | /nudm-sdm/v2/imsi-208930000007487/nssai?plmn-id=%7B%22mcc%22%3A%22208%22%2C%22mnc%22%3A%2293%22%7D |  |
+2025-12-05T18:59:31.839110653Z[36m [INFO][NRF][DISC] [0mHandle NFDiscoveryRequest
+2025-12-05T18:59:31.839798095Z[36m [INFO][NRF][GIN] [0m| 200 |       127.0.0.1 | GET     | /nnrf-disc/v1/nf-instances?requester-nf-type=AMF&supi=imsi-208930000007487&target-nf-type=UDM |  |
+2025-12-05T18:59:31.840248522Z[36m [INFO][UDM][UECM] [0mHandle RegisterAmfNon3gppAccessRequest
+2025-12-05T18:59:31.841431564Z[36m [INFO][UDR][GIN] [0m| 204 |       127.0.0.1 | PUT     | /nudr-dr/v2/subscription-data/imsi-208930000007487/context-data/amf-non-3gpp-access |  |
+2025-12-05T18:59:31.841754214Z[36m [INFO][UDM][GIN] [0m| 201 |       127.0.0.1 | PUT     | /nudm-uecm/v1/imsi-208930000007487/registrations/amf-non-3gpp-access |  |
+2025-12-05T18:59:31.841971795Z[36m [INFO][UDM][Consumer] [0mTwoLayerPathHandlerFunc,  imsi-208930000007487 am-data
+2025-12-05T18:59:31.841990081Z[36m [INFO][UDM][SDM] [0mHandle GetAmData
+2025-12-05T18:59:31.842103697Z[36m [INFO][UDR][DataRepo] [0mQueryAmDataProcedure: ueId: imsi-208930000007487, servingPlmnId: 20893
+2025-12-05T18:59:31.842411164Z[36m [INFO][UDR][GIN] [0m| 200 |       127.0.0.1 | GET     | /nudr-dr/v2/subscription-data/imsi-208930000007487/20893/provisioned-data/am-data?supported-features= |  |
+2025-12-05T18:59:31.842499661Z[36m [INFO][UDM][GIN] [0m| 200 |       127.0.0.1 | GET     | /nudm-sdm/v2/imsi-208930000007487/am-data?plmn-id=%7B%22mcc%22%3A%22208%22%2C%22mnc%22%3A%2293%22%7D |  |
+2025-12-05T18:59:31.842600873Z[36m [INFO][UDM][Consumer] [0mTwoLayerPathHandlerFunc,  imsi-208930000007487 smf-select-data
+2025-12-05T18:59:31.842611378Z[36m [INFO][UDM][SDM] [0mHandle GetSmfSelectData
+2025-12-05T18:59:31.842971033Z[36m [INFO][UDR][GIN] [0m| 200 |       127.0.0.1 | GET     | /nudr-dr/v2/subscription-data/imsi-208930000007487/20893/provisioned-data/smf-selection-subscription-data?supported-features= |  |
+2025-12-05T18:59:31.843102541Z[36m [INFO][UDM][GIN] [0m| 200 |       127.0.0.1 | GET     | /nudm-sdm/v2/imsi-208930000007487/smf-select-data?plmn-id=%7B%22mcc%22%3A%22208%22%2C%22mnc%22%3A%2293%22%7D |  |
+2025-12-05T18:59:31.843207123Z[36m [INFO][UDM][Consumer] [0mTwoLayerPathHandlerFunc,  imsi-208930000007487 ue-context-in-smf-data
+2025-12-05T18:59:31.843216939Z[36m [INFO][UDM][SDM] [0mHandle GetUeContextInSmfData
+2025-12-05T18:59:31.843566597Z[36m [INFO][UDR][GIN] [0m| 200 |       127.0.0.1 | GET     | /nudr-dr/v2/subscription-data/imsi-208930000007487/context-data/smf-registrations?supported-features= |  |
+2025-12-05T18:59:31.843797539Z[36m [INFO][UDM][GIN] [0m| 200 |       127.0.0.1 | GET     | /nudm-sdm/v2/imsi-208930000007487/ue-context-in-smf-data |  |
+2025-12-05T18:59:31.844215657Z[36m [INFO][UDM][Consumer] [0mTwoLayerPathHandlerFunc,  imsi-208930000007487 sdm-subscriptions
+2025-12-05T18:59:31.844241570Z[36m [INFO][UDM][SDM] [0mHandle Subscribe
+2025-12-05T18:59:31.844377477Z[36m [INFO][UDR][GIN] [0m| 201 |       127.0.0.1 | POST    | /nudr-dr/v2/subscription-data/imsi-208930000007487/context-data/sdm-subscriptions |  |
+2025-12-05T18:59:31.844563968Z[36m [INFO][UDM][GIN] [0m| 201 |       127.0.0.1 | POST    | /nudm-sdm/v2/imsi-208930000007487/sdm-subscriptions |  |
+2025-12-05T18:59:31.844902007Z[36m [INFO][NRF][DISC] [0mHandle NFDiscoveryRequest
+2025-12-05T18:59:31.845513858Z[36m [INFO][NRF][GIN] [0m| 200 |       127.0.0.1 | GET     | /nnrf-disc/v1/nf-instances?requester-nf-type=AMF&supi=imsi-208930000007487&target-nf-type=PCF |  |
+2025-12-05T18:59:31.846079996Z[36m [INFO][PCF][AmPol] [0mHandle AM Policy Create Request
+2025-12-05T18:59:31.846231489Z[36m [INFO][NRF][DISC] [0mHandle NFDiscoveryRequest
+2025-12-05T18:59:31.847088909Z[36m [INFO][NRF][GIN] [0m| 200 |       127.0.0.1 | GET     | /nnrf-disc/v1/nf-instances?requester-nf-type=PCF&target-nf-type=UDR |  |
+2025-12-05T18:59:31.847721301Z[36m [INFO][UDR][GIN] [0m| 200 |       127.0.0.1 | GET     | /nudr-dr/v2/policy-data/ues/imsi-208930000007487/am-data |  |
+2025-12-05T18:59:31.847885807Z[36m [INFO][NRF][DISC] [0mHandle NFDiscoveryRequest
+2025-12-05T18:59:31.848505238Z[36m [INFO][NRF][GIN] [0m| 200 |       127.0.0.1 | GET     | /nnrf-disc/v1/nf-instances?guami=%7B%22plmnId%22%3A%7B%22mcc%22%3A%22208%22%2C%22mnc%22%3A%2293%22%7D%2C%22amfId%22%3A%22cafe00%22%7D&requester-nf-type=PCF&target-nf-type=AMF |  |
+2025-12-05T18:59:31.848866911Z[36m [INFO][AMF][Comm] [0mHandle AMF Status Change Subscribe Request
+2025-12-05T18:59:31.848881805Z[36m [INFO][AMF][Comm] [0mnew AMF Status Subscription[1]
+2025-12-05T18:59:31.848892627Z[36m [INFO][AMF][GIN] [0m| 201 |       127.0.0.1 | POST    | /namf-comm/v1/subscriptions |  |
+2025-12-05T18:59:31.849058339Z[36m [INFO][PCF][GIN] [0m| 201 |       127.0.0.1 | POST    | /npcf-am-policy-control/v1/policies |  |
+2025-12-05T18:59:31.849158407Z[36m [INFO][AMF][Gmm][amf_ue_ngap_id:RU:0,AU:1(Non3GPP)][supi:SUPI:imsi-208930000007487] [0mSend Registration Accept
+2025-12-05T18:59:31.849178893Z[36m [INFO][AMF][Ngap][amf_ue_ngap_id:RU:0,AU:1(Non3GPP)][ran_addr:10.200.200.1/10.0.2.15/172.17.0.1/10.60.0.1/10.200.200.2/192.168.127.1/10.0.0.1:57316] [0mSend Initial Context Setup Request
+2025-12-05T18:59:31.849261830Z[36m [INFO][AMF][Gmm][amf_ue_ngap_id:RU:0,AU:1(Non3GPP)][supi:SUPI:imsi-208930000007487] [0mStart T3550 timer
+2025-12-05T18:59:31.849359661Z[36m [INFO][TNGF][NGAP] [0m[TNGF] Handle Initial Context Setup Request
+2025-12-05T18:59:31.849383583Z[36m [INFO][TNGF][Radius] [0mSend Radius message to UE
+2025-12-05T18:59:31.849387172Z[36m [INFO][TNGF][Radius] [0mEncoding...
+2025-12-05T18:59:31.849522625Z[36m [INFO][TNGF][Radius] [0mHandle Radius Access Request
+2025-12-05T18:59:31.849551405Z[36m [INFO][TNGF][Radius] [0mHandle EAP-Res/5G-Notification
+2025-12-05T18:59:31.849581706Z[36m [INFO][TNGF][Radius] [0mSend Radius message to UE
+2025-12-05T18:59:31.849592835Z[36m [INFO][TNGF][Radius] [0mEncoding...
+2025-12-05T18:59:31.851951210Z[36m [INFO][TNGF][IKE] [0mEncoding IKE message
+2025-12-05T18:59:31.851983788Z[36m [INFO][TNGF][IKE] [0mEncoding IKE payloads
+2025-12-05T18:59:31.851989609Z[36m [INFO][TNGF][IKE] [0m[SecurityAssociation] marshal(): Start marshaling
+2025-12-05T18:59:31.851993724Z[36m [INFO][TNGF][IKE] [0m[KeyExchange] marshal(): Start marshaling
+2025-12-05T18:59:31.851998167Z[36m [INFO][TNGF][IKE] [0m[Nonce] marshal(): Start marshaling
+2025-12-05T18:59:31.852046623Z[36m [INFO][TNGF][IKE] [0mEncoding IKE message
+2025-12-05T18:59:31.852050102Z[36m [INFO][TNGF][IKE] [0mEncoding IKE payloads
+2025-12-05T18:59:31.852052871Z[36m [INFO][TNGF][IKE] [0m[SecurityAssociation] marshal(): Start marshaling
+2025-12-05T18:59:31.852055585Z[36m [INFO][TNGF][IKE] [0m[KeyExchange] marshal(): Start marshaling
+2025-12-05T18:59:31.852057839Z[36m [INFO][TNGF][IKE] [0m[Nonce] marshal(): Start marshaling
+2025-12-05T18:59:31.852071983Z[36m [INFO][TNGF][IKE] [0mDecoding IKE message
+2025-12-05T18:59:31.852099483Z[36m [INFO][TNGF][IKE] [0mDecoding IKE payloads
+2025-12-05T18:59:31.852105173Z[36m [INFO][TNGF][IKE] [0m[SecurityAssociation] unmarshal(): Start unmarshalling received bytes
+2025-12-05T18:59:31.852109649Z[36m [INFO][TNGF][IKE] [0m[KeyExchange] unmarshal(): Start unmarshalling received bytes
+2025-12-05T18:59:31.852121971Z[36m [INFO][TNGF][IKE] [0m[Nonce] unmarshal(): Start unmarshalling received bytes
+2025-12-05T18:59:31.852167811Z[36m [INFO][TNGF][IKE] [0mHandle IKE_SA_INIT
+2025-12-05T18:59:31.856627618Z[36m [INFO][TNGF][IKE] [0mEncoding IKE message
+2025-12-05T18:59:31.856635092Z[36m [INFO][TNGF][IKE] [0mEncoding IKE payloads
+2025-12-05T18:59:31.856637773Z[36m [INFO][TNGF][IKE] [0m[SecurityAssociation] marshal(): Start marshaling
+2025-12-05T18:59:31.856641702Z[36m [INFO][TNGF][IKE] [0m[KeyExchange] marshal(): Start marshaling
+2025-12-05T18:59:31.856644437Z[36m [INFO][TNGF][IKE] [0m[Nonce] marshal(): Start marshaling
+2025-12-05T18:59:31.856662450Z[36m [INFO][TNGF][IKE] [0mNonceRData:  00000000  9f 8a 72 8f 07 6f c6 a7  77 8c a9 84 73 f9 b3 23  |..r..o..w...s..#|
+00000010  1a 77 f1 d4 22 f8 54 1c  ed a5 e7 02 ca 87 30 15  |.w..".T.......0.|
+00000020  41 ef f6 aa 5d 38 de 22  ea 6b 96 15 1f 19 65 f1  |A...]8.".k....e.|
+00000030  72 0c bc b9 95 7d 6f b9  b4 0d 0e 29 3d 27 0d c3  |r....}o....)='..|
+00000040  cd 94 04 62 ec a7 bc 64  31 49 ee d4 39 a1 ea 08  |...b...d1I..9...|
+00000050  fa 0e 8b 8d ed 8a 57 78  c1 a5 6b 91 98 e6 a5 82  |......Wx..k.....|
+00000060  5b 6f c6 6c 61 82 bc e9  35 ac 22 00 84 07 86 53  |[o.la...5."....S|
+00000070  61 42 af 4c 7d 09 fb 76  92 2f db a6 ce 5f 9d f3  |aB.L}..v./..._..|
+00000080  01 e9 29 2f 83 72 33 08  47 df 39 99 b2 82 b9 ef  |..)/.r3.G.9.....|
+00000090  64 3c 1e 2a 13 36 44 12  e1 b0 54 4a d0 20 8a 7d  |d<.*.6D...TJ. .}|
+000000a0  d4 5a d0 32 cc 57 ff b6  bb 27 8e ff 7a a1 3c 28  |.Z.2.W...'..z.<(|
+000000b0  97 65 7a b4 d1 63 cb 6a  21 1b a4 b7 60 a0 75 98  |.ez..c.j!...`.u.|
+000000c0  f4 3c 01 4e d3 34 93 d8  4e 61 78 15 cb 82 fd a8  |.<.N.4..Nax.....|
+000000d0  a4 c9 d9 c2 1e 05 31 e9  44 ba 62 fc 36 37 f8 a9  |......1.D.b.67..|
+000000e0  29 45 ee 20 26 48 2a 3f  a2 99 fc a9 58 e3 11 8e  |)E. &H*?....X...|
+000000f0  83 aa 53 2c 0c 5f 57 1a  23 12 7f 11 5b 19 00 3a  |..S,._W.#...[..:|
+2025-12-05T18:59:31.856683438Z[36m [INFO][TNGF][IKE] [0mEncoding IKE message
+2025-12-05T18:59:31.856686273Z[36m [INFO][TNGF][IKE] [0mEncoding IKE payloads
+2025-12-05T18:59:31.856688527Z[36m [INFO][TNGF][IKE] [0m[SecurityAssociation] marshal(): Start marshaling
+2025-12-05T18:59:31.856691744Z[36m [INFO][TNGF][IKE] [0m[KeyExchange] marshal(): Start marshaling
+2025-12-05T18:59:31.856694075Z[36m [INFO][TNGF][IKE] [0m[Nonce] marshal(): Start marshaling
+2025-12-05T18:59:31.856696767Z[36m [INFO][TNGF][IKE] [0m[Notification] marshal(): Start marshaling
+2025-12-05T18:59:31.856699153Z[36m [INFO][TNGF][IKE] [0m[Notification] marshal(): Start marshaling
+2025-12-05T18:59:31.856718522Z[36m [INFO][TNGF][IKE] [0mEncoding IKE payloads
+2025-12-05T18:59:31.856720776Z[36m [INFO][TNGF][IKE] [0m[Identification] marshal(): Start marshaling
+2025-12-05T18:59:31.856740813Z[36m [INFO][TNGF][IKE] [0mEncoding IKE message
+2025-12-05T18:59:31.856742936Z[36m [INFO][TNGF][IKE] [0mEncoding IKE payloads
+2025-12-05T18:59:31.856744993Z[36m [INFO][TNGF][IKE] [0m[SecurityAssociation] marshal(): Start marshaling
+2025-12-05T18:59:31.856747805Z[36m [INFO][TNGF][IKE] [0m[KeyExchange] marshal(): Start marshaling
+2025-12-05T18:59:31.856750125Z[36m [INFO][TNGF][IKE] [0m[Nonce] marshal(): Start marshaling
+2025-12-05T18:59:31.856752653Z[36m [INFO][TNGF][IKE] [0m[Notification] marshal(): Start marshaling
+2025-12-05T18:59:31.856755247Z[36m [INFO][TNGF][IKE] [0m[Notification] marshal(): Start marshaling
+2025-12-05T18:59:31.856826330Z[36m [INFO][TNGF][IKE] [0mDecoding IKE message
+2025-12-05T18:59:31.856851422Z[36m [INFO][TNGF][IKE] [0mDecoding IKE payloads
+2025-12-05T18:59:31.856854979Z[36m [INFO][TNGF][IKE] [0m[SecurityAssociation] unmarshal(): Start unmarshalling received bytes
+2025-12-05T18:59:31.856858557Z[36m [INFO][TNGF][IKE] [0m[KeyExchange] unmarshal(): Start unmarshalling received bytes
+2025-12-05T18:59:31.856861358Z[36m [INFO][TNGF][IKE] [0m[Nonce] unmarshal(): Start unmarshalling received bytes
+2025-12-05T18:59:31.856864050Z[36m [INFO][TNGF][IKE] [0m[Notification] unmarshal(): Start unmarshalling received bytes
+2025-12-05T18:59:31.856866348Z[36m [INFO][TNGF][IKE] [0m[Notification] unmarshal(): Start unmarshalling received bytes
+    tngf_test.go:1313: Get SA payload
+ktngf:  00000000  64 3c f6 99 84 9a e7 a4  7c 49 43 4a 69 9c 39 b8  |d<......|ICJi.9.|
+00000010  7f 11 d1 f1 13 9a 5c ca  da 37 e1 32 9d 0b 79 32  |......\..7.2..y2|
+
+2025-12-05T18:59:31.859219485Z[36m [INFO][TNGF][IKE] [0mEncoding IKE payloads
+2025-12-05T18:59:31.859226805Z[36m [INFO][TNGF][IKE] [0m[Identification] marshal(): Start marshaling
+ktipsec:  00000000  20 71 cb 3f 11 e2 56 48  35 2b 8d 3a f0 d8 4e 65  | q.?..VH5+.:..Ne|
+00000010  af fb b9 6d d4 78 e4 8a  27 9a 6a a3 90 d6 fb 0e  |...m.x..'.j.....|
+
+    tngf_test.go:1430: Using key to authentication: 00000000  c2 34 6e 16 90 00 f1 b4  ac 3a ba c2 74 39 4d ef  |.4n......:..t9M.|
+        00000010  fc 10 07 1c                                       |....|
+        
+    tngf_test.go:1438: InitoatorSignedOctets:  00000000  00 00 00 00 00 01 e0 f3  00 00 00 00 00 00 00 00  |................|
+        00000010  21 20 22 08 00 00 00 00  00 00 02 54 22 00 00 2c  |! "........T"..,|
+        00000020  00 00 00 28 01 01 00 04  03 00 00 08 01 00 00 0b  |...(............|
+        00000030  03 00 00 08 02 00 00 02  03 00 00 08 03 00 00 02  |................|
+        00000040  00 00 00 08 04 00 00 0e  28 00 01 08 00 0e 00 00  |........(.......|
+        00000050  1e 6a d9 4e 19 59 6c 78  5a 00 4c 1f 2f 3a 08 94  |.j.N.YlxZ.L./:..|
+        00000060  7f 33 e1 16 99 11 b8 fa  cc 54 b9 e5 3d ac f2 76  |.3.......T..=..v|
+        00000070  85 95 6b 51 07 02 df 64  d8 9d 8e 9b 38 3b cc f4  |..kQ...d....8;..|
+        00000080  81 28 44 6e 76 d3 b3 6b  b4 67 2c 7d e2 3a 66 76  |.(Dnv..k.g,}.:fv|
+        00000090  6d 89 2d 62 94 ee 3c b6  1c a6 5b 7c 54 f1 4c 7f  |m.-b..<...[|T.L.|
+        000000a0  bc 80 41 1e 57 28 ef 3b  f1 54 9d 20 d9 44 35 11  |..A.W(.;.T. .D5.|
+        000000b0  0d f9 29 cf 74 14 a8 2c  ae 05 21 d7 f9 5c 97 ee  |..).t..,..!..\..|
+        000000c0  ac d2 36 9a d4 6d c6 90  0a da 6e 00 fd b2 70 a9  |..6..m....n...p.|
+        000000d0  a9 d7 08 53 82 97 e2 ff  8b a3 e1 33 1b 1e c1 6e  |...S.......3...n|
+        000000e0  b5 83 c4 ea fa 63 17 69  fd f3 53 e8 10 96 7f f9  |.....c.i..S.....|
+        000000f0  0c 7a 27 00 34 77 b2 4b  ec 5f 18 a5 48 c5 24 bd  |.z'.4w.K._..H.$.|
+        00000100  fd c1 3b 72 6c a2 30 a5  bb 8d 06 88 42 1a 20 53  |..;rl.0.....B. S|
+        00000110  36 3d b9 e9 18 6c a8 08  2c 1a 47 13 14 e5 29 ac  |6=...l..,.G...).|
+        00000120  e5 0b 07 40 1b 0e 10 7a  09 af 5d 04 f6 44 91 59  |...@...z..]..D.Y|
+        00000130  ee 8a e8 f6 51 5b 3f 10  7a 9e 00 79 74 e0 03 94  |....Q[?.z..yt...|
+        00000140  cd 4e b3 06 2c b5 7e f1  58 f4 a8 27 68 8e a8 b5  |.N..,.~.X..'h...|
+        00000150  00 00 01 04 21 bd b9 37  a9 48 61 1b 20 40 4b 4e  |....!..7.Ha. @KN|
+        00000160  43 4a f2 b9 66 08 f8 04  f2 c4 e1 e2 8c 02 3d de  |CJ..f.........=.|
+        00000170  4c 83 61 4c 0c 8b 00 ed  dc 28 f5 71 f8 c8 a7 02  |L.aL.....(.q....|
+        00000180  30 cb 86 b7 d5 8b e2 34  e0 2c 18 2d a5 7a 3c ff  |0......4.,.-.z<.|
+        00000190  98 98 94 42 2f e9 c5 66  a6 4a 06 b5 bf 50 0c fb  |...B/..f.J...P..|
+        000001a0  6b 0c 61 7e d3 ed 77 0d  b8 52 42 95 58 d3 94 7e  |k.a~..w..RB.X..~|
+        000001b0  d1 ef b7 bd 45 cb c5 f3  57 b6 c2 9d 2f 3f 54 68  |....E...W.../?Th|
+        000001c0  b7 74 8b 79 42 9a 4d 29  f3 88 ea 2f 22 78 f1 57  |.t.yB.M).../"x.W|
+        000001d0  9c 4c 19 28 20 d7 ee f7  93 21 1d 67 1e 63 0b e5  |.L.( ....!.g.c..|
+        000001e0  5d 7d 52 ed 72 3f e9 cf  7c 65 68 3d a8 8e b4 df  |]}R.r?..|eh=....|
+        000001f0  71 3a d5 84 dc c4 d3 10  cc f4 99 87 d5 ff d4 98  |q:..............|
+        00000200  aa b8 10 90 c5 9f d3 b8  45 70 56 7a 63 e0 73 c3  |........EpVzc.s.|
+        00000210  87 f8 3a b7 0c 9d 6b de  de ae 16 77 a0 26 e6 49  |..:...k....w.&.I|
+        00000220  dd ac 42 27 2a 13 93 c5  1c 88 e0 39 6f 55 54 6f  |..B'*......9oUTo|
+        00000230  12 25 43 ea f4 78 b1 de  d9 e2 14 7e 90 a8 5e 93  |.%C..x.....~..^.|
+        00000240  85 b5 ec 2a 6c fb 18 bb  2a 3c 59 37 f4 00 49 c6  |...*l...*<Y7..I.|
+        00000250  35 8d 59 74 9f 8a 72 8f  07 6f c6 a7 77 8c a9 84  |5.Yt..r..o..w...|
+        00000260  73 f9 b3 23 1a 77 f1 d4  22 f8 54 1c ed a5 e7 02  |s..#.w..".T.....|
+        00000270  ca 87 30 15 41 ef f6 aa  5d 38 de 22 ea 6b 96 15  |..0.A...]8.".k..|
+        00000280  1f 19 65 f1 72 0c bc b9  95 7d 6f b9 b4 0d 0e 29  |..e.r....}o....)|
+        00000290  3d 27 0d c3 cd 94 04 62  ec a7 bc 64 31 49 ee d4  |='.....b...d1I..|
+        000002a0  39 a1 ea 08 fa 0e 8b 8d  ed 8a 57 78 c1 a5 6b 91  |9.........Wx..k.|
+        000002b0  98 e6 a5 82 5b 6f c6 6c  61 82 bc e9 35 ac 22 00  |....[o.la...5.".|
+        000002c0  84 07 86 53 61 42 af 4c  7d 09 fb 76 92 2f db a6  |...SaB.L}..v./..|
+        000002d0  ce 5f 9d f3 01 e9 29 2f  83 72 33 08 47 df 39 99  |._....)/.r3.G.9.|
+        000002e0  b2 82 b9 ef 64 3c 1e 2a  13 36 44 12 e1 b0 54 4a  |....d<.*.6D...TJ|
+        000002f0  d0 20 8a 7d d4 5a d0 32  cc 57 ff b6 bb 27 8e ff  |. .}.Z.2.W...'..|
+        00000300  7a a1 3c 28 97 65 7a b4  d1 63 cb 6a 21 1b a4 b7  |z.<(.ez..c.j!...|
+        00000310  60 a0 75 98 f4 3c 01 4e  d3 34 93 d8 4e 61 78 15  |`.u..<.N.4..Nax.|
+        00000320  cb 82 fd a8 a4 c9 d9 c2  1e 05 31 e9 44 ba 62 fc  |..........1.D.b.|
+        00000330  36 37 f8 a9 29 45 ee 20  26 48 2a 3f a2 99 fc a9  |67..)E. &H*?....|
+        00000340  58 e3 11 8e 83 aa 53 2c  0c 5f 57 1a 23 12 7f 11  |X.....S,._W.#...|
+        00000350  5b 19 00 3a b7 1b 15 e3  1c 46 cf 7d 82 c9 5b 16  |[..:.....F.}..[.|
+        00000360  2d a7 15 ff 18 a9 00 2e                           |-.......|
+        
+2025-12-05T18:59:31.859337713Z[36m [INFO][TNGF][IKE] [0mEncoding IKE payloads
+2025-12-05T18:59:31.859340755Z[36m [INFO][TNGF][IKE] [0m[Identification] marshal(): Start marshaling
+2025-12-05T18:59:31.859343393Z[36m [INFO][TNGF][IKE] [0m[SecurityAssociation] marshal(): Start marshaling
+2025-12-05T18:59:31.859347179Z[36m [INFO][TNGF][IKE] [0m[TrafficSelector] marshal(): Start marshaling
+2025-12-05T18:59:31.859350035Z[36m [INFO][TNGF][IKE] [0m[TrafficSelector] marshal(): Start marshaling
+2025-12-05T18:59:31.859352858Z[36m [INFO][TNGF][IKE] [0m[Authentication] marshal(): Start marshaling
+2025-12-05T18:59:31.859355342Z[36m [INFO][TNGF][IKE] [0m[Configuration] marshal(): Start marshaling
+2025-12-05T18:59:31.859358527Z[36m [INFO][TNGF][IKE] [0mEncoding IKE message
+2025-12-05T18:59:31.859360858Z[36m [INFO][TNGF][IKE] [0mEncoding IKE payloads
+2025-12-05T18:59:31.859365224Z[36m [INFO][TNGF][IKE] [0m[Encrypted] marshal(): Start marshaling
+2025-12-05T18:59:31.859372436Z[36m [INFO][TNGF][IKE] [0mEncoding IKE message
+2025-12-05T18:59:31.859374591Z[36m [INFO][TNGF][IKE] [0mEncoding IKE payloads
+2025-12-05T18:59:31.859376966Z[36m [INFO][TNGF][IKE] [0m[Encrypted] marshal(): Start marshaling
+2025-12-05T18:59:31.859431533Z[36m [INFO][TNGF][IKE] [0mDecoding IKE message
+2025-12-05T18:59:31.859447226Z[36m [INFO][TNGF][IKE] [0mDecoding IKE payloads
+2025-12-05T18:59:31.859450465Z[36m [INFO][TNGF][IKE] [0m[Encrypted] unmarshal(): Start unmarshalling received bytes
+2025-12-05T18:59:31.859504660Z[36m [INFO][TNGF][IKE] [0mHandle IKE_AUTH
+2025-12-05T18:59:31.859513229Z[36m [INFO][TNGF][IKE] [0mEncoding IKE message
+2025-12-05T18:59:31.859517420Z[36m [INFO][TNGF][IKE] [0mEncoding IKE payloads
+2025-12-05T18:59:31.859519893Z[36m [INFO][TNGF][IKE] [0m[Encrypted] marshal(): Start marshaling
+2025-12-05T18:59:31.859606206Z[36m [INFO][TNGF][IKE] [0mDecoding IKE payloads
+2025-12-05T18:59:31.859626035Z[36m [INFO][TNGF][IKE] [0m[Identification] unmarshal(): Start unmarshalling received bytes
+2025-12-05T18:59:31.859634888Z[36m [INFO][TNGF][IKE] [0m[SecurityAssociation] unmarshal(): Start unmarshalling received bytes
+2025-12-05T18:59:31.859639189Z[36m [INFO][TNGF][IKE] [0m[TrafficSelector] unmarshal(): Start unmarshalling received bytes
+2025-12-05T18:59:31.859642307Z[36m [INFO][TNGF][IKE] [0m[TrafficSelector] unmarshal(): Start unmarshalling received bytes
+2025-12-05T18:59:31.859645284Z[36m [INFO][TNGF][IKE] [0m[Authentication] unmarshal(): Start unmarshalling received bytes
+2025-12-05T18:59:31.859647976Z[36m [INFO][TNGF][IKE] [0m[Configuration] unmarshal(): Start unmarshalling received bytes
+2025-12-05T18:59:31.859656577Z[36m [INFO][TNGF][IKE] [0mEcoding initiator for later IKE authentication
+2025-12-05T18:59:31.859659138Z[36m [INFO][TNGF][IKE] [0mEncoding IKE payloads
+2025-12-05T18:59:31.859661392Z[36m [INFO][TNGF][IKE] [0m[Identification] marshal(): Start marshaling
+2025-12-05T18:59:31.859668034Z[36m [INFO][TNGF][IKE] [0mPRF(sk_p,id) : 00000000  b7 1b 15 e3 1c 46 cf 7d  82 c9 5b 16 2d a7 15 ff  |.....F.}..[.-...|
+00000010  18 a9 00 2e                                       |....|
+2025-12-05T18:59:31.859670803Z[36m [INFO][TNGF][IKE] [0mParsing security association
+2025-12-05T18:59:31.859674261Z[36m [INFO][TNGF][IKE] [0mReceived traffic selector initiator from UE
+2025-12-05T18:59:31.859676570Z[36m [INFO][TNGF][IKE] [0mReceived traffic selector initiator from UE
+initiatorID.IDData:  �9��     Gx
+ktipsec:  00000000  20 71 cb 3f 11 e2 56 48  35 2b 8d 3a f0 d8 4e 65  | q.?..VH5+.:..Ne|
+00000010  af fb b9 6d d4 78 e4 8a  27 9a 6a a3 90 d6 fb 0e  |...m.x..'.j.....|
+
+2025-12-05T18:59:31.859687229Z[36m [INFO][TNGF][IKE] [0mUsing key to authentication: 00000000  c2 34 6e 16 90 00 f1 b4  ac 3a ba c2 74 39 4d ef  |.4n......:..t9M.|
+00000010  fc 10 07 1c                                       |....|
+2025-12-05T18:59:31.859715691Z[36m [INFO][TNGF][IKE] [0mInitoatorSignedOctets:  00000000  00 00 00 00 00 01 e0 f3  00 00 00 00 00 00 00 00  |................|
+00000010  21 20 22 08 00 00 00 00  00 00 02 54 22 00 00 2c  |! "........T"..,|
+00000020  00 00 00 28 01 01 00 04  03 00 00 08 01 00 00 0b  |...(............|
+00000030  03 00 00 08 02 00 00 02  03 00 00 08 03 00 00 02  |................|
+00000040  00 00 00 08 04 00 00 0e  28 00 01 08 00 0e 00 00  |........(.......|
+00000050  1e 6a d9 4e 19 59 6c 78  5a 00 4c 1f 2f 3a 08 94  |.j.N.YlxZ.L./:..|
+00000060  7f 33 e1 16 99 11 b8 fa  cc 54 b9 e5 3d ac f2 76  |.3.......T..=..v|
+00000070  85 95 6b 51 07 02 df 64  d8 9d 8e 9b 38 3b cc f4  |..kQ...d....8;..|
+00000080  81 28 44 6e 76 d3 b3 6b  b4 67 2c 7d e2 3a 66 76  |.(Dnv..k.g,}.:fv|
+00000090  6d 89 2d 62 94 ee 3c b6  1c a6 5b 7c 54 f1 4c 7f  |m.-b..<...[|T.L.|
+000000a0  bc 80 41 1e 57 28 ef 3b  f1 54 9d 20 d9 44 35 11  |..A.W(.;.T. .D5.|
+000000b0  0d f9 29 cf 74 14 a8 2c  ae 05 21 d7 f9 5c 97 ee  |..).t..,..!..\..|
+000000c0  ac d2 36 9a d4 6d c6 90  0a da 6e 00 fd b2 70 a9  |..6..m....n...p.|
+000000d0  a9 d7 08 53 82 97 e2 ff  8b a3 e1 33 1b 1e c1 6e  |...S.......3...n|
+000000e0  b5 83 c4 ea fa 63 17 69  fd f3 53 e8 10 96 7f f9  |.....c.i..S.....|
+000000f0  0c 7a 27 00 34 77 b2 4b  ec 5f 18 a5 48 c5 24 bd  |.z'.4w.K._..H.$.|
+00000100  fd c1 3b 72 6c a2 30 a5  bb 8d 06 88 42 1a 20 53  |..;rl.0.....B. S|
+00000110  36 3d b9 e9 18 6c a8 08  2c 1a 47 13 14 e5 29 ac  |6=...l..,.G...).|
+00000120  e5 0b 07 40 1b 0e 10 7a  09 af 5d 04 f6 44 91 59  |...@...z..]..D.Y|
+00000130  ee 8a e8 f6 51 5b 3f 10  7a 9e 00 79 74 e0 03 94  |....Q[?.z..yt...|
+00000140  cd 4e b3 06 2c b5 7e f1  58 f4 a8 27 68 8e a8 b5  |.N..,.~.X..'h...|
+00000150  00 00 01 04 21 bd b9 37  a9 48 61 1b 20 40 4b 4e  |....!..7.Ha. @KN|
+00000160  43 4a f2 b9 66 08 f8 04  f2 c4 e1 e2 8c 02 3d de  |CJ..f.........=.|
+00000170  4c 83 61 4c 0c 8b 00 ed  dc 28 f5 71 f8 c8 a7 02  |L.aL.....(.q....|
+00000180  30 cb 86 b7 d5 8b e2 34  e0 2c 18 2d a5 7a 3c ff  |0......4.,.-.z<.|
+00000190  98 98 94 42 2f e9 c5 66  a6 4a 06 b5 bf 50 0c fb  |...B/..f.J...P..|
+000001a0  6b 0c 61 7e d3 ed 77 0d  b8 52 42 95 58 d3 94 7e  |k.a~..w..RB.X..~|
+000001b0  d1 ef b7 bd 45 cb c5 f3  57 b6 c2 9d 2f 3f 54 68  |....E...W.../?Th|
+000001c0  b7 74 8b 79 42 9a 4d 29  f3 88 ea 2f 22 78 f1 57  |.t.yB.M).../"x.W|
+000001d0  9c 4c 19 28 20 d7 ee f7  93 21 1d 67 1e 63 0b e5  |.L.( ....!.g.c..|
+000001e0  5d 7d 52 ed 72 3f e9 cf  7c 65 68 3d a8 8e b4 df  |]}R.r?..|eh=....|
+000001f0  71 3a d5 84 dc c4 d3 10  cc f4 99 87 d5 ff d4 98  |q:..............|
+00000200  aa b8 10 90 c5 9f d3 b8  45 70 56 7a 63 e0 73 c3  |........EpVzc.s.|
+00000210  87 f8 3a b7 0c 9d 6b de  de ae 16 77 a0 26 e6 49  |..:...k....w.&.I|
+00000220  dd ac 42 27 2a 13 93 c5  1c 88 e0 39 6f 55 54 6f  |..B'*......9oUTo|
+00000230  12 25 43 ea f4 78 b1 de  d9 e2 14 7e 90 a8 5e 93  |.%C..x.....~..^.|
+00000240  85 b5 ec 2a 6c fb 18 bb  2a 3c 59 37 f4 00 49 c6  |...*l...*<Y7..I.|
+00000250  35 8d 59 74 9f 8a 72 8f  07 6f c6 a7 77 8c a9 84  |5.Yt..r..o..w...|
+00000260  73 f9 b3 23 1a 77 f1 d4  22 f8 54 1c ed a5 e7 02  |s..#.w..".T.....|
+00000270  ca 87 30 15 41 ef f6 aa  5d 38 de 22 ea 6b 96 15  |..0.A...]8.".k..|
+00000280  1f 19 65 f1 72 0c bc b9  95 7d 6f b9 b4 0d 0e 29  |..e.r....}o....)|
+00000290  3d 27 0d c3 cd 94 04 62  ec a7 bc 64 31 49 ee d4  |='.....b...d1I..|
+000002a0  39 a1 ea 08 fa 0e 8b 8d  ed 8a 57 78 c1 a5 6b 91  |9.........Wx..k.|
+000002b0  98 e6 a5 82 5b 6f c6 6c  61 82 bc e9 35 ac 22 00  |....[o.la...5.".|
+000002c0  84 07 86 53 61 42 af 4c  7d 09 fb 76 92 2f db a6  |...SaB.L}..v./..|
+000002d0  ce 5f 9d f3 01 e9 29 2f  83 72 33 08 47 df 39 99  |._....)/.r3.G.9.|
+000002e0  b2 82 b9 ef 64 3c 1e 2a  13 36 44 12 e1 b0 54 4a  |....d<.*.6D...TJ|
+000002f0  d0 20 8a 7d d4 5a d0 32  cc 57 ff b6 bb 27 8e ff  |. .}.Z.2.W...'..|
+00000300  7a a1 3c 28 97 65 7a b4  d1 63 cb 6a 21 1b a4 b7  |z.<(.ez..c.j!...|
+00000310  60 a0 75 98 f4 3c 01 4e  d3 34 93 d8 4e 61 78 15  |`.u..<.N.4..Nax.|
+00000320  cb 82 fd a8 a4 c9 d9 c2  1e 05 31 e9 44 ba 62 fc  |..........1.D.b.|
+00000330  36 37 f8 a9 29 45 ee 20  26 48 2a 3f a2 99 fc a9  |67..)E. &H*?....|
+00000340  58 e3 11 8e 83 aa 53 2c  0c 5f 57 1a 23 12 7f 11  |X.....S,._W.#...|
+00000350  5b 19 00 3a b7 1b 15 e3  1c 46 cf 7d 82 c9 5b 16  |[..:.....F.}..[.|
+00000360  2d a7 15 ff 18 a9 00 2e                           |-.......|
+2025-12-05T18:59:31.859751574Z[36m [INFO][TNGF][IKE] [0mInbound SPI: 3790691369, Outbound SPI: 365688237
+2025-12-05T18:59:31.859763994Z[36m [INFO][TNGF][IKE] [0mEncoding IKE payloads
+2025-12-05T18:59:31.859766402Z[36m [INFO][TNGF][IKE] [0m[Identification] marshal(): Start marshaling
+2025-12-05T18:59:31.859771807Z[36m [INFO][TNGF][IKE] [0m[Authentication] marshal(): Start marshaling
+2025-12-05T18:59:31.859774226Z[36m [INFO][TNGF][IKE] [0m[Configuration] marshal(): Start marshaling
+2025-12-05T18:59:31.859776732Z[36m [INFO][TNGF][IKE] [0m[SecurityAssociation] marshal(): Start marshaling
+2025-12-05T18:59:31.859780069Z[36m [INFO][TNGF][IKE] [0m[TrafficSelector] marshal(): Start marshaling
+2025-12-05T18:59:31.859782554Z[36m [INFO][TNGF][IKE] [0m[TrafficSelector] marshal(): Start marshaling
+2025-12-05T18:59:31.859785180Z[36m [INFO][TNGF][IKE] [0m[Notification] marshal(): Start marshaling
+2025-12-05T18:59:31.859787467Z[36m [INFO][TNGF][IKE] [0m[Notification] marshal(): Start marshaling
+2025-12-05T18:59:31.859790028Z[36m [INFO][TNGF][IKE] [0mEncoding IKE message
+2025-12-05T18:59:31.859792205Z[36m [INFO][TNGF][IKE] [0mEncoding IKE payloads
+2025-12-05T18:59:31.859794328Z[36m [INFO][TNGF][IKE] [0m[Encrypted] marshal(): Start marshaling
+2025-12-05T18:59:31.863083185Z[36m [INFO][TNGF][IKE] [0mEncoding IKE message
+2025-12-05T18:59:31.863094489Z[36m [INFO][TNGF][IKE] [0mEncoding IKE payloads
+2025-12-05T18:59:31.863097520Z[36m [INFO][TNGF][IKE] [0m[Encrypted] marshal(): Start marshaling
+2025-12-05T18:59:31.863142682Z[36m [INFO][TNGF][NGAP] [0m[TNGF] Send Initial Context Setup Response
+2025-12-05T18:59:31.863174327Z[36m [INFO][TNGF][IKE] [0mDecoding IKE message
+2025-12-05T18:59:31.863189472Z[36m [INFO][TNGF][IKE] [0mDecoding IKE payloads
+2025-12-05T18:59:31.863192995Z[36m [INFO][TNGF][IKE] [0m[Encrypted] unmarshal(): Start unmarshalling received bytes
+2025-12-05T18:59:31.863196169Z[36m [INFO][TNGF][IKE] [0mEncoding IKE message
+2025-12-05T18:59:31.863198522Z[36m [INFO][TNGF][IKE] [0mEncoding IKE payloads
+2025-12-05T18:59:31.863200973Z[36m [INFO][TNGF][IKE] [0m[Encrypted] marshal(): Start marshaling
+2025-12-05T18:59:31.863212222Z[36m [INFO][TNGF][IKE] [0mDecoding IKE payloads
+2025-12-05T18:59:31.863214969Z[36m [INFO][TNGF][IKE] [0m[Identification] unmarshal(): Start unmarshalling received bytes
+2025-12-05T18:59:31.863217661Z[36m [INFO][TNGF][IKE] [0m[Authentication] unmarshal(): Start unmarshalling received bytes
+2025-12-05T18:59:31.863226864Z[36m [INFO][TNGF][IKE] [0m[Configuration] unmarshal(): Start unmarshalling received bytes
+2025-12-05T18:59:31.863230191Z[36m [INFO][TNGF][IKE] [0m[SecurityAssociation] unmarshal(): Start unmarshalling received bytes
+2025-12-05T18:59:31.863233342Z[36m [INFO][TNGF][IKE] [0m[TrafficSelector] unmarshal(): Start unmarshalling received bytes
+2025-12-05T18:59:31.863236166Z[36m [INFO][TNGF][IKE] [0m[TrafficSelector] unmarshal(): Start unmarshalling received bytes
+2025-12-05T18:59:31.863238978Z[36m [INFO][TNGF][IKE] [0m[Notification] unmarshal(): Start unmarshalling received bytes
+2025-12-05T18:59:31.863241309Z[36m [INFO][TNGF][IKE] [0m[Notification] unmarshal(): Start unmarshalling received bytes
+    tngf_test.go:1496: Get Authentication from TNGF
+2025-12-05T18:59:31.863253027Z[36m [INFO][AMF][Ngap][ran_addr:10.200.200.1/10.0.2.15/172.17.0.1/10.60.0.1/10.200.200.2/192.168.127.1/10.0.0.1:57316] [0mHandle InitialContextSetupResponse
+2025-12-05T18:59:31.863264604Z[36m [INFO][AMF][Ngap][amf_ue_ngap_id:RU:0,AU:1(Non3GPP)][ran_addr:10.200.200.1/10.0.2.15/172.17.0.1/10.60.0.1/10.200.200.2/192.168.127.1/10.0.0.1:57316] [0mHandle InitialContextSetupResponse (RAN UE NGAP ID: 0)
+2025-12-05T18:59:31.863284061Z[36m [INFO][AMF][Ngap][amf_ue_ngap_id:RU:0,AU:1(Non3GPP)][ran_addr:10.200.200.1/10.0.2.15/172.17.0.1/10.60.0.1/10.200.200.2/192.168.127.1/10.0.0.1:57316] [0mSend Downlink Nas Transport
+2025-12-05T18:59:31.863404911Z[36m [INFO][TNGF][NGAP] [0m[TNGF] Handle Downlink NAS Transport
+Expected XFRM Interface Addr: 10.0.0.58/24
+    tngf_test.go:1583: Establish TCP connection with TNGF successfully!!
+Security header type: Integrity Protected And Ciphered
+cmac value: 0x6812e03d
+err <nil>
+    tngf_test.go:1607: Get Registration Accept Message:
+         (*nas.Message)(0xc00096a0a0)({
+        	SecurityHeader: (nas.SecurityHeader) {
+        		ProtocolDiscriminator: (uint8) 0,
+        		SecurityHeaderType: (uint8) 2,
+        		MessageAuthenticationCode: (uint32) 0,
+        		SequenceNumber: (uint8) 0
+        	},
+        	GmmMessage: (*nas.GmmMessage)(0xc000208870)({
+        		GmmHeader: (nas.GmmHeader) {
+        			Octet: ([3]uint8) (len=3 cap=3) {
+        				00000000  7e 00 42                                          |~.B|
+        			}
+        		},
+        		AuthenticationRequest: (*nasMessage.AuthenticationRequest)(<nil>),
+        		AuthenticationResponse: (*nasMessage.AuthenticationResponse)(<nil>),
+        		AuthenticationResult: (*nasMessage.AuthenticationResult)(<nil>),
+        		AuthenticationFailure: (*nasMessage.AuthenticationFailure)(<nil>),
+        		AuthenticationReject: (*nasMessage.AuthenticationReject)(<nil>),
+        		RegistrationRequest: (*nasMessage.RegistrationRequest)(<nil>),
+        		RegistrationAccept: (*nasMessage.RegistrationAccept)(0xc000000000)({
+        			ExtendedProtocolDiscriminator: (nasType.ExtendedProtocolDiscriminator) {
+        				Octet: (uint8) 126
+        			},
+        			SpareHalfOctetAndSecurityHeaderType: (nasType.SpareHalfOctetAndSecurityHeaderType) {
+        				Octet: (uint8) 0
+        			},
+        			RegistrationAcceptMessageIdentity: (nasType.RegistrationAcceptMessageIdentity) {
+        				Octet: (uint8) 66
+        			},
+        			RegistrationResult5GS: (nasType.RegistrationResult5GS) {
+        				Iei: (uint8) 0,
+        				Len: (uint8) 1,
+        				Octet: (uint8) 2
+        			},
+        			GUTI5G: (*nasType.GUTI5G)(0xc000b642f0)({
+        				Iei: (uint8) 119,
+        				Len: (uint16) 11,
+        				Octet: ([11]uint8) (len=11 cap=11) {
+        					00000000  f2 02 f8 39 ca fe 00 00  00 00 01                 |...9.......|
+        				}
+        			}),
+        			EquivalentPlmns: (*nasType.EquivalentPlmns)(<nil>),
+        			TAIList: (*nasType.TAIList)(0xc00096a0c0)({
+        				Iei: (uint8) 84,
+        				Len: (uint8) 7,
+        				Buffer: ([]uint8) (len=7 cap=7) {
+        					00000000  00 02 f8 39 00 00 01                              |...9...|
+        				}
+        			}),
+        			AllowedNSSAI: (*nasType.AllowedNSSAI)(0xc00096a0e0)({
+        				Iei: (uint8) 21,
+        				Len: (uint8) 10,
+        				Buffer: ([]uint8) (len=10 cap=10) {
+        					00000000  04 01 fe dc ba 04 01 11  22 33                    |........"3|
+        				}
+        			}),
+        			RejectedNSSAI: (*nasType.RejectedNSSAI)(<nil>),
+        			ConfiguredNSSAI: (*nasType.ConfiguredNSSAI)(<nil>),
+        			NetworkFeatureSupport5GS: (*nasType.NetworkFeatureSupport5GS)(0xc000b6434b)({
+        				Iei: (uint8) 33,
+        				Len: (uint8) 1,
+        				Octet: ([3]uint8) (len=3 cap=3) {
+        					00000000  00 00 00                                          |...|
+        				}
+        			}),
+        			PDUSessionStatus: (*nasType.PDUSessionStatus)(<nil>),
+        			PDUSessionReactivationResult: (*nasType.PDUSessionReactivationResult)(<nil>),
+        			PDUSessionReactivationResultErrorCause: (*nasType.PDUSessionReactivationResultErrorCause)(<nil>),
+        			LADNInformation: (*nasType.LADNInformation)(<nil>),
+        			MICOIndication: (*nasType.MICOIndication)(<nil>),
+        			NetworkSlicingIndication: (*nasType.NetworkSlicingIndication)(<nil>),
+        			ServiceAreaList: (*nasType.ServiceAreaList)(<nil>),
+        			T3512Value: (*nasType.T3512Value)(<nil>),
+        			Non3GppDeregistrationTimerValue: (*nasType.Non3GppDeregistrationTimerValue)(0xc000b64383)({
+        				Iei: (uint8) 93,
+        				Len: (uint8) 1,
+        				Octet: (uint8) 73
+        			}),
+        			T3502Value: (*nasType.T3502Value)(0xc000b64389)({
+        				Iei: (uint8) 22,
+        				Len: (uint8) 1,
+        				Octet: (uint8) 44
+        			}),
+        			EmergencyNumberList: (*nasType.EmergencyNumberList)(<nil>),
+        			ExtendedEmergencyNumberList: (*nasType.ExtendedEmergencyNumberList)(<nil>),
+        			SORTransparentContainer: (*nasType.SORTransparentContainer)(<nil>),
+        			EAPMessage: (*nasType.EAPMessage)(<nil>),
+        			NSSAIInclusionMode: (*nasType.NSSAIInclusionMode)(<nil>),
+        			OperatordefinedAccessCategoryDefinitions: (*nasType.OperatordefinedAccessCategoryDefinitions)(<nil>),
+        			NegotiatedDRXParameters: (*nasType.NegotiatedDRXParameters)(<nil>),
+        			Non3GppNwPolicies: (*nasType.Non3GppNwPolicies)(<nil>),
+        			EPSBearerContextStatus: (*nasType.EPSBearerContextStatus)(<nil>)
+        		}),
+        		RegistrationComplete: (*nasMessage.RegistrationComplete)(<nil>),
+        		RegistrationReject: (*nasMessage.RegistrationReject)(<nil>),
+        		ULNASTransport: (*nasMessage.ULNASTransport)(<nil>),
+        		DLNASTransport: (*nasMessage.DLNASTransport)(<nil>),
+        		DeregistrationRequestUEOriginatingDeregistration: (*nasMessage.DeregistrationRequestUEOriginatingDeregistration)(<nil>),
+        		DeregistrationAcceptUEOriginatingDeregistration: (*nasMessage.DeregistrationAcceptUEOriginatingDeregistration)(<nil>),
+        		DeregistrationRequestUETerminatedDeregistration: (*nasMessage.DeregistrationRequestUETerminatedDeregistration)(<nil>),
+        		DeregistrationAcceptUETerminatedDeregistration: (*nasMessage.DeregistrationAcceptUETerminatedDeregistration)(<nil>),
+        		ServiceRequest: (*nasMessage.ServiceRequest)(<nil>),
+        		ServiceAccept: (*nasMessage.ServiceAccept)(<nil>),
+        		ServiceReject: (*nasMessage.ServiceReject)(<nil>),
+        		ConfigurationUpdateCommand: (*nasMessage.ConfigurationUpdateCommand)(<nil>),
+        		ConfigurationUpdateComplete: (*nasMessage.ConfigurationUpdateComplete)(<nil>),
+        		IdentityRequest: (*nasMessage.IdentityRequest)(<nil>),
+        		IdentityResponse: (*nasMessage.IdentityResponse)(<nil>),
+        		Notification: (*nasMessage.Notification)(<nil>),
+        		NotificationResponse: (*nasMessage.NotificationResponse)(<nil>),
+        		SecurityModeCommand: (*nasMessage.SecurityModeCommand)(<nil>),
+        		SecurityModeComplete: (*nasMessage.SecurityModeComplete)(<nil>),
+        		SecurityModeReject: (*nasMessage.SecurityModeReject)(<nil>),
+        		SecurityProtected5GSNASMessage: (*nasMessage.SecurityProtected5GSNASMessage)(<nil>),
+        		Status5GMM: (*nasMessage.Status5GMM)(<nil>)
+        	}),
+        	GsmMessage: (*nas.GsmMessage)(<nil>)
+        })
+2025-12-05T18:59:32.909041629Z[36m [INFO][TNGF][NGAP] [0m[TNGF] Send Uplink NAS Transport
+2025-12-05T18:59:32.909204850Z[36m [INFO][AMF][Ngap][ran_addr:10.200.200.1/10.0.2.15/172.17.0.1/10.60.0.1/10.200.200.2/192.168.127.1/10.0.0.1:57316] [0mHandle UplinkNASTransport
+2025-12-05T18:59:32.909223508Z[36m [INFO][AMF][Ngap][amf_ue_ngap_id:RU:0,AU:1(Non3GPP)][ran_addr:10.200.200.1/10.0.2.15/172.17.0.1/10.60.0.1/10.200.200.2/192.168.127.1/10.0.0.1:57316] [0mHandle UplinkNASTransport (RAN UE NGAP ID: 0)
+2025-12-05T18:59:32.909256403Z[36m [INFO][AMF][Gmm] [0mHandle event[Gmm Message], transition from [ContextSetup] to [ContextSetup]
+2025-12-05T18:59:32.909261010Z[36m [INFO][AMF][Gmm][amf_ue_ngap_id:RU:0,AU:1(Non3GPP)][supi:SUPI:imsi-208930000007487] [0mHandle Registration Complete
+2025-12-05T18:59:32.909265781Z[36m [INFO][AMF][Gmm][amf_ue_ngap_id:RU:0,AU:1(Non3GPP)][supi:SUPI:imsi-208930000007487] [0mStop T3550 timer
+2025-12-05T18:59:32.909288378Z[36m [INFO][AMF][Gmm][amf_ue_ngap_id:RU:0,AU:1(Non3GPP)][supi:SUPI:imsi-208930000007487] [0mSend Configuration Update Command
+2025-12-05T18:59:32.909293773Z[36m [INFO][AMF][Ngap][amf_ue_ngap_id:RU:0,AU:1(Non3GPP)][ran_addr:10.200.200.1/10.0.2.15/172.17.0.1/10.60.0.1/10.200.200.2/192.168.127.1/10.0.0.1:57316] [0mSend Downlink Nas Transport
+2025-12-05T18:59:32.909342645Z[36m [INFO][AMF][Gmm] [0mHandle event[ContextSetup Success], transition from [ContextSetup] to [Registered]
+2025-12-05T18:59:32.909448430Z[36m [INFO][TNGF][NGAP] [0m[TNGF] Handle Downlink NAS Transport
+2025-12-05T18:59:34.773700718Z[36m [INFO][TNGF][NGAP] [0m[TNGF] Send Uplink NAS Transport
+2025-12-05T18:59:34.773894328Z[36m [INFO][AMF][Ngap][ran_addr:10.200.200.1/10.0.2.15/172.17.0.1/10.60.0.1/10.200.200.2/192.168.127.1/10.0.0.1:57316] [0mHandle UplinkNASTransport
+2025-12-05T18:59:34.773918107Z[36m [INFO][AMF][Ngap][amf_ue_ngap_id:RU:0,AU:1(Non3GPP)][ran_addr:10.200.200.1/10.0.2.15/172.17.0.1/10.60.0.1/10.200.200.2/192.168.127.1/10.0.0.1:57316] [0mHandle UplinkNASTransport (RAN UE NGAP ID: 0)
+2025-12-05T18:59:34.773959078Z[36m [INFO][AMF][Gmm] [0mHandle event[Gmm Message], transition from [Registered] to [Registered]
+2025-12-05T18:59:34.773964133Z[36m [INFO][AMF][Gmm][amf_ue_ngap_id:RU:0,AU:1(Non3GPP)][supi:SUPI:imsi-208930000007487] [0mHandle UL NAS Transport
+2025-12-05T18:59:34.773968182Z[36m [INFO][AMF][Gmm][amf_ue_ngap_id:RU:0,AU:1(Non3GPP)][supi:SUPI:imsi-208930000007487] [0mTransport 5GSM Message to SMF
+2025-12-05T18:59:34.773977506Z[36m [INFO][AMF][Gmm][amf_ue_ngap_id:RU:0,AU:1(Non3GPP)][supi:SUPI:imsi-208930000007487] [0mSelect SMF [snssai: {Sst:1 Sd:fedcba}, dnn: internet]
+2025-12-05T18:59:34.774334408Z[36m [INFO][NRF][DISC] [0mHandle NFDiscoveryRequest
+2025-12-05T18:59:34.775127817Z[36m [INFO][NRF][GIN] [0m| 200 |       127.0.0.1 | GET     | /nnrf-disc/v1/nf-instances?requester-nf-type=AMF&target-nf-type=NSSF |  |
+2025-12-05T18:59:34.775560992Z[36m [INFO][NSSF][NsSel] [0mHandle NSSelectionGet
+2025-12-05T18:59:34.775721943Z[33m [WARN][NSSF][Util] [0mNo TA {"plmnId":{"mcc":"208","mnc":"93"},"tac":"000001"} in NSSF configuration
+2025-12-05T18:59:34.775794101Z[36m [INFO][NSSF][GIN] [0m| 200 |       127.0.0.1 | GET     | /nnssf-nsselection/v2/network-slice-information?nf-id=f25ab5e8-5ccf-4514-8a68-202c7eaff7e0&nf-type=AMF&slice-info-request-for-pdu-session=%7B%22sNssai%22%3A%7B%22sst%22%3A1%2C%22sd%22%3A%22fedcba%22%7D%2C%22roamingIndication%22%3A%22NON_ROAMING%22%7D&tai=%7B%22plmnId%22%3A%7B%22mcc%22%3A%22208%22%2C%22mnc%22%3A%2293%22%7D%2C%22tac%22%3A%22000001%22%7D |  |
+2025-12-05T18:59:34.775888217Z[33m [WARN][AMF][Gmm][amf_ue_ngap_id:RU:0,AU:1(Non3GPP)][supi:SUPI:imsi-208930000007487] [0mnsiInformation is still nil, use default NRF[http://127.0.0.10:8000]
+2025-12-05T18:59:34.775979493Z[36m [INFO][NRF][DISC] [0mHandle NFDiscoveryRequest
+2025-12-05T18:59:34.776713509Z[36m [INFO][NRF][GIN] [0m| 200 |       127.0.0.1 | GET     | /nnrf-disc/v1/nf-instances?dnn=internet&requester-nf-type=AMF&service-names=nsmf-pdusession&snssais=%5B%7B%22sst%22%3A1%2C%22sd%22%3A%22fedcba%22%7D%5D&target-nf-type=SMF&target-plmn-list=%5B%7B%22mcc%22%3A%22208%22%2C%22mnc%22%3A%2293%22%7D%5D |  |
+2025-12-05T18:59:34.777253209Z[36m [INFO][SMF][PduSess] [0mReceive Create SM Context Request
+2025-12-05T18:59:34.777390982Z[36m [INFO][SMF][PduSess] [0mIn HandlePDUSessionSMContextCreate
+2025-12-05T18:59:34.777414028Z[36m [INFO][SMF][CTX] [0mUrrPeriod: 30s
+2025-12-05T18:59:34.777416785Z[36m [INFO][SMF][CTX] [0mUrrThreshold: 10000
+2025-12-05T18:59:34.777505156Z[36m [INFO][NRF][DISC] [0mHandle NFDiscoveryRequest
+2025-12-05T18:59:34.778205918Z[36m [INFO][NRF][GIN] [0m| 200 |       127.0.0.1 | GET     | /nnrf-disc/v1/nf-instances?requester-nf-type=SMF&target-nf-type=UDM |  |
+2025-12-05T18:59:34.778358990Z[36m [INFO][SMF][PduSess][pdu_session_id:1][supi:imsi-208930000007487] [0mSend NF Discovery Serving UDM Successfully
+2025-12-05T18:59:34.778632000Z[36m [INFO][UDM][Consumer] [0mTwoLayerPathHandlerFunc,  imsi-208930000007487 sm-data
+2025-12-05T18:59:34.778649268Z[36m [INFO][UDM][SDM] [0mHandle GetSmData
+2025-12-05T18:59:34.778658428Z[36m [INFO][UDM][SDM] [0mgetSmDataProcedure: SUPI[imsi-208930000007487] PLMNID[20893] DNN[internet] SNssai[{"sst":1,"sd":"fedcba"}]
+2025-12-05T18:59:34.779313489Z[36m [INFO][UDR][GIN] [0m| 200 |       127.0.0.1 | GET     | /nudr-dr/v2/subscription-data/imsi-208930000007487/20893/provisioned-data/sm-data?single-nssai=%7B%22sst%22%3A1%2C%22sd%22%3A%22fedcba%22%7D |  |
+2025-12-05T18:59:34.779432834Z[36m [INFO][UDM][GIN] [0m| 200 |       127.0.0.1 | GET     | /nudm-sdm/v2/imsi-208930000007487/sm-data?dnn=internet&plmn-id=%7B%22mcc%22%3A%22208%22%2C%22mnc%22%3A%2293%22%7D&single-nssai=%7B%22sst%22%3A1%2C%22sd%22%3A%22fedcba%22%7D |  |
+2025-12-05T18:59:34.779484584Z[36m [INFO][SMF][GSM] [0mIn HandlePDUSessionEstablishmentRequest
+2025-12-05T18:59:34Z[36m [INFO][NAS][Convert] [0mProtocolOrContainerList:  [0xc000de0e20 0xc000de0e40 0xc000de0e60]
+2025-12-05T18:59:34.779495089Z[36m [INFO][SMF][GSM] [0mProtocol Configuration Options
+2025-12-05T18:59:34.779504741Z[36m [INFO][SMF][GSM] [0m&{[0xc000de0e20 0xc000de0e40 0xc000de0e60]}
+2025-12-05T18:59:34.779507411Z[36m [INFO][SMF][GSM] [0mDidn't Implement container type IPAddressAllocationViaNASSignallingUL
+2025-12-05T18:59:34.779574032Z[36m [INFO][NRF][DISC] [0mHandle NFDiscoveryRequest
+2025-12-05T18:59:34.780201791Z[36m [INFO][NRF][GIN] [0m| 200 |       127.0.0.1 | GET     | /nnrf-disc/v1/nf-instances?requester-nf-type=SMF&target-nf-instance-id=f25ab5e8-5ccf-4514-8a68-202c7eaff7e0&target-nf-type=AMF |  |
+2025-12-05T18:59:34.780317777Z[36m [INFO][SMF][Consumer] [0mSendNFDiscoveryServingAMF ok
+2025-12-05T18:59:34.780339685Z[36m [INFO][SMF][CTX] [0mAllocated UE IP address: 10.60.0.1
+2025-12-05T18:59:34.780342749Z[36m [INFO][SMF][CTX] [0mSelected UPF: UPF
+2025-12-05T18:59:34.780345758Z[36m [INFO][SMF][PduSess][pdu_session_id:1][supi:imsi-208930000007487] [0mAllocated PDUAdress[10.60.0.1]
+2025-12-05T18:59:34.780440678Z[36m [INFO][NRF][DISC] [0mHandle NFDiscoveryRequest
+2025-12-05T18:59:34.780729148Z[36m [INFO][NRF][GIN] [0m| 200 |       127.0.0.1 | GET     | /nnrf-disc/v1/nf-instances?requester-nf-type=SMF&target-nf-type=BSF |  |
+2025-12-05T18:59:34.780829321Z[33m [WARN][SMF][Consumer] [0mBSF selection failed: no BSF instances found
+2025-12-05T18:59:34.780834136Z[33m [WARN][SMF][Consumer] [0mBSF query error (falling back to NRF): no BSF instances found
+2025-12-05T18:59:34.780837605Z[36m [INFO][SMF][Consumer] [0mNo PCF binding found in BSF, using NRF discovery for SUPI: imsi-208930000007487, DNN: internet
+2025-12-05T18:59:34.780922140Z[36m [INFO][NRF][DISC] [0mHandle NFDiscoveryRequest
+2025-12-05T18:59:34.781505699Z[36m [INFO][NRF][GIN] [0m| 200 |       127.0.0.1 | GET     | /nnrf-disc/v1/nf-instances?preferred-locality=area1&requester-nf-type=SMF&target-nf-type=PCF |  |
+2025-12-05T18:59:34.781977947Z[36m [INFO][PCF][SMpolicy] [0mHandle CreateSmPolicy
+2025-12-05T18:59:34.782707695Z[36m [INFO][UDR][GIN] [0m| 200 |       127.0.0.1 | GET     | /nudr-dr/v2/policy-data/ues/imsi-208930000007487/sm-data?dnn=internet&snssai=%7B%22sst%22%3A1%2C%22sd%22%3A%22fedcba%22%7D |  |
+2025-12-05T18:59:34.784879283Z[36m [INFO][UDR][GIN] [0m| 200 |       127.0.0.1 | GET     | /nudr-dr/v2/application-data/influenceData?dnns=internet&snssais=%5B%7B%22sst%22%3A1%2C%22sd%22%3A%22fedcba%22%7D%5D&supis=imsi-208930000007487 |  |
+2025-12-05T18:59:34.784954341Z[36m [INFO][PCF][SMpolicy] [0mMatched [0] trafficInfluDatas from UDR
+2025-12-05T18:59:34.785089214Z[36m [INFO][UDR][GIN] [0m| 201 |       127.0.0.1 | POST    | /nudr-dr/v2/application-data/influenceData/subs-to-notify |  |
+2025-12-05T18:59:34.785453475Z[36m [INFO][PCF][GIN] [0m| 201 |       127.0.0.1 | POST    | /npcf-smpolicycontrol/v1/sm-policies |  |
+2025-12-05T18:59:34.785589191Z[36m [INFO][SMF][PduSess] [0mCHF Selection for SMContext SUPI[imsi-208930000007487] PDUSessionID[1]
+2025-12-05T18:59:34.785825336Z[36m [INFO][NRF][DISC] [0mHandle NFDiscoveryRequest
+2025-12-05T18:59:34.786251886Z[36m [INFO][NRF][GIN] [0m| 200 |       127.0.0.1 | GET     | /nnrf-disc/v1/nf-instances?requester-nf-type=SMF&target-nf-type=CHF |  |
+2025-12-05T18:59:34.786349344Z[36m [INFO][SMF][Charging] [0mHandle SendConvergedChargingRequest
+2025-12-05T18:59:34.787422606Z[36m [INFO][CHF][ChargingPost] [0mHandleChargingdataInitial
+2025-12-05T18:59:34.787451474Z[36m [INFO][CHF][ChargingPost] [0mSMF charging event
+2025-12-05T18:59:34.787456518Z[33m [WARN][CHF][CFG] [0mCGF Not enable: SendCDR() didn't do anything.
+2025-12-05T18:59:34.787459484Z[36m [INFO][CHF][ChargingPost] [0mOpen CDR for UE imsi-208930000007487
+2025-12-05T18:59:34.787462198Z[36m [INFO][CHF][ChargingPost] [0mNewChfUe imsi-208930000007487
+2025-12-05T18:59:34.787598428Z[36m [INFO][CHF][GIN] [0m| 201 |       127.0.0.1 | POST    | /nchf-convergedcharging/v3/chargingdata |  |
+2025-12-05T18:59:34.787704198Z[36m [INFO][SMF][Charging] [0mSend Charging Data Request[Init] successfully
+2025-12-05T18:59:34.787764264Z[36m [INFO][SMF][PduSess][pdu_session_id:1][supi:imsi-208930000007487] [0mInstall PCCRule[PccRuleId-1]
+2025-12-05T18:59:34.787769758Z[36m [INFO][SMF][PduSess][pdu_session_id:1][supi:imsi-208930000007487] [0mNo srcTcData and tgtTcData. Nothing to do
+2025-12-05T18:59:34.787788755Z[36m [INFO][SMF][PduSess][pdu_session_id:1][supi:imsi-208930000007487] [0mInstall PCCRule[PccRuleId-2]
+2025-12-05T18:59:34.787792125Z[36m [INFO][SMF][PduSess][pdu_session_id:1][supi:imsi-208930000007487] [0mNo srcTcData and tgtTcData. Nothing to do
+2025-12-05T18:59:34.787808452Z[36m [INFO][SMF][PduSess][pdu_session_id:1][supi:imsi-208930000007487] [0mHas default path
+2025-12-05T18:59:34.787956818Z[36m [INFO][SMF][PduSess] [0mSending PFCP Session Establishment Request
+2025-12-05T18:59:34.788114907Z[36m [INFO][UDM][Consumer] [0mTwoLayerPathHandlerFunc,  imsi-208930000007487 sdm-subscriptions
+2025-12-05T18:59:34.788139244Z[36m [INFO][UDM][SDM] [0mHandle Subscribe
+2025-12-05T18:59:34.788206059Z[36m [INFO][UPF][PFCP][LAddr:10.200.200.101:8805] [0mhandleSessionEstablishmentRequest
+2025-12-05T18:59:34.788225450Z[36m [INFO][UPF][PFCP][LAddr:10.200.200.101:8805][CPNodeID:10.200.200.1][CPSEID:0x1][UPSEID:0x1] [0mNew session
+2025-12-05T18:59:34.788416836Z[36m [INFO][UDR][GIN] [0m| 201 |       127.0.0.1 | POST    | /nudr-dr/v2/subscription-data/imsi-208930000007487/context-data/sdm-subscriptions |  |
+2025-12-05T18:59:34.788527963Z[36m [INFO][UDM][GIN] [0m| 201 |       127.0.0.1 | POST    | /nudm-sdm/v2/imsi-208930000007487/sdm-subscriptions |  |
+2025-12-05T18:59:34.788667389Z[36m [INFO][SMF][PduSess] [0mSDM Subscription Successful UE: imsi-208930000007487 SubscriptionId: 2
+2025-12-05T18:59:34.788680641Z[36m [INFO][SMF][GIN] [0m| 201 |       127.0.0.1 | POST    | /nsmf-pdusession/v1/sm-contexts |  |
+2025-12-05T18:59:34.788803580Z[36m [INFO][AMF][Gmm][amf_ue_ngap_id:RU:0,AU:1(Non3GPP)][supi:SUPI:imsi-208930000007487] [0mcreate smContext[pduSessionID: 1] Success
+2025-12-05T18:59:34.791359970Z[36m [INFO][UPF][Perio] [0mrecv event[TYPE_PERIO_ADD][{eType:1 lSeid:1 urrid:1 period:30000000000}]
+2025-12-05T18:59:34.791383038Z[36m [INFO][UPF][Perio] [0mnew ticker [30s]
+2025-12-05T18:59:34.791449155Z[36m [INFO][UPF][Perio] [0mrecv event[TYPE_PERIO_ADD][{eType:1 lSeid:1 urrid:2 period:30000000000}]
+2025-12-05T18:59:34.807969663Z[36m [INFO][SMF][PduSess] [0mReceived PFCP Session Establishment Accepted Response
+2025-12-05T18:59:34.808547031Z[36m [INFO][AMF][Producer] [0mHandle N1N2 Message Transfer Request
+2025-12-05T18:59:34.808567538Z[36m [INFO][AMF][Ngap][amf_ue_ngap_id:RU:0,AU:1(Non3GPP)][ran_addr:10.200.200.1/10.0.2.15/172.17.0.1/10.60.0.1/10.200.200.2/192.168.127.1/10.0.0.1:57316] [0mSend PDU Session Resource Setup Request
+2025-12-05T18:59:34.808657490Z[36m [INFO][AMF][GIN] [0m| 200 |       127.0.0.1 | POST    | /namf-comm/v1/ue-contexts/imsi-208930000007487/n1-n2-messages |  |
+2025-12-05T18:59:34.808757567Z[36m [INFO][TNGF][NGAP] [0m[TNGF] Handle PDU Session Resource Setup Request
+2025-12-05T18:59:34.809106826Z[36m [INFO][TNGF][IKE] [0mEncoding IKE payloads
+2025-12-05T18:59:34.809117222Z[36m [INFO][TNGF][IKE] [0m[SecurityAssociation] marshal(): Start marshaling
+2025-12-05T18:59:34.809122157Z[36m [INFO][TNGF][IKE] [0m[Nonce] marshal(): Start marshaling
+2025-12-05T18:59:34.809125254Z[36m [INFO][TNGF][IKE] [0m[TrafficSelector] marshal(): Start marshaling
+2025-12-05T18:59:34.809128920Z[36m [INFO][TNGF][IKE] [0m[TrafficSelector] marshal(): Start marshaling
+2025-12-05T18:59:34.809131579Z[36m [INFO][TNGF][IKE] [0m[Notification] marshal(): Start marshaling
+2025-12-05T18:59:34.809133932Z[36m [INFO][TNGF][IKE] [0m[Notification] marshal(): Start marshaling
+2025-12-05T18:59:34.809136810Z[36m [INFO][TNGF][IKE] [0mEncoding IKE message
+2025-12-05T18:59:34.809139163Z[36m [INFO][TNGF][IKE] [0mEncoding IKE payloads
+2025-12-05T18:59:34.809141811Z[36m [INFO][TNGF][IKE] [0m[Encrypted] marshal(): Start marshaling
+2025-12-05T18:59:34.809168753Z[36m [INFO][TNGF][IKE] [0mEncoding IKE message
+2025-12-05T18:59:34.809170908Z[36m [INFO][TNGF][IKE] [0mEncoding IKE payloads
+2025-12-05T18:59:34.809173086Z[36m [INFO][TNGF][IKE] [0m[Encrypted] marshal(): Start marshaling
+2025-12-05T18:59:34.809320680Z[36m [INFO][TNGF][IKE] [0mDecoding IKE message
+2025-12-05T18:59:34.809347513Z[36m [INFO][TNGF][IKE] [0mDecoding IKE payloads
+2025-12-05T18:59:34.809351868Z[36m [INFO][TNGF][IKE] [0m[Encrypted] unmarshal(): Start unmarshalling received bytes
+    tngf_test.go:1655: IKE message exchange type: 36
+    tngf_test.go:1656: IKE message ID: 0
+2025-12-05T18:59:34.809393846Z[36m [INFO][TNGF][IKE] [0mEncoding IKE message
+2025-12-05T18:59:34.809396384Z[36m [INFO][TNGF][IKE] [0mEncoding IKE payloads
+2025-12-05T18:59:34.809399076Z[36m [INFO][TNGF][IKE] [0m[Encrypted] marshal(): Start marshaling
+2025-12-05T18:59:34.809418336Z[36m [INFO][TNGF][IKE] [0mDecoding IKE payloads
+2025-12-05T18:59:34.809420952Z[36m [INFO][TNGF][IKE] [0m[SecurityAssociation] unmarshal(): Start unmarshalling received bytes
+2025-12-05T18:59:34.809425230Z[36m [INFO][TNGF][IKE] [0m[Nonce] unmarshal(): Start unmarshalling received bytes
+2025-12-05T18:59:34.809430308Z[36m [INFO][TNGF][IKE] [0m[TrafficSelector] unmarshal(): Start unmarshalling received bytes
+2025-12-05T18:59:34.809433394Z[36m [INFO][TNGF][IKE] [0m[TrafficSelector] unmarshal(): Start unmarshalling received bytes
+2025-12-05T18:59:34.809436381Z[36m [INFO][TNGF][IKE] [0m[Notification] unmarshal(): Start unmarshalling received bytes
+2025-12-05T18:59:34.809438865Z[36m [INFO][TNGF][IKE] [0m[Notification] unmarshal(): Start unmarshalling received bytes
+    tngf_test.go:1683: Received Qos Flow settings
+    tngf_test.go:1686: NotificationData:[6 1 2 1 2 2]
+    tngf_test.go:1696: UP IP Address: 10.0.0.1
+2025-12-05T18:59:34.809485734Z[36m [INFO][TNGF][IKE] [0mEncoding IKE payloads
+2025-12-05T18:59:34.809489324Z[36m [INFO][TNGF][IKE] [0m[SecurityAssociation] marshal(): Start marshaling
+2025-12-05T18:59:34.809492880Z[36m [INFO][TNGF][IKE] [0m[TrafficSelector] marshal(): Start marshaling
+2025-12-05T18:59:34.809495703Z[36m [INFO][TNGF][IKE] [0m[TrafficSelector] marshal(): Start marshaling
+2025-12-05T18:59:34.809503944Z[36m [INFO][TNGF][IKE] [0m[Nonce] marshal(): Start marshaling
+2025-12-05T18:59:34.809513880Z[36m [INFO][TNGF][IKE] [0mEncoding IKE message
+2025-12-05T18:59:34.809516276Z[36m [INFO][TNGF][IKE] [0mEncoding IKE payloads
+2025-12-05T18:59:34.809518399Z[36m [INFO][TNGF][IKE] [0m[Encrypted] marshal(): Start marshaling
+2025-12-05T18:59:34.809528412Z[36m [INFO][TNGF][IKE] [0mEncoding IKE message
+2025-12-05T18:59:34.809530524Z[36m [INFO][TNGF][IKE] [0mEncoding IKE payloads
+2025-12-05T18:59:34.809532582Z[36m [INFO][TNGF][IKE] [0m[Encrypted] marshal(): Start marshaling
+2025-12-05T18:59:34.809638614Z[36m [INFO][TNGF][IKE] [0mDecoding IKE message
+2025-12-05T18:59:34.809655521Z[36m [INFO][TNGF][IKE] [0mDecoding IKE payloads
+2025-12-05T18:59:34.809658946Z[36m [INFO][TNGF][IKE] [0m[Encrypted] unmarshal(): Start unmarshalling received bytes
+2025-12-05T18:59:34.809662798Z[36m [INFO][TNGF][IKE] [0mHandle CREATE_CHILD_SA
+2025-12-05T18:59:34.809672647Z[33m [WARN][TNGF][IKE] [0mCREATE_CHILD_SA responderSPI: 5706426029526637793
+2025-12-05T18:59:34.809676455Z[36m [INFO][TNGF][IKE] [0mEncoding IKE message
+2025-12-05T18:59:34.809678742Z[36m [INFO][TNGF][IKE] [0mEncoding IKE payloads
+2025-12-05T18:59:34.809680953Z[36m [INFO][TNGF][IKE] [0m[Encrypted] marshal(): Start marshaling
+2025-12-05T18:59:34.809696568Z[36m [INFO][TNGF][IKE] [0mDecoding IKE payloads
+2025-12-05T18:59:34.809699304Z[36m [INFO][TNGF][IKE] [0m[SecurityAssociation] unmarshal(): Start unmarshalling received bytes
+2025-12-05T18:59:34.809702740Z[36m [INFO][TNGF][IKE] [0m[TrafficSelector] unmarshal(): Start unmarshalling received bytes
+2025-12-05T18:59:34.809705575Z[36m [INFO][TNGF][IKE] [0m[TrafficSelector] unmarshal(): Start unmarshalling received bytes
+2025-12-05T18:59:34.809708529Z[36m [INFO][TNGF][IKE] [0m[Nonce] unmarshal(): Start unmarshalling received bytes
+Security header type: Integrity Protected And Ciphered
+2025-12-05T18:59:34.809900317Z[36m [INFO][TNGF][NGAP] [0m[TNGF] Send PDU Session Resource Setup Response
+cmac value: 0x0d508cca
+err <nil>
+2025-12-05T18:59:34.810011154Z[36m [INFO][AMF][Ngap][ran_addr:10.200.200.1/10.0.2.15/172.17.0.1/10.60.0.1/10.200.200.2/192.168.127.1/10.0.0.1:57316] [0mHandle PDUSessionResourceSetupResponse
+2025-12-05T18:59:34.810022108Z[36m [INFO][AMF][Ngap][amf_ue_ngap_id:RU:0,AU:1(Non3GPP)][ran_addr:10.200.200.1/10.0.2.15/172.17.0.1/10.60.0.1/10.200.200.2/192.168.127.1/10.0.0.1:57316] [0mHandle PDUSessionResourceSetupResponse (RAN UE NGAP ID: 0)
+    tngf_test.go:1782: Dump DecodePDUSessionEstablishmentAccept:
+         (*nas.Message)(0xc000bfc8c0)({
+        	SecurityHeader: (nas.SecurityHeader) {
+        		ProtocolDiscriminator: (uint8) 0,
+        		SecurityHeaderType: (uint8) 2,
+        		MessageAuthenticationCode: (uint32) 0,
+        		SequenceNumber: (uint8) 0
+        	},
+        	GmmMessage: (*nas.GmmMessage)(0xc000f0d950)({
+        		GmmHeader: (nas.GmmHeader) {
+        			Octet: ([3]uint8) (len=3 cap=3) {
+        				00000000  7e 00 68                                          |~.h|
+        			}
+        		},
+        		AuthenticationRequest: (*nasMessage.AuthenticationRequest)(<nil>),
+        		AuthenticationResponse: (*nasMessage.AuthenticationResponse)(<nil>),
+        		AuthenticationResult: (*nasMessage.AuthenticationResult)(<nil>),
+        		AuthenticationFailure: (*nasMessage.AuthenticationFailure)(<nil>),
+        		AuthenticationReject: (*nasMessage.AuthenticationReject)(<nil>),
+        		RegistrationRequest: (*nasMessage.RegistrationRequest)(<nil>),
+        		RegistrationAccept: (*nasMessage.RegistrationAccept)(<nil>),
+        		RegistrationComplete: (*nasMessage.RegistrationComplete)(<nil>),
+        		RegistrationReject: (*nasMessage.RegistrationReject)(<nil>),
+        		ULNASTransport: (*nasMessage.ULNASTransport)(<nil>),
+        		DLNASTransport: (*nasMessage.DLNASTransport)(0xc000b6e3c0)({
+        			ExtendedProtocolDiscriminator: (nasType.ExtendedProtocolDiscriminator) {
+        				Octet: (uint8) 126
+        			},
+        			SpareHalfOctetAndSecurityHeaderType: (nasType.SpareHalfOctetAndSecurityHeaderType) {
+        				Octet: (uint8) 0
+        			},
+        			DLNASTRANSPORTMessageIdentity: (nasType.DLNASTRANSPORTMessageIdentity) {
+        				Octet: (uint8) 104
+        			},
+        			SpareHalfOctetAndPayloadContainerType: (nasType.SpareHalfOctetAndPayloadContainerType) {
+        				Octet: (uint8) 1
+        			},
+        			PayloadContainer: (nasType.PayloadContainer) {
+        				Iei: (uint8) 0,
+        				Len: (uint16) 109,
+        				Buffer: ([]uint8) (len=109 cap=109) {
+        					00000000  2e 01 00 c2 11 00 1a 01  00 06 31 31 01 01 ff 01  |..........11....|
+        					00000010  02 00 0e 21 11 09 10 09  09 09 09 ff ff ff ff 80  |...!............|
+        					00000020  02 06 01 03 e8 01 03 e8  29 05 01 0a 3c 00 01 22  |........)...<.."|
+        					00000030  04 01 fe dc ba 79 00 0c  01 20 41 01 01 09 02 20  |.....y... A.... |
+        					00000040  41 01 01 08 7b 00 1b 80  00 0d 04 08 08 08 08 00  |A...{...........|
+        					00000050  03 10 20 01 48 60 48 60  00 00 00 00 00 00 00 00  |.. .H`H`........|
+        					00000060  88 88 25 09 08 69 6e 74  65 72 6e 65 74           |..%..internet|
+        				}
+        			},
+        			PduSessionID2Value: (*nasType.PduSessionID2Value)(0xc000615ddc)({
+        				Iei: (uint8) 18,
+        				Octet: (uint8) 1
+        			}),
+        			AdditionalInformation: (*nasType.AdditionalInformation)(<nil>),
+        			Cause5GMM: (*nasType.Cause5GMM)(<nil>),
+        			BackoffTimerValue: (*nasType.BackoffTimerValue)(<nil>)
+        		}),
+        		DeregistrationRequestUEOriginatingDeregistration: (*nasMessage.DeregistrationRequestUEOriginatingDeregistration)(<nil>),
+        		DeregistrationAcceptUEOriginatingDeregistration: (*nasMessage.DeregistrationAcceptUEOriginatingDeregistration)(<nil>),
+        		DeregistrationRequestUETerminatedDeregistration: (*nasMessage.DeregistrationRequestUETerminatedDeregistration)(<nil>),
+        		DeregistrationAcceptUETerminatedDeregistration: (*nasMessage.DeregistrationAcceptUETerminatedDeregistration)(<nil>),
+        		ServiceRequest: (*nasMessage.ServiceRequest)(<nil>),
+        		ServiceAccept: (*nasMessage.ServiceAccept)(<nil>),
+        		ServiceReject: (*nasMessage.ServiceReject)(<nil>),
+        		ConfigurationUpdateCommand: (*nasMessage.ConfigurationUpdateCommand)(<nil>),
+        		ConfigurationUpdateComplete: (*nasMessage.ConfigurationUpdateComplete)(<nil>),
+        		IdentityRequest: (*nasMessage.IdentityRequest)(<nil>),
+        		IdentityResponse: (*nasMessage.IdentityResponse)(<nil>),
+        		Notification: (*nasMessage.Notification)(<nil>),
+        		NotificationResponse: (*nasMessage.NotificationResponse)(<nil>),
+        		SecurityModeCommand: (*nasMessage.SecurityModeCommand)(<nil>),
+        		SecurityModeComplete: (*nasMessage.SecurityModeComplete)(<nil>),
+        		SecurityModeReject: (*nasMessage.SecurityModeReject)(<nil>),
+        		SecurityProtected5GSNASMessage: (*nasMessage.SecurityProtected5GSNASMessage)(<nil>),
+        		Status5GMM: (*nasMessage.Status5GMM)(<nil>)
+        	}),
+        	GsmMessage: (*nas.GsmMessage)(0xc000f04870)({
+        		GsmHeader: (nas.GsmHeader) {
+        			Octet: ([4]uint8) (len=4 cap=4) {
+        				00000000  2e 01 00 c2                                       |....|
+        			}
+        		},
+        		PDUSessionEstablishmentRequest: (*nasMessage.PDUSessionEstablishmentRequest)(<nil>),
+        		PDUSessionEstablishmentAccept: (*nasMessage.PDUSessionEstablishmentAccept)(0xc000cc5d80)({
+        			ExtendedProtocolDiscriminator: (nasType.ExtendedProtocolDiscriminator) {
+        				Octet: (uint8) 46
+        			},
+        			PDUSessionID: (nasType.PDUSessionID) {
+        				Octet: (uint8) 1
+        			},
+        			PTI: (nasType.PTI) {
+        				Octet: (uint8) 0
+        			},
+        			PDUSESSIONESTABLISHMENTACCEPTMessageIdentity: (nasType.PDUSESSIONESTABLISHMENTACCEPTMessageIdentity) {
+        				Octet: (uint8) 194
+        			},
+        			SelectedSSCModeAndSelectedPDUSessionType: (nasType.SelectedSSCModeAndSelectedPDUSessionType) {
+        				Octet: (uint8) 17
+        			},
+        			AuthorizedQosRules: (nasType.AuthorizedQosRules) {
+        				Iei: (uint8) 0,
+        				Len: (uint16) 26,
+        				Buffer: ([]uint8) (len=26 cap=26) {
+        					00000000  01 00 06 31 31 01 01 ff  01 02 00 0e 21 11 09 10  |...11.......!...|
+        					00000010  09 09 09 09 ff ff ff ff  80 02                    |..........|
+        				}
+        			},
+        			SessionAMBR: (nasType.SessionAMBR) {
+        				Iei: (uint8) 0,
+        				Len: (uint8) 6,
+        				Octet: ([6]uint8) (len=6 cap=6) {
+        					00000000  01 03 e8 01 03 e8                                 |......|
+        				}
+        			},
+        			Cause5GSM: (*nasType.Cause5GSM)(<nil>),
+        			PDUAddress: (*nasType.PDUAddress)(0xc000615e00)({
+        				Iei: (uint8) 41,
+        				Len: (uint8) 5,
+        				Octet: ([13]uint8) (len=13 cap=13) {
+        					00000000  01 0a 3c 00 01 00 00 00  00 00 00 00 00           |..<..........|
+        				}
+        			}),
+        			RQTimerValue: (*nasType.RQTimerValue)(<nil>),
+        			SNSSAI: (*nasType.SNSSAI)(0xc000615e10)({
+        				Iei: (uint8) 34,
+        				Len: (uint8) 4,
+        				Octet: ([8]uint8) (len=8 cap=8) {
+        					00000000  01 fe dc ba 00 00 00 00                           |........|
+        				}
+        			}),
+        			AlwaysonPDUSessionIndication: (*nasType.AlwaysonPDUSessionIndication)(<nil>),
+        			MappedEPSBearerContexts: (*nasType.MappedEPSBearerContexts)(<nil>),
+        			EAPMessage: (*nasType.EAPMessage)(<nil>),
+        			AuthorizedQosFlowDescriptions: (*nasType.AuthorizedQosFlowDescriptions)(0xc000bfc900)({
+        				Iei: (uint8) 121,
+        				Len: (uint16) 12,
+        				Buffer: ([]uint8) (len=12 cap=12) {
+        					00000000  01 20 41 01 01 09 02 20  41 01 01 08              |. A.... A...|
+        				}
+        			}),
+        			ExtendedProtocolConfigurationOptions: (*nasType.ExtendedProtocolConfigurationOptions)(0xc000bfc940)({
+        				Iei: (uint8) 123,
+        				Len: (uint16) 27,
+        				Buffer: ([]uint8) (len=27 cap=27) {
+        					00000000  80 00 0d 04 08 08 08 08  00 03 10 20 01 48 60 48  |........... .H`H|
+        					00000010  60 00 00 00 00 00 00 00  00 88 88                 |`..........|
+        				}
+        			}),
+        			DNN: (*nasType.DNN)(0xc000bfc980)({
+        				Iei: (uint8) 37,
+        				Len: (uint8) 9,
+        				Buffer: ([]uint8) (len=9 cap=9) {
+        					00000000  08 69 6e 74 65 72 6e 65  74                       |.internet|
+        				}
+        			})
+        		}),
+        		PDUSessionEstablishmentReject: (*nasMessage.PDUSessionEstablishmentReject)(<nil>),
+        		PDUSessionAuthenticationCommand: (*nasMessage.PDUSessionAuthenticationCommand)(<nil>),
+        		PDUSessionAuthenticationComplete: (*nasMessage.PDUSessionAuthenticationComplete)(<nil>),
+        		PDUSessionAuthenticationResult: (*nasMessage.PDUSessionAuthenticationResult)(<nil>),
+        		PDUSessionModificationRequest: (*nasMessage.PDUSessionModificationRequest)(<nil>),
+        		PDUSessionModificationReject: (*nasMessage.PDUSessionModificationReject)(<nil>),
+        		PDUSessionModificationCommand: (*nasMessage.PDUSessionModificationCommand)(<nil>),
+        		PDUSessionModificationComplete: (*nasMessage.PDUSessionModificationComplete)(<nil>),
+        		PDUSessionModificationCommandReject: (*nasMessage.PDUSessionModificationCommandReject)(<nil>),
+        		PDUSessionReleaseRequest: (*nasMessage.PDUSessionReleaseRequest)(<nil>),
+        		PDUSessionReleaseReject: (*nasMessage.PDUSessionReleaseReject)(<nil>),
+        		PDUSessionReleaseCommand: (*nasMessage.PDUSessionReleaseCommand)(<nil>),
+        		PDUSessionReleaseComplete: (*nasMessage.PDUSessionReleaseComplete)(<nil>),
+        		Status5GSM: (*nasMessage.Status5GSM)(<nil>)
+        	})
+        })
+        
+    tngf_test.go:1788: PDU Address: 10.60.0.1
+    non3gpp_test.go:264: GRE Key Field: 0x1000000
+2025-12-05T18:59:34.810401199Z[36m [INFO][SMF][PduSess] [0mReceive Update SM Context Request
+2025-12-05T18:59:34.810615423Z[36m [INFO][UPF][PFCP][LAddr:10.200.200.101:8805] [0mhandleSessionModificationRequest
+2025-12-05T18:59:34.909288288Z[36m [INFO][SMF][PduSess] [0mReceived PFCP Session Modification Accepted Response from AN UPF
+2025-12-05T18:59:34.909352830Z[36m [INFO][SMF][GIN] [0m| 200 |       127.0.0.1 | POST    | /nsmf-pdusession/v1/sm-contexts/urn:uuid:17f0de54-599f-4c3b-97d3-e500d6d33c6b/modify |  |
+    tngf_test.go:1827: 32 bytes from 10.60.0.101: icmp_seq=0 time=350.546µs
+    tngf_test.go:1827: 32 bytes from 10.60.0.101: icmp_seq=1 time=355.217µs
+    tngf_test.go:1827: 32 bytes from 10.60.0.101: icmp_seq=2 time=938.011µs
+    tngf_test.go:1827: 32 bytes from 10.60.0.101: icmp_seq=3 time=563.862µs
+    tngf_test.go:1827: 32 bytes from 10.60.0.101: icmp_seq=4 time=356.095µs
+    tngf_test.go:1831: 
+        --- 10.60.0.101 ping statistics ---
+    tngf_test.go:1832: 5 packets transmitted, 5 packets received, 0% packet loss
+    tngf_test.go:1834: round-trip min/avg/max/stddev = 350.546µs/512.746µs/938.011µs/227.652µs
+    tngf_test.go:1801: Delete interface: gretun-id-1
+    tngf_test.go:1559: Delete XFRM interface: ipsec-default
+--- PASS: TestTngfUE (12.57s)
+PASS
+ok  	test	12.598s
+2025-12-05T18:59:49.693544378Z[36m [INFO][UPF][Main] [0mShutdown UPF ...
+2025-12-05T18:59:49.693596084Z[36m [INFO][UPF][PFCP][LAddr:10.200.200.101:8805] [0mStopping pfcp server
+2025-12-05T18:59:49.693659433Z[31m [ERRO][UPF][PFCP][LAddr:10.200.200.101:8805] [0mread udp4 10.200.200.101:8805: use of closed network connection
+2025-12-05T18:59:49.693665058Z[36m [INFO][UPF][PFCP][LAddr:10.200.200.101:8805] [0mpfcp reciver stopped
+2025-12-05T18:59:49.693673714Z[36m [INFO][UPF][PFCP][LAddr:10.200.200.101:8805] [0mpfcp server stopped
+2025-12-05T18:59:50.950203044Z[36m [INFO][UPF][Perio] [0mrecv event[TYPE_SERVER_CLOSE][{eType:4 lSeid:0 urrid:0 period:0}]
+2025-12-05T18:59:50.950233706Z[36m [INFO][UPF][Perio] [0mperio server stopped
+2025-12-05T18:59:50.950250351Z[36m [INFO][UPF][Perio] [0mticker[30s] Stopped
+2025-12-05T18:59:50.950266656Z[36m [INFO][UPF][Main] [0mTerminating UPF...
+2025-12-05T18:59:50.950271022Z[36m [INFO][UPF][Main] [0mUPF terminated
+2025-12-05T18:59:50.950274567Z[36m [INFO][UPF][Main] [0mUPF exited
+2025-12-05T18:59:52.509681877Z[36m [INFO][TNGF][Init] [0mTerminating TNGF...
+2025-12-05T18:59:52.509715746Z[36m [INFO][TNGF][Init] [0mDeleting interfaces created by TNGF
+2025-12-05T18:59:52.509771982Z[31m [ERRO][TNGF][Init] [0mDelete interface xfrmi-default fail: no such device
+2025-12-05T18:59:52.509776600Z[36m [INFO][TNGF][Init] [0mTNGF terminated
+/home/ubuntu/web_test/ci-test/base/free5gc/test.sh: line 82: 151926 Killed                  sudo -E ./bin/tngf -c ./config/tngfcfg.test.yaml  (wd: ~/web_test/ci-test/base/free5gc)
+--- PASS: TestCN (35.46s)
+PASS
+ok  	test	39.796s

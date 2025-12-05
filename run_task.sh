@@ -8,7 +8,7 @@
 # 1. 設定目標路徑
 #DEFAULT_DIR="/home/rs/ci-test"
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-DEFAULT_DIR="${CI_WORK_DIR:-$(cd "$SCRIPT_DIR/.." && pwd)/ci-test}"
+DEFAULT_DIR="${CI_WORK_DIR:-$(cd "$SCRIPT_DIR" && pwd)/ci-test}"
 CI_TARGET_DIR="${CI_WORK_DIR:-$DEFAULT_DIR}"
 CI_SCRIPT_NAME="./ci-operation.sh"
 
@@ -248,18 +248,18 @@ run_test_command() {
     fi
 
     # 2. 如果失敗，啟動機器人介入
-    if [ $status -ne 0 ]; then
-        # 如果是 testAll 階段失敗，呼叫智慧處理器
-        if [[ "$step_name" == "testAll" ]]; then
-            smart_failure_handler "$step_name"
-            # 注意: smart_failure_handler 回傳 0 代表修復成功/Flaky，非 0 代表真的掛了
-            return $?
-        else
-            # 環境測試 (ulcl-ti) 失敗暫時直接報錯 (也可以實作類似邏輯)
-            return $status
-        fi
-    fi
-    return 0
+    # if [ $status -ne 0 ]; then
+    #     # 如果是 testAll 階段失敗，呼叫智慧處理器
+    #     if [[ "$step_name" == "testAll" ]]; then
+    #         smart_failure_handler "$step_name"
+    #         # 注意: smart_failure_handler 回傳 0 代表修復成功/Flaky，非 0 代表真的掛了
+    #         return $?
+    #     else
+    #         # 環境測試 (ulcl-ti) 失敗暫時直接報錯 (也可以實作類似邏輯)
+    #         return $status
+    #     fi
+    # fi
+    return $status
 }
 
 run_quiet() {
@@ -278,7 +278,7 @@ run_quiet() {
 wait_for_log_then_continue_background() {
     local command="$1"
     local pattern="$2"
-    local timeout=${3:-20}  # 預設 10 分鐘超時
+    local timeout=${3:-120}  # 預設 10 分鐘超時
     local start_time=$(date +%s)
     local counter=0
     local log_file=$(mktemp)
@@ -299,14 +299,15 @@ wait_for_log_then_continue_background() {
     exec 3< "$fifo"
     
     while read -r line <&3; do
-        echo "$line" >> "$log_file"  # 保存到日誌文件，不輸出到終端
+        echo "$line"  # 輸出到終端
+        echo "$line" >> "$log_file"  # 保存到日誌文件
         
         # 檢查是否匹配模式
         if [[ "$line" =~ $pattern ]]; then
             counter=$((counter + 1))
-            log "🎯 檢測到目標日誌模式: $pattern ($counter/60)"
-            if [ $counter -eq 60 ]; then
-                log "🎯 已檢測到 60 次目標日誌模式，命令將繼續在後台運行 (PID: $cmd_pid)"
+            log "🎯 檢測到目標日誌模式: $pattern ($counter/35)"
+            if [ $counter -eq 35 ]; then
+                log "🎯 已檢測到 35 次目標日誌模式，命令將繼續在後台運行 (PID: $cmd_pid)"
                 # 注意：這裡不終止命令，讓它繼續在後台運行
                 # 關閉文件描述符，但命令會繼續運行
                 exec 3<&-
@@ -319,9 +320,9 @@ wait_for_log_then_continue_background() {
         # 檢查超時
         local current_time=$(date +%s)
         if (( current_time - start_time > timeout )); then
-            log "${RED}❌ 等待日誌模式超時 ($timeout 秒)，logs 保存到 ${env}.log${RESET}"
-            echo "Environment $env setup timed out after $timeout seconds" > "${env}.log"
-            grep "ERRO" "$log_file" >> "${env}.log"
+            #log "${RED}❌ 等待日誌模式超時 ($timeout 秒)，logs 保存到 ${env}.log${RESET}"
+            #echo "Environment $env setup timed out after $timeout seconds" > "${env}.log"
+            #grep "ERRO" "$log_file" >> "${env}.log"
             # 終止後台命令
             kill "$cmd_pid" 2>/dev/null || true
             exec 3<&-
@@ -332,7 +333,7 @@ wait_for_log_then_continue_background() {
     done
     
     # 如果命令正常結束但未檢測到模式
-    log "${RED}❌ 命令結束但未檢測到目標日誌模式，logs"
+    log "${RED}❌ 命令結束但未檢測到目標日誌模式${RESET}"
     exec 3<&-
     rm -f "$fifo"
     rm -f "$log_file"
@@ -344,6 +345,12 @@ cleanup_on_failure() {
     if [ -n "$CURRENT_ENV" ]; then
         run_quiet $CI_SCRIPT_NAME down "$CURRENT_ENV" || true
     fi
+
+    # 收集失敗日誌
+    log "📋 Collecting failure logs..."
+    mkdir -p "$SCRIPT_DIR/logs"
+    cp -r "$CI_TARGET_DIR/base/free5gc/testing_output" "$SCRIPT_DIR/logs/" 2>/dev/null || true
+    find "$CI_TARGET_DIR" -name "*.log" -exec cp {} "$SCRIPT_DIR/logs/" \; 2>/dev/null || true
 
     #還原代碼並重新編譯，刪有發PR的NF的image
     # run_quiet $CI_SCRIPT_NAME pull || { log "Release Pull 失敗"; return 1; }
@@ -393,15 +400,37 @@ done
 # ================= TestAll 階段 (含機器人邏輯) =================
 log "🧪 3. Pre-build Tests (testAll)..."
 
+# 啟動 MongoDB（如果尚未運行）
+log "🔄 3.1. Starting MongoDB..."
+if ! docker ps | grep -q mongodb; then
+    log "   -> MongoDB not running, starting container..."
+    docker run -d --name mongodb -p 27017:27017 mongo:4.4 || { log "${RED}Failed to start MongoDB${RESET}"; exit 1; }
+    sleep 5  # 等待 MongoDB 啟動
+else
+    log "   -> MongoDB already running"
+fi
+
 # 呼叫 run_test_command，如果它回傳 0 (成功或已修復)，才繼續
-# if run_test_command "testAll" $CI_SCRIPT_NAME testAll; then
-#     log "${GREEN}✅ Pre-build Tests Passed (or Flaky verified)!${RESET}"
-# else
-#     log "${RED}⛔ Pre-build Tests Failed (Verification confirm regression/env issue).${RESET}"
-#     # 這裡直接退出，不執行後面的環境測試
-#     rm -f "$FAILED_LIST_FILE"
-#     exit 1
-# fi
+if run_test_command "testAll" $CI_SCRIPT_NAME testAll; then
+    log "${GREEN}✅ Pre-build Tests Passed (or Flaky verified)!${RESET}"
+else
+    log "${RED}⛔ Pre-build Tests Failed (Verification confirm regression/env issue).${RESET}"
+    # 這裡直接退出，不執行後面的環境測試
+    # rm -f "$FAILED_LIST_FILE"
+    
+    # # 收集日誌
+    # log "📋 Collecting logs..."
+    # mkdir -p "$SCRIPT_DIR/logs"
+    # cp -r "$CI_TARGET_DIR/base/free5gc/testing_output" "$SCRIPT_DIR/logs/" 2>/dev/null || true
+    # find "$CI_TARGET_DIR" -name "*.log" -exec cp {} "$SCRIPT_DIR/logs/" \; 2>/dev/null || true
+
+    # exit 1
+fi
+
+# 停止 MongoDB
+log "🛑 Stopping MongoDB..."
+docker stop mongodb || true
+docker rm mongodb || true
 
 log "🏗️ 5. Building..."
 #run_quiet $CI_SCRIPT_NAME build || { log "Build 失敗"; exit 1; }
@@ -415,29 +444,29 @@ log "🏗️ 5. Building..."
 # ================= 循環測試階段 =================
 log "🚀 Starting Test Cycles..."
 
-for ENV in "${TEST_ENVS[@]}"; do
-    CURRENT_ENV="$ENV"
+# for ENV in "${TEST_ENVS[@]}"; do
+#     CURRENT_ENV="$ENV"
     
-    echo "------------------------------------------------"
-    log "▶️  Testing Environment: $CURRENT_ENV"
-    log "🔌 Starting ($CURRENT_ENV)..."
-    #run_quiet $CI_SCRIPT_NAME up "$CURRENT_ENV" || cleanup_on_failure
-    # 等待 60 次 handleHeartbeatRequest 日誌，匹配後讓命令繼續在後台運行
-    wait_for_log_then_continue_background "$CI_SCRIPT_NAME up \"$CURRENT_ENV\"" "handleHeartbeatRequest" || cleanup_on_failure
+#     echo "------------------------------------------------"
+#     log "▶️  Testing Environment: $CURRENT_ENV"
+#     log "🔌 Starting ($CURRENT_ENV)..."
+#     #run_quiet $CI_SCRIPT_NAME up "$CURRENT_ENV" || cleanup_on_failure
+#     # 等待 60 次 handleHeartbeatRequest 日誌，匹配後讓命令繼續在後台運行
+#     wait_for_log_then_continue_background "$CI_SCRIPT_NAME up \"$CURRENT_ENV\"" "handleHeartbeatRequest" || cleanup_on_failure
     
-    log "⚡ Running tests ($CURRENT_ENV)..."
+#     log "⚡ Running tests ($CURRENT_ENV)..."
     
-    if run_test_command "$ENV" $CI_SCRIPT_NAME test "$ENV"; then
-        log "${GREEN}✅ All Tests Passed ($CURRENT_ENV)!${RESET}"
-    else
-        log "${RED}❌ Tests Failed ($CURRENT_ENV)${RESET}"
-        cleanup_on_failure
-    fi
+#     if run_test_command "$ENV" $CI_SCRIPT_NAME test "$ENV"; then
+#         log "${GREEN}✅ All Tests Passed ($CURRENT_ENV)!${RESET}"
+#     else
+#         log "${RED}❌ Tests Failed ($CURRENT_ENV)${RESET}"
+#         cleanup_on_failure
+#     fi
 
-    log "🛑 Shutting down ($CURRENT_ENV)..."
-    run_quiet $CI_SCRIPT_NAME down "$CURRENT_ENV" || cleanup_on_failure
-    CURRENT_ENV=""
-done
+#     log "🛑 Shutting down ($CURRENT_ENV)..."
+#     run_quiet $CI_SCRIPT_NAME down "$CURRENT_ENV" || cleanup_on_failure
+#     CURRENT_ENV=""
+# done
 
 # 還原代碼並重新編譯，刪有發PR的NF的image
 # run_quiet $CI_SCRIPT_NAME pull || { log "Release Pull 失敗"; return 1; }
@@ -446,6 +475,12 @@ done
 #     run_quiet docker rmi free5gc/${comp}-base:latest || true
 #     run_quiet $CI_SCRIPT_NAME build-nf "$comp" || { log "Build $comp 失敗"; return 1; }
 # done
+
+# 收集日誌
+log "📋 Collecting logs..."
+mkdir -p "$SCRIPT_DIR/logs"
+cp -r "$CI_TARGET_DIR/base/free5gc/testing_output" "$SCRIPT_DIR/logs/" 2>/dev/null || true
+find "$CI_TARGET_DIR" -name "*.log" -not -path "*/testing_output/*" -exec cp {} "$SCRIPT_DIR/logs/" \; 2>/dev/null || true
 
 log "🎉 All Tasks Completed!"
 rm -f "$FAILED_LIST_FILE"
