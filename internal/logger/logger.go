@@ -8,6 +8,7 @@ var Log *logrus.Logger
 var MainLog *logrus.Entry
 var WebLog *logrus.Entry
 var GitHubLog *logrus.Entry
+var ExecutorLog *logrus.Entry
 
 func init() {
 	Log = logrus.New()
@@ -16,4 +17,5 @@ func init() {
 	MainLog = Log.WithFields(logrus.Fields{"category": "Main"})
 	WebLog = Log.WithFields(logrus.Fields{"category": "WebServer"})
 	GitHubLog = Log.WithFields(logrus.Fields{"category": "GitHub"})
+	ExecutorLog = Log.WithFields(logrus.Fields{"category": "Executor"})
 }
