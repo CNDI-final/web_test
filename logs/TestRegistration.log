@@ -1,62 +1,7 @@
 exec of "./bin/upf" failed: No such file or directory
-go: downloading github.com/calee0219/fatal v0.0.1
-go: downloading github.com/free5gc/nas v1.2.1
-go: downloading github.com/free5gc/ngap v1.1.2-0.20251021092212-333b38ef1f93
-go: downloading github.com/free5gc/openapi v1.2.2
-go: downloading github.com/stretchr/testify v1.10.0
-go: downloading go.mongodb.org/mongo-driver v1.17.1
-go: downloading golang.org/x/net v0.47.0
-go: downloading golang.org/x/sys v0.38.0
-go: downloading github.com/free5gc/ike v1.1.1-0.20241014015325-083f89768f43
-go: downloading github.com/go-ping/ping v1.1.0
-go: downloading github.com/vishvananda/netlink v1.1.0
-go: downloading github.com/evanphx/json-patch/v5 v5.9.0
-go: downloading github.com/evanphx/json-patch v4.9.0+incompatible
-go: downloading golang.org/x/crypto v0.45.0
-go: downloading github.com/pmezard/go-difflib v1.0.0
-go: downloading github.com/wmnsk/go-gtp v0.8.0
-go: downloading github.com/bronze1man/radius v0.0.0-20190516032554-afd8baec892d
-go: downloading github.com/google/gopacket v1.1.19
-go: downloading github.com/fclairamb/go-log v0.4.1
-go: downloading github.com/fclairamb/ftpserver v0.13.0
-go: downloading github.com/jlaffaye/ftp v0.1.0
-go: downloading github.com/fclairamb/ftpserverlib v0.21.0
-go: downloading github.com/fiorix/go-diameter v3.0.2+incompatible
-go: downloading golang.org/x/exp v0.0.0-20231127185646-65229373498e
-go: downloading github.com/gin-contrib/cors v1.6.0
-go: downloading github.com/cydev/zero v0.0.0-20160322155811-4a4535dd56e7
-go: downloading github.com/free5gc/pfcp v1.1.0
-go: downloading golang.org/x/sync v0.18.0
-go: downloading github.com/golang/mock v1.6.0
-go: downloading github.com/vishvananda/netns v0.0.4
-go: downloading github.com/youmark/pkcs8 v0.0.0-20240726163527-a2c0da244d78
-go: downloading github.com/hashicorp/go-multierror v1.1.1
-go: downloading github.com/tidwall/sjson v1.2.5
-go: downloading github.com/spf13/afero v1.9.5
-go: downloading github.com/ishidawataru/sctp v0.0.0-20230406120618-7ff4192f6ff2
-go: downloading github.com/free5gc/tlv v1.0.3-0.20241204153300-1005a019612d
-go: downloading github.com/golang/snappy v0.0.4
-go: downloading github.com/xdg-go/scram v1.1.2
-go: downloading github.com/xdg-go/stringprep v1.0.4
-go: downloading github.com/montanaflynn/stats v0.7.1
-go: downloading golang.org/x/text v0.31.0
-go: downloading github.com/fclairamb/afero-snd v0.1.0
-go: downloading github.com/hashicorp/errwrap v1.1.0
-go: downloading github.com/tidwall/gjson v1.14.4
-go: downloading github.com/xdg-go/pbkdf2 v1.0.0
-go: downloading github.com/fclairamb/afero-dropbox v0.1.0
-go: downloading github.com/fclairamb/afero-gdrive v0.3.0
-go: downloading github.com/go-mail/mail v2.3.1+incompatible
-go: downloading github.com/aws/aws-sdk-go v1.44.263
-go: downloading github.com/fclairamb/afero-s3 v0.3.1
-go: downloading github.com/pkg/sftp v1.13.5
-go: downloading github.com/tidwall/match v1.1.1
-go: downloading github.com/tidwall/pretty v1.2.1
-go: downloading github.com/dropbox/dropbox-sdk-go-unofficial v5.6.0+incompatible
-go: downloading google.golang.org/api v0.126.0
-[41;37m Terminating due to SIGINT ... [0m
+# github.com/free5gc/amf/pkg/factory
+../NFs/amf/pkg/factory/config.go:865:15: undefined: os
+../NFs/amf/pkg/factory/config.go:877:41: undefined: strconv
+FAIL	test [build failed]
 upf: no process found
-upf: no process found
-Cannot find device "veth0"
-Cannot remove namespace file "/run/netns/UPFns": No such file or directory
-Error: ipv4: Address not found.
+exit status 1
