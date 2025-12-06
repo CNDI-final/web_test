@@ -388,14 +388,14 @@ cd "$CI_TARGET_DIR" || exit 1
 
 # ================= 準備階段 =================
 log "🔄 1. Pulling source..."
-run_quiet $CI_SCRIPT_NAME pull || exit 1
+# run_quiet $CI_SCRIPT_NAME pull || exit 1
 
-log "📥 2. Fetching PRs..."
-for pr_entry in "${PR_LIST[@]}"; do
-    IFS=':' read -r comp id <<< "$pr_entry"
-    log "   -> Fetching $comp #$id"
-    run_quiet $CI_SCRIPT_NAME fetch "$comp" "$id" || exit 1
-done
+# log "📥 2. Fetching PRs..."
+# for pr_entry in "${PR_LIST[@]}"; do
+#     IFS=':' read -r comp id <<< "$pr_entry"
+#     log "   -> Fetching $comp #$id"
+#     run_quiet $CI_SCRIPT_NAME fetch "$comp" "$id" || exit 1
+# done
 
 # ================= TestAll 階段 (含機器人邏輯) =================
 log "🧪 3. Pre-build Tests (testAll)..."
@@ -485,9 +485,9 @@ mkdir -p "$SCRIPT_DIR/logs"
 find "$CI_TARGET_DIR" -type f -iname "*.log" -exec cp {} "$SCRIPT_DIR/logs/" \; 2>/dev/null || true
 
 # 在 logs 裡掃描是否有 'exit status 1' 的測試紀錄，並輸出 JSON
-log "🔎 Scanning $SCRIPT_DIR/logs for 'exit status 1' entries..."
-# 抓出所有 'exit status 1' 的模式，取得去重後的測試名稱
-mapfile -t failed_tests < <(grep -rhoE 'exit status 1' "$SCRIPT_DIR/logs" 2>/dev/null | sed -E 's/exit status //' | sort -u)
+log "🔎 Scanning $SCRIPT_DIR/logs for files containing 'exit status 1'..."
+# 抓出所有包含 'exit status 1' 的 .log 檔案名稱，去重
+mapfile -t failed_tests < <(find "$SCRIPT_DIR/logs" -type f -name "*.log" -exec grep -l 'exit status 1' {} \; | xargs -n1 basename 2>/dev/null | sort -u)
 
 json_file="$SCRIPT_DIR/logs/failures.json"
 if [ ${#failed_tests[@]} -gt 0 ]; then
@@ -499,10 +499,10 @@ if [ ${#failed_tests[@]} -gt 0 ]; then
         printf '"%s"' "$esc" >> "$json_file"
     done
     printf ']}' >> "$json_file"
-    log "🔔 'exit status 1' found: ${#failed_tests[@]} (saved to $json_file)"
+    log "🔔 Files with 'exit status 1': ${#failed_tests[@]} (saved to $json_file)"
 else
     printf '{"failed_tests": []}\n' > "$json_file"
-    log "✅ No 'exit status 1' entries found; wrote empty $json_file"
+    log "✅ No files with 'exit status 1' found; wrote empty $json_file"
 fi
 
 log "🎉 All Tasks Completed!"
