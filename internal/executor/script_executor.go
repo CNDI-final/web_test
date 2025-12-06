@@ -3,7 +3,9 @@ package executor
 import (
 	"context"
 	"fmt"
+	"os"
 	"os/exec"
+	"path/filepath"
 	"strings"
 	"time"
 
@@ -114,7 +116,7 @@ func (e *TaskExecutor) executeTask(ctx context.Context, task *models.Task) []*mo
 			// 如果有錯誤但沒有解析到失敗測試，創建一個通用失敗 result
 			result := &models.TaskResult{
 				TaskID:    task.ID,
-				Status:    "failed",
+				Status:    "Failed",
 				Logs:      fmt.Sprintf("Task failed: %v\nLogs: %s", err, logs),
 				Timestamp: time.Now().Unix(),
 			}
@@ -124,7 +126,7 @@ func (e *TaskExecutor) executeTask(ctx context.Context, task *models.Task) []*mo
 		// 成功情況：創建一個成功 result
 		result := &models.TaskResult{
 			TaskID:    task.ID,
-			Status:    "success",
+			Status:    "Success",
 			Logs:      logs,
 			Timestamp: time.Now().Unix(),
 		}
@@ -142,9 +144,11 @@ func (e *TaskExecutor) doActualWork(ctx context.Context, task *models.Task) (str
 		logger.ExecutorLog.Infof("Adding param: NF=%s, PRVersion=%s", param.NF, param.PRVersion)
 	}
 
+	wd, _ := os.Getwd()
+	scriptPath := filepath.Clean(filepath.Join(wd, "..", "..", "run_task.sh"))
+
 	// 執行 run_task.sh，傳遞多個 -p 參數
-	cmd := exec.CommandContext(ctx, "./run_task.sh", args...)
-	cmd.Dir = "/home/rs/web_test" // 設定工作目錄
+	cmd := exec.CommandContext(ctx, scriptPath, args...)
 
 	// 執行命令並捕獲輸出
 	output, err := cmd.CombinedOutput()
