@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>任務</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            margin: 0;
+            padding: 40px 20px 80px;
+            font-family: "Noto Sans TC", "Microsoft JhengHei", sans-serif;
+            background: radial-gradient(circle at top, #f7f0ff, #fdfbff);
+            min-height: 100vh;
+        }
+        .page {
+            max-width: 960px;
+            margin: 0 auto;
+        }
+        header h1 {
+            margin: 10px 0 5px;
+            font-size: 2rem;
+            color: #4a148c;
+        }
+        header .subtitle {
+            margin: 0;
+            color: #6a6a6a;
+        }
+        .breadcrumb a {
+            color: #4a148c;
+            text-decoration: none;
+            font-weight: 600;
+        }
+        .card {
+            background: #fff;
+            border-radius: 18px;
+            padding: 24px;
+            margin-top: 24px;
+            box-shadow: 0 20px 60px rgba(74, 20, 140, 0.08);
+            border: 1px solid rgba(74, 20, 140, 0.08);
+        }
+        .card h2 {
+            margin-top: 0;
+            font-size: 1.2rem;
+            color: #311b92;
+        }
+        .meta-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 16px;
+            margin-top: 20px;
+        }
+        .meta-item {
+            padding: 12px 16px;
+            border-radius: 12px;
+            background: #f5f2ff;
+            border: 1px solid rgba(49, 27, 146, 0.12);
+        }
+        .label {
+            display: block;
+            font-size: 0.8rem;
+            color: #6a6a6a;
+            margin-bottom: 4px;
+        }
+        .value {
+            font-size: 1.1rem;
+            color: #311b92;
+            font-weight: 600;
+        }
+        pre {
+            background: #111028;
+            color: #e3e8ff;
+            padding: 20px;
+            border-radius: 12px;
+            overflow-x: auto;
+            line-height: 1.6;
+            font-size: 0.9rem;
+            min-height: 200px;
+        }
+        #error-banner {
+            display: none;
+            margin-top: 20px;
+            padding: 12px 16px;
+            border-radius: 8px;
+            background: #ffebee;
+            color: #c62828;
+            border: 1px solid #ffcdd2;
+        }
+    </style>
+</head>
+<body>
+    <div class="page">
+        <header>
+            <div class="breadcrumb"><a href="/">← 返回控制台</a></div>
+            <h1>任務詳情</h1>
+            <p class="subtitle">檢視單一任務的狀態與輸出</p>
+        </header>
+
+        <section class="card">
+            <h2>任務資訊</h2>
+            <div class="meta-grid">
+                <div class="meta-item">
+                    <span class="label">任務 ID</span>
+                    <span class="value" id="task-id">-</span>
+                </div>
+                <div class="meta-item">
+                    <span class="label">結果</span>
+                    <span class="value" id="task-status">-</span>
+                </div>
+                <div class="meta-item">
+                    <span class="label">更新時間</span>
+                    <span class="value" id="task-time">-</span>
+                </div>
+                <div class="meta-item">
+                    <span class="label">Failed Test</span>
+                    <span class="value" id="task-failed">-</span>
+                </div>
+            </div>
+        </section>
+
+        <section class="card">
+            <h2>Log 內容</h2>
+            <div id="error-banner"></div>
+            <pre id="task-logs">載入中...</pre>
+        </section>
+    </div>
+
+    <script src="/js/preview.js"></script>
+</body>
+</html>

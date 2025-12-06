@@ -20,9 +20,11 @@ type ResultStore interface {
 	// 儲存歷史紀錄
 	SaveHistory(ctx context.Context, record *models.HistoryRecord) error
 	// 取得所有任務歷史紀錄
-	GetHistory(ctx context.Context) ([]*models.HistoryRecord, error)
+	GetHistory(ctx context.Context, start, end int64) ([]*models.HistoryRecord, error)
 	// 儲存PR快取
 	SavePrCache(ctx context.Context, Prs []byte) error
 	// 取得PR快取
 	GetPrCache(ctx context.Context) ([]byte, error)
+	// 清除PR快取
+	ClearPrCache(ctx context.Context) error
 }

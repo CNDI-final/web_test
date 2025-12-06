@@ -46,6 +46,16 @@ func GetCachedPRsHandler(c *gin.Context) {
 	c.JSON(200, raw)
 }
 
+// 4.1 清除 PR 快取
+func ClearPRCacheHandler(c *gin.Context) {
+	ctx := context.Background()
+	if err := DB.ClearPrCache(ctx); err != nil {
+		c.JSON(500, gin.H{"error": "failed to clear PR cache"})
+		return
+	}
+	c.JSON(200, gin.H{"status": "cleared"})
+}
+
 // 5. 執行 PR 任務 (加入佇列)
 func RunPRTaskHandler(c *gin.Context) {
 	if TaskQ == nil {
@@ -60,7 +70,12 @@ func RunPRTaskHandler(c *gin.Context) {
 		return
 	}
 	logger.WebLog.Infof("Received request: %+v", req)
-	logger.WebLog.Infof("Params map: %v, length: %d", req.Params, len(req.Params))
+	logger.WebLog.Infof("Params slice length: %d", len(req.Params))
+	logger.WebLog.Infof("Params content: %+v", req.Params)
+	if len(req.Params) == 0 {
+		c.JSON(400, gin.H{"error": "params cannot be empty"})
+		return
+	}
 
 	taskID, err := GenerateUniqueTaskID() // Use the new unique ID generator
 	if err != nil {
@@ -68,18 +83,26 @@ func RunPRTaskHandler(c *gin.Context) {
 		return
 	}
 	var params []models.TaskParams
-	for nf, prVersion := range req.Params {
-		logger.WebLog.Infof("Processing NF: %s, PRVersion: %s", nf, prVersion)
+	for _, p := range req.Params {
+		if p.NF == "" || p.PRVersion == "" {
+			logger.WebLog.Warnf("Skipping invalid param entry: %+v", p)
+			continue
+		}
+		logger.WebLog.Infof("Processing NF: %s, PRVersion: %s", p.NF, p.PRVersion)
 		params = append(params, models.TaskParams{
-			NF:        nf,
-			PRVersion: prVersion,
+			NF:        p.NF,
+			PRVersion: p.PRVersion,
 		})
+	}
+	if len(params) == 0 {
+		c.JSON(400, gin.H{"error": "no valid params provided"})
+		return
 	}
 	task := models.Task{
 		ID:     fmt.Sprintf("%d", taskID), // Assign the generated unique TaskID
 		Params: params,                    // 轉發參數
 	}
-	logger.WebLog.Infof("Enqueuing PR task %s with params: %v", task.ID, req.Params)
+	logger.WebLog.Infof("Enqueuing PR task %s with %d params", task.ID, len(params))
 	if err := TaskQ.PushTask(ctx, &task); err != nil {
 		c.JSON(500, gin.H{"error": fmt.Sprintf("failed to enqueue task: %v", err)})
 		return
