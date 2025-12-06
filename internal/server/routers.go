@@ -31,7 +31,7 @@ func AddService(engine *gin.Engine, rdb database.ResultStore) *gin.RouterGroup {
 	// register routes directly with gin handlers
 	group.GET("/queue/list", GetQueueHandler)
 	group.DELETE("/queue/delete/:taskID", DeleteFromQueueHandler)
-	group.GET("/history", HistoryHandler)
+	group.GET("/history/:page", HistoryHandler)
 	group.POST("/queue/add_github", AddGitHubTaskHandler)
 	group.GET("/prs", GetCachedPRsHandler)
 	group.POST("/run-pr", RunPRTaskHandler)

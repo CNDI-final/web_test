@@ -13,8 +13,16 @@ import (
 // 7. 歷史紀錄
 func HistoryHandler(c *gin.Context) {
 	ctx := context.Background()
-
-	val, err := DB.GetHistory(ctx, 0, 100)
+	pageStr := c.Param("page") // Get page from path parameter
+	page, err := strconv.Atoi(pageStr)
+	if err != nil {
+		logger.WebLog.Errorf("HistoryHandler: Invalid page received: %s, error: %v", pageStr, err)
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid page"})
+		return
+	}
+	start := page * 100
+	end := start + 99
+	val, err := DB.GetHistory(ctx, start, end)
 	if err != nil {
 		c.JSON(500, gin.H{"error": "failed to retrieve history"})
 		return
