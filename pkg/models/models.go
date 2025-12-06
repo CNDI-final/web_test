@@ -60,7 +60,7 @@ type GitHubRequest struct {
 }
 
 type RunPRRequest struct {
-	Params   map[string]string `json:"params"`
+	Params map[string]string `json:"params"`
 }
 
 type HistoryRecord struct {
