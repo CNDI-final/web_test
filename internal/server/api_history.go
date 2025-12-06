@@ -13,8 +13,7 @@ import (
 // 7. 歷史紀錄
 func HistoryHandler(c *gin.Context) {
 	ctx := context.Background()
-
-	val, err := DB.GetHistory(ctx)
+	val, err := DB.GetHistory(ctx, 0, 100)
 	if err != nil {
 		c.JSON(500, gin.H{"error": "failed to retrieve history"})
 		return
