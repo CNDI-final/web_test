@@ -46,6 +46,16 @@ func GetCachedPRsHandler(c *gin.Context) {
 	c.JSON(200, raw)
 }
 
+// 4.1 清除 PR 快取
+func ClearPRCacheHandler(c *gin.Context) {
+	ctx := context.Background()
+	if err := DB.ClearPrCache(ctx); err != nil {
+		c.JSON(500, gin.H{"error": "failed to clear PR cache"})
+		return
+	}
+	c.JSON(200, gin.H{"status": "cleared"})
+}
+
 // 5. 執行 PR 任務 (加入佇列)
 func RunPRTaskHandler(c *gin.Context) {
 	if TaskQ == nil {
