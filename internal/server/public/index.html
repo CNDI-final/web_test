@@ -90,6 +90,10 @@
             border-radius: 50%;
             animation: spin 0.9s linear infinite;
         }
+        .spinner-placeholder {
+            visibility: hidden;
+            animation: none;
+        }
         @keyframes spin {
             to { transform: rotate(360deg); }
         }
@@ -165,21 +169,11 @@
     <div class="container">
         
         <div class="panel">
-            <h3>⏳ 排隊中</h3>
+            <h3>⏳ 執行列表</h3>
             <div class="scroll-wrapper">
                 <table style="width:100%">
-                    <thead class="sticky-header"><tr><th>ID</th><th>任務</th><th>操作</th></tr></thead>
+                    <thead class="sticky-header"><tr><th>ID</th><th>操作</th><th>狀態</th></tr></thead>
                     <tbody id="queue-table-body"></tbody>
-                </table>
-            </div>
-        </div>
-
-        <div class="panel" style="background: #e1f5fe; border-color: #b3e5fc;">
-            <h3>🚀 執行中</h3>
-            <div class="scroll-wrapper">
-                <table style="width:100%">
-                    <thead class="sticky-header"><tr><th>任務</th></tr></thead>
-                    <tbody id="running-list"></tbody>
                 </table>
             </div>
         </div>

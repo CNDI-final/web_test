@@ -9,7 +9,6 @@ document.addEventListener("DOMContentLoaded", () => {
     const runMsg = document.getElementById("run-msg");
 
     const queueBody = document.getElementById("queue-table-body");
-    const runningList = document.getElementById("running-list");
     const historyList = document.getElementById("history-list");
 
     // 本地暫存的待執行任務列表
@@ -125,10 +124,10 @@ document.addEventListener("DOMContentLoaded", () => {
             runAllBtn.disabled = true;
 
             try {
-                const params = selectedTasks.map(task => ({
-                    nf: task.nf,
-                    pr_version: String(task.prNumber)
-                }));
+                const params = selectedTasks.map(task => [
+                    task.nf,
+                    String(task.prNumber)
+                ]);
 
                 await fetch("/api/run-pr", {
                     method: "POST",
@@ -154,6 +153,7 @@ document.addEventListener("DOMContentLoaded", () => {
     if (queueBody) {
         queueBody.addEventListener("click", async (e) => {
             if (e.target.classList.contains("btn-del")) {
+                if (e.target.disabled) return;
                 const id = e.target.dataset.id;
                 if(confirm(`確定要移除任務 ID ${id} 嗎?`)) {
                     await fetch(`/api/queue/delete/${id}`, { method: "DELETE" });
@@ -265,30 +265,26 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     }
 
-    // 更新執行中任務 (進度條)
-    async function loadRunning() {
-        try {
-            const res = await fetch("/api/running");
-            const tasks = await res.json();
-            
-            runningList.innerHTML = "";
-            if (!tasks || tasks.length === 0) {
-                runningList.innerHTML = "<tr><td style='color:#999; text-align:center;'>無任務執行中</td></tr>";
-                return;
-            }
+    function extractTaskParams(task) {
+        if (!task) return [];
+        if (Array.isArray(task.params)) return task.params;
+        if (Array.isArray(task.Params)) return task.Params;
+        if (Array.isArray(task.queue_params)) return task.queue_params;
+        if (Array.isArray(task.QueueParams)) return task.QueueParams;
+        return [];
+    }
 
-            tasks.forEach(t => {
-                runningList.innerHTML += `
-                    <tr>
-                        <td>
-                            <div class="running-task-row">
-                                <small>${t.task_name}</small>
-                                <span class="spinner"></span>
-                            </div>
-                        </td>
-                    </tr>`;
-            });
-        } catch (e) {}
+    function formatParamLabel(param) {
+        if (Array.isArray(param)) {
+            const [nf, pr] = param;
+            return `${nf || "-"} #${pr || "-"}`;
+        }
+        if (param && typeof param === "object") {
+            const nf = param.nf || param.NF || "-";
+            const pr = param.pr_number || param.prNumber || param.PRNumber || param.pr_version || param.prVersion || param.PRVersion || "-";
+            return `${nf} #${pr}`;
+        }
+        return String(param ?? "-");
     }
 
     // 更新排隊列表
@@ -296,21 +292,56 @@ document.addEventListener("DOMContentLoaded", () => {
         try {
             const res = await fetch("/api/queue/list");
             const tasks = await res.json();
-            
+
+            // if (!Array.isArray(tasks)) {
+            //     queueBody.innerHTML = "<tr><td colspan='3' style='color:#d32f2f; text-align:center;'>讀取排隊資料失敗</td></tr>";
+            //     return;
+            // }
+
+            const activeTasks = tasks.filter(task => {
+                const rawStatus = (task.status || "").toLowerCase();
+                return rawStatus === "queueing" || rawStatus === "running";
+            });
+
             queueBody.innerHTML = "";
-            if (!tasks || tasks.length === 0) {
+            if (activeTasks.length === 0) {
                 queueBody.innerHTML = "<tr><td colspan='3' style='color:#999; text-align:center;'>目前空閒</td></tr>";
                 return;
             }
-            tasks.forEach(t => {
+
+            activeTasks.forEach((task) => {
+                const taskId = task.task_id || task.taskId || task.TaskID || task.id || "-";
+                const params = extractTaskParams(task);
+                // const taskLabel = params.length
+                //     ? params.map(formatParamLabel).join("<br>")
+                //     : (task.task_name || task.taskName || "-");
+
+                const rawStatus = (task.status || "").toLowerCase();
+                const statusLabel = rawStatus === "running"
+                    ? "執行中"
+                    : rawStatus === "queueing"
+                        ? "排隊中"
+                        : (task.status || "-");
+                const spinnerEl = rawStatus === "running"
+                    ? '<span class="spinner"></span>'
+                    : '<span class="spinner spinner-placeholder"></span>';
+                const statusCell = `<div class="running-task-row">${spinnerEl}<span>${statusLabel}</span></div>`;
+                const canDelete = rawStatus === "queueing" && taskId !== "-";
+
                 queueBody.innerHTML += `
                     <tr>
-                        <td>${t.task_id}</td>
-                        <td><small>${t.task_name}</small></td>
-                        <td><button class="btn-del" data-id="${t.task_id}">移除</button></td>
+                        <td>${taskId}</td>
+                        <td>
+                            ${canDelete
+                                ? `<button class="btn-del" data-id="${taskId}">移除</button>`
+                                : `<button class="btn-del" disabled style="opacity:0.4; cursor:not-allowed;">不可移除</button>`}
+                        </td>
+                        <td style="text-align:center;">${statusCell}</td>
                     </tr>`;
             });
-        } catch (e) {}
+        } catch (e) {
+            console.error("載入排隊資料失敗:", e);
+        }
     }
 
     // 更新歷史紀錄
@@ -353,7 +384,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
     function loadAll() {
         loadQueue();
-        loadRunning();
         loadHistory();
     }
 

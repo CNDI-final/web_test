@@ -7,9 +7,10 @@ import (
 	"net/http" // Add http for status codes
 	"strconv"
 
-	"github.com/gin-gonic/gin"
 	"web_test/internal/logger" // Import logger
 	"web_test/pkg/models"
+
+	"github.com/gin-gonic/gin"
 )
 
 // 1. 取得佇列
@@ -21,7 +22,7 @@ func GetQueueHandler(c *gin.Context) {
 	ctx := context.Background()
 
 	var return_tasks []models.TaskResult
-	running_tasks,err := DB.GetRunningTasks(ctx)
+	running_tasks, err := DB.GetRunningTasks(ctx)
 	if err != nil {
 		logger.WebLog.Errorf("GetQueueHandler: Failed to get running tasks: %v", err)
 		c.JSON(500, gin.H{"error": "failed to get running tasks"})
@@ -29,8 +30,8 @@ func GetQueueHandler(c *gin.Context) {
 	}
 	for _, rt := range running_tasks {
 		taskResult := models.TaskResult{
-			TaskID:    rt.TaskID,
-			Status:    "running",
+			TaskID: rt.TaskID,
+			Status: "running",
 		}
 		return_tasks = append(return_tasks, taskResult)
 	}
@@ -54,8 +55,8 @@ func GetQueueHandler(c *gin.Context) {
 			continue
 		}
 		taskResult := models.TaskResult{
-			TaskID:    tmp.ID,
-			Status:    "queueing", // Placeholder status
+			TaskID: tmp.ID,
+			Status: "queueing", // Placeholder status
 		}
 		return_tasks = append(return_tasks, taskResult)
 	}
