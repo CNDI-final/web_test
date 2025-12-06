@@ -41,12 +41,6 @@ type WorkerResponse struct {
 	PRs     []PullRequest `json:"prs"`
 }
 
-type InternalMessage struct {
-	TaskID   int               `json:"task_id"`
-	TaskName string            `json:"task_name"`
-	Params   map[string]string `json:"params"`
-}
-
 type ProgressInfo struct {
 	TaskID    int    `json:"task_id"`
 	TaskName  string `json:"task_name"`
@@ -60,7 +54,7 @@ type GitHubRequest struct {
 }
 
 type RunPRRequest struct {
-	Params []TaskParams `json:"params"`
+	Params [][]string `json:"params"`
 }
 
 type HistoryRecord struct {
