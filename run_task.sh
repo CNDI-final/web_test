@@ -398,17 +398,7 @@ for pr_entry in "${PR_LIST[@]}"; do
 done
 
 # ================= TestAll 階段 (含機器人邏輯) =================
-log "🧪 3. Pre-build Tests (testAll)..."
-
-# 啟動 MongoDB（如果尚未運行）
-log "🔄 3.1. Starting MongoDB..."
-if ! docker ps | grep -q mongodb; then
-    log "   -> MongoDB not running, starting container..."
-    docker run -d --name mongodb -p 27017:27017 mongo:4.4 || { log "${RED}Failed to start MongoDB${RESET}"; exit 1; }
-    sleep 5  # 等待 MongoDB 啟動
-else
-    log "   -> MongoDB already running"
-fi
+log "🧪 3. Normal Tests (testAll)..."
 
 # 呼叫 run_test_command，如果它回傳 0 (成功或已修復)，才繼續
 if run_test_command "testAll" $CI_SCRIPT_NAME testAll; then
@@ -426,11 +416,6 @@ else
 
     # exit 1
 fi
-
-# 停止 MongoDB
-log "🛑 Stopping MongoDB..."
-docker stop mongodb || true
-docker rm mongodb || true
 
 log "🏗️ 5. Building..."
 #run_quiet $CI_SCRIPT_NAME build || { log "Build 失敗"; exit 1; }
