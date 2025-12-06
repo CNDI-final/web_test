@@ -22,6 +22,8 @@ func NewRedisDB(addr, password string, db int) *RedisDB {
 		Addr:     addr,
 		Password: password, // no password set
 		DB:       db,       // use default DB
+        DisableIndentity: true, // Disable RESP3 identity feature
+        Protocol: 2,	
 	})
 	return &RedisDB{client: rdb}
 }
@@ -129,12 +131,12 @@ func (r *RedisDB) SaveHistory(ctx context.Context, record *models.HistoryRecord)
 // GetHistory retrieves all historical task records from Redis.
 func (r *RedisDB) GetHistory(ctx context.Context) ([]*models.HistoryRecord, error) {
 	// Use LRange to get all elements from the list
-	data, err := r.client.LRange(ctx, historyListKey, 0, -1).Result()
+	data, err := r.client.LRange(ctx, historyListKey, -100, -1).Result()
 	if err != nil {
 		return nil, err
 	}
 
-	var history []*models.HistoryRecord
+	history := make([]*models.HistoryRecord, 0, len(data))
 	for _, item := range data {
 		var record models.HistoryRecord
 		if err := json.Unmarshal([]byte(item), &record); err != nil {
