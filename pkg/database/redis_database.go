@@ -36,6 +36,14 @@ const (
 	prCacheKey        = "pr_cache"
 )
 
+var taipeiLocation = func() *time.Location {
+	loc, err := time.LoadLocation("Asia/Taipei")
+	if err != nil {
+		return time.FixedZone("CST", 8*3600)
+	}
+	return loc
+}()
+
 // SaveResult saves a task result to Redis.
 func (r *RedisDB) SaveResult(ctx context.Context, result *models.TaskResult) error {
 	data, err := json.Marshal(result)
@@ -58,7 +66,7 @@ func (r *RedisDB) SaveResult(ctx context.Context, result *models.TaskResult) err
 			return err
 		}
 		r.SaveHistory(ctx, &models.HistoryRecord{
-			Time:     time.Unix(result.Timestamp, 0).Format("2006-01-02 15:04:05"),
+			Time:     time.Unix(result.Timestamp, 0).In(taipeiLocation).Format("2006-01-02 15:04:05"),
 			TaskName: fmt.Sprintf("Test Task %s", result.TaskID),
 			Result:   result.Status,
 		})
