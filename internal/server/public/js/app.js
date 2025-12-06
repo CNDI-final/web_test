@@ -14,6 +14,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     // 本地暫存的待執行任務列表
     let selectedTasks = [];
+    let lastNfChangeAt = 0; // 用於控制空列表判斷的計時器
 
     // ==========================================
     // 1. NF 選擇變更 -> 觸發 GitHub 抓取
@@ -22,6 +23,7 @@ document.addEventListener("DOMContentLoaded", () => {
         nfSelect.addEventListener("change", async () => {
             const repo = nfSelect.value;
             const owner = "free5gc";
+            lastNfChangeAt = Date.now();
             
             prSelect.innerHTML = '<option>載入中...</option>';
             
@@ -35,9 +37,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 loadAll(); // 觸發刷新
                 // 簡單的輪詢等待結果 (或是依賴原本的 updatePRList 定時更新)
                 // 這裡為了體驗更好，稍微延遲後立即觸發一次更新
-                setTimeout(updatePRList, 500);
-                setTimeout(updatePRList, 1500);
-                // setTimeout(updatePRList, 3000);
+                // setTimeout(updatePRList, 500);
             } catch (e) { console.error(e); }
         });
     }
@@ -54,6 +54,10 @@ document.addEventListener("DOMContentLoaded", () => {
             if (!prVal) return alert("請選擇 PR");
 
             const selectedOption = prSelect.options[prSelect.selectedIndex];
+            if (selectedOption.text === "-- 無 PR --") {
+                return alert("該 NF 目前沒有開啟的 PR");
+            }
+
             const prTitle = selectedOption.dataset.title || "";
             const prNumber = parseInt(prVal);
 
@@ -75,7 +79,7 @@ document.addEventListener("DOMContentLoaded", () => {
             const tr = document.createElement("tr");
             tr.innerHTML = `
                 <td>${task.nf}</td>
-                <td>#${task.prNumber}: ${task.prTitle.substring(0, 20)}...</td>
+                <td>#${task.prNumber}: ${task.prTitle}</td>
                 <td><button class="btn-del" data-local-id="${task.id}">刪除</button></td>
             `;
             selectedTasksBody.appendChild(tr);
@@ -163,11 +167,18 @@ document.addEventListener("DOMContentLoaded", () => {
             prSelect.innerHTML = "";
 
             if (!prs || prs.length === 0) {
+                const withinGracePeriod = lastNfChangeAt && (Date.now() - lastNfChangeAt < 4000);
+                if (withinGracePeriod) {
+                    prSelect.innerHTML = '<option>載入中...</option>';
+                    return;
+                }
                 const opt = document.createElement("option");
                 opt.text = "-- 無 PR --";
                 prSelect.appendChild(opt);
+                lastNfChangeAt = 0;
                 return;
             }
+            lastNfChangeAt = 0;
 
             // 顯示前 5 個 PR
             const displayLimit = 5;
@@ -176,7 +187,7 @@ document.addEventListener("DOMContentLoaded", () => {
             initialPRs.forEach(pr => {
                 const opt = document.createElement("option");
                 opt.value = pr.number;
-                let displayTitle = pr.title.length > 40 ? pr.title.substring(0, 40) + "..." : pr.title;
+                let displayTitle = pr.title.length > 100 ? pr.title.substring(0, 100) + "..." : pr.title;
                 opt.text = `#${pr.number}: ${displayTitle}`;
                 opt.dataset.title = pr.title;
                 prSelect.appendChild(opt);
@@ -210,7 +221,7 @@ document.addEventListener("DOMContentLoaded", () => {
                     remainingPRs.forEach(pr => {
                         const opt = document.createElement("option");
                         opt.value = pr.number;
-                        let displayTitle = pr.title.length > 40 ? pr.title.substring(0, 40) + "..." : pr.title;
+                        let displayTitle = pr.title.length > 100 ? pr.title.substring(0, 100) + "..." : pr.title;
                         opt.text = `#${pr.number}: ${displayTitle}`;
                         opt.dataset.title = pr.title;
                         prSelect.appendChild(opt);
