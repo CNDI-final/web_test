@@ -91,8 +91,8 @@ func RunPRTaskHandler(c *gin.Context) {
 		prVersion := string(pair[1])
 		logger.WebLog.Infof("Processing NF: %s, PRVersion: %s", nf, prVersion)
 		params = append(params, models.TaskParams{
-			NF:        p.NF,
-			PRVersion: p.PRVersion,
+			NF:        nf,
+			PRVersion: prVersion,
 		})
 	}
 	if len(params) == 0 {

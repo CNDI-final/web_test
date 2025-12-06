@@ -2,14 +2,12 @@ package server
 
 import (
 	"context"
-	"encoding/json"
 	"fmt"      // Add fmt for Sprintf
 	"net/http" // Add http for status codes
 	"strconv"
 
 	"github.com/gin-gonic/gin"
 	"web_test/internal/logger" // Import logger
-	"web_test/pkg/models"
 )
 
 // 1. 取得佇列
