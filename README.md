@@ -1,5 +1,3 @@
 # web-template
 ## build
-docker compose up --build
-## test 
-http://localhost:8080/
+docker run -d --name kvrocks -p 6379:6666 apache/kvrocks:latest
