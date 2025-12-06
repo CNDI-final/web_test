@@ -31,9 +31,6 @@ func GetQueueHandler(c *gin.Context) {
 		taskResult := models.TaskResult{
 			TaskID:    rt.TaskID,
 			Status:    "running",
-			failedTests: rt.FailedTests,
-			logs:      rt.Logs,
-			timestamp: rt.Timestamp,
 		}
 		return_tasks = append(return_tasks, taskResult)
 	}
@@ -59,9 +56,6 @@ func GetQueueHandler(c *gin.Context) {
 		taskResult := models.TaskResult{
 			TaskID:    tmp.ID,
 			Status:    "queueing", // Placeholder status
-			logs:      []string{},	
-			failedTests: []string{},
-			timestamp: 0,
 		}
 		return_tasks = append(return_tasks, taskResult)
 	}
