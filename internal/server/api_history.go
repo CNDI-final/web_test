@@ -16,6 +16,7 @@ import (
 func HistoryHandler(c *gin.Context) {
 	ctx := context.Background()
 <<<<<<< HEAD
+<<<<<<< HEAD
 	pageStr := c.Param("page") // Get page from path parameter
 	page, err := strconv.Atoi(pageStr)
 	if err != nil {
@@ -28,6 +29,9 @@ func HistoryHandler(c *gin.Context) {
 	end = int64(start + 99)
 	val, err := DB.GetHistory(ctx, start, end)
 =======
+=======
+
+>>>>>>> 3182639 (feat: support query range of history and update the method of store history)
 	val, err := DB.GetHistory(ctx, 0, 100)
 >>>>>>> 503997e (feat: update history)
 	if err != nil {
