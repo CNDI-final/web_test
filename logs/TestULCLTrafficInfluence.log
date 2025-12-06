@@ -1,1 +1,36 @@
-Error response from daemon: No such container: ci
+=== RUN   TestULCLTrafficInfluence
+=== RUN   TestULCLTrafficInfluence/Before_TI
+=== RUN   TestULCLTrafficInfluence/After_TI
+=== RUN   TestULCLTrafficInfluence/Reset_TI
+=== RUN   TestULCLTrafficInfluence/Flow_Level_Ping
+=== RUN   TestULCLTrafficInfluence/Check_Charging_Record
+=== RUN   TestULCLTrafficInfluence/Check_Charging_Record/Check_Session_Level_Charging_Record
+=== RUN   TestULCLTrafficInfluence/Check_Charging_Record/Check_Flow_Level_Charging_Record
+--- PASS: TestULCLTrafficInfluence (56.27s)
+    --- PASS: TestULCLTrafficInfluence/Before_TI (14.10s)
+    --- PASS: TestULCLTrafficInfluence/After_TI (17.98s)
+    --- PASS: TestULCLTrafficInfluence/Reset_TI (14.10s)
+    --- PASS: TestULCLTrafficInfluence/Flow_Level_Ping (4.99s)
+    --- PASS: TestULCLTrafficInfluence/Check_Charging_Record (0.21s)
+        --- PASS: TestULCLTrafficInfluence/Check_Charging_Record/Check_Session_Level_Charging_Record (0.00s)
+        --- PASS: TestULCLTrafficInfluence/Check_Charging_Record/Check_Flow_Level_Charging_Record (0.00s)
+PASS
+ok  	test	56.272s
+=== RUN   TestULCLTrafficInfluence
+=== RUN   TestULCLTrafficInfluence/Before_TI
+=== RUN   TestULCLTrafficInfluence/After_TI
+=== RUN   TestULCLTrafficInfluence/Reset_TI
+=== RUN   TestULCLTrafficInfluence/Flow_Level_Ping
+=== RUN   TestULCLTrafficInfluence/Check_Charging_Record
+=== RUN   TestULCLTrafficInfluence/Check_Charging_Record/Check_Session_Level_Charging_Record
+=== RUN   TestULCLTrafficInfluence/Check_Charging_Record/Check_Flow_Level_Charging_Record
+--- PASS: TestULCLTrafficInfluence (62.29s)
+    --- PASS: TestULCLTrafficInfluence/Before_TI (15.75s)
+    --- PASS: TestULCLTrafficInfluence/After_TI (14.14s)
+    --- PASS: TestULCLTrafficInfluence/Reset_TI (15.07s)
+    --- PASS: TestULCLTrafficInfluence/Flow_Level_Ping (7.30s)
+    --- PASS: TestULCLTrafficInfluence/Check_Charging_Record (5.10s)
+        --- PASS: TestULCLTrafficInfluence/Check_Charging_Record/Check_Session_Level_Charging_Record (0.00s)
+        --- PASS: TestULCLTrafficInfluence/Check_Charging_Record/Check_Flow_Level_Charging_Record (0.00s)
+PASS
+ok  	test	62.295s

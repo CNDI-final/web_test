@@ -43,6 +43,7 @@ type WorkerResponse struct {
 
 type InternalMessage struct {
 	TaskID   int               `json:"task_id"`
+	TaskName string            `json:"task_name"`
 	Params   map[string]string `json:"params"`
 }
 

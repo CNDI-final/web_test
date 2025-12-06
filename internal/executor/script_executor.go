@@ -55,7 +55,7 @@ func (e *TaskExecutor) processNextTask(ctx context.Context) error {
 
 	// 建構日誌訊息
 	var paramStrs []string
-	logger.ExecutorLog.Infof("Processing task %s with params: []", task.Params)
+	logger.ExecutorLog.Infof("Processing task %s", task.Params)
 	for _, p := range task.Params {
 		paramStrs = append(paramStrs, fmt.Sprintf("%s:%s", p.NF, p.PRVersion))
 	}
@@ -70,7 +70,6 @@ func (e *TaskExecutor) processNextTask(ctx context.Context) error {
 	}
 	if err := e.db.SaveResult(ctx, runningResult); err != nil {
 		logger.ExecutorLog.Errorf("Failed to save running status for task %s: %v", task.ID, err)
-		// 不返回錯誤，繼續執行任務
 	}
 
 	// 執行任務，獲取多個結果
@@ -145,7 +144,7 @@ func (e *TaskExecutor) doActualWork(ctx context.Context, task *models.Task) (str
 
 	// 執行 run_task.sh，傳遞多個 -p 參數
 	cmd := exec.CommandContext(ctx, "./run_task.sh", args...)
-	cmd.Dir = "/home/rs/test" // 設定工作目錄
+	cmd.Dir = "/home/rs/web_test" // 設定工作目錄
 
 	// 執行命令並捕獲輸出
 	output, err := cmd.CombinedOutput()
