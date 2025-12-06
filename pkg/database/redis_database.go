@@ -51,6 +51,10 @@ func (r *RedisDB) SaveResult(ctx context.Context, result *models.TaskResult) err
 		return err
 	}
 
+	if err = r.client.HSet(ctx, taskResultsHashKey, result.TaskID, data).Err(); err != nil {
+		return err
+	}
+
 	// If the task is running, add it to the running tasks set
 	if result.Status == "running" {
 		if err := r.client.SAdd(ctx, runningTasksSetKey, result.TaskID).Err(); err != nil {
@@ -59,9 +63,6 @@ func (r *RedisDB) SaveResult(ctx context.Context, result *models.TaskResult) err
 	} else {
 		// If the task is completed or failed, remove it from the running tasks set
 		if err := r.client.SRem(ctx, runningTasksSetKey, result.TaskID).Err(); err != nil {
-			return err
-		}
-		if err = r.client.HSet(ctx, taskResultsHashKey, result.TaskID, data).Err(); err != nil {
 			return err
 		}
 		r.SaveHistory(ctx, &models.HistoryRecord{
