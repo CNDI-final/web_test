@@ -28,6 +28,7 @@ document.addEventListener("DOMContentLoaded", () => {
             prSelect.innerHTML = '<option>載入中...</option>';
             
             try {
+                await fetch("/api/prs/clear", { method: "POST" });
                 // 呼叫後端抓取 (Worker 2)
                 await fetch("/api/queue/add_github", {
                     method: "POST",
@@ -156,7 +157,7 @@ document.addEventListener("DOMContentLoaded", () => {
         if (document.activeElement === prSelect) return;
 
         try {
-            // 如果選單顯示「載入中...」，則跳過更新，避免顯示上次的資料
+            // 如果選單顯示「-- 請先選擇 NF --」，則跳過更新，避免顯示上次的資料
             if (prSelect.options.length === 1 && prSelect.options[0].text === "-- 請先選擇 NF --") {
                 return;
             }
@@ -307,11 +308,18 @@ document.addEventListener("DOMContentLoaded", () => {
                 const downloadCell = taskId
                     ? `<a class="btn-download" href="/api/download/${encodeURIComponent(taskId)}">下載</a>`
                     : "<span style='color:#aaa'>-</span>";
+                const previewCell = taskId
+                    ? `<a class="btn-preview" href="/static/preview.html?taskId=${encodeURIComponent(taskId)}" target="_blank" rel="noopener">預覽</a>`
+                    : "<span style='color:#aaa'>-</span>";
+                const resultText = r.result || "-";
+                const lowerResult = resultText.toLowerCase();
+                const resultColor = lowerResult === "failed" ? "#c62828" : (lowerResult === "running" ? "#fb8c00" : "green");
                 historyList.innerHTML += `
                     <tr>
                         <td>${r.time}</td>
                         <td>${r.task_name}</td>
-                        <td style='color:green'>${r.result}</td>
+                        <td style='color:${resultColor}'>${resultText}</td>
+                        <td>${previewCell}</td>
                         <td>${downloadCell}</td>
                     </tr>`;
             });
@@ -332,6 +340,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
     // 啟動定時器
     setInterval(loadAll, 1000);      // 狀態類每秒更新
-    setInterval(updatePRList, 2000); // 選單類 2 秒更新
+    setInterval(updatePRList, 1000); // 選單類每秒更新
     loadAll(); 
 });
