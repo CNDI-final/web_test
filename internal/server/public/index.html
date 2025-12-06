@@ -73,6 +73,22 @@
             text-decoration: none;
             display: inline-block;
         }
+        .running-task-row {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .spinner {
+            width: 14px;
+            height: 14px;
+            border: 2px solid #81d4fa;
+            border-top-color: #0288d1;
+            border-radius: 50%;
+            animation: spin 0.9s linear infinite;
+        }
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
         
         /* 參數列樣式 */
         .param-row { margin-top: 5px; display: flex; gap: 5px; align-items: center; }
@@ -119,7 +135,7 @@
 
         <!-- 下區塊: 待執行列表 -->
         <div style="margin-top: 20px;">
-            <h4>待執行列表</h4>
+            <h3>📋 待執行列表</h3>
             <div class="scroll-wrapper" style="max-height: 200px; background: #fff;">
                 <table style="width:100%">
                     <thead class="sticky-header">
@@ -136,7 +152,7 @@
             </div>
         </div>
 
-        <div style="margin-top: 15px; text-align: right;">
+        <div style="margin-top: 15px; text-align: center;">
             <span id="run-msg" style="color: brown; font-weight: bold; margin-right: 10px;"></span>
             <button id="run-all-btn" class="btn-run">執行任務</button>
         </div>
@@ -158,7 +174,7 @@
             <h3>🚀 執行中</h3>
             <div class="scroll-wrapper">
                 <table style="width:100%">
-                    <thead class="sticky-header"><tr><th>任務</th><th>進度</th><th>倒數</th></tr></thead>
+                    <thead class="sticky-header"><tr><th>任務</th></tr></thead>
                     <tbody id="running-list"></tbody>
                 </table>
             </div>
