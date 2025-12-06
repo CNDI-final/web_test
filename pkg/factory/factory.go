@@ -62,7 +62,7 @@ func NewFactory(cfg *Config) *Factory {
 	}
 }
 
-func (f *Factory) NewRedisDB() *database.RedisDB {
+func (f *Factory) NewDB() database.ResultStore {
 	return database.NewRedisDB(
 		f.cfg.Redis.Addr,
 		f.cfg.Redis.Password,
@@ -74,11 +74,12 @@ func (f *Factory) NewTaskQueue() queue.TaskQueue {
 	return queue.NewQueue()
 }
 
-func (f *Factory) NewTaskExecutor(redisDB *database.RedisDB, taskQueue queue.TaskQueue) *executor.TaskExecutor {
-	exec := executor.NewTaskExecutor(redisDB, taskQueue)
+func (f *Factory) NewTaskExecutor(redisDB database.ResultStore, taskQueue queue.TaskQueue) *executor.TaskExecutor {
+	var store database.ResultStore = redisDB
+	exec := executor.NewTaskExecutor(store, taskQueue)
 	return exec
 }
 
-func (f *Factory) NewWebServer(redisDB *database.RedisDB, taskQueue queue.TaskQueue) *server.WebServer {
+func (f *Factory) NewWebServer(redisDB database.ResultStore, taskQueue queue.TaskQueue) *server.WebServer {
 	return server.NewWebServer(f.cfg.WebServer.Port, redisDB, taskQueue)
 }

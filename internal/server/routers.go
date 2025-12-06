@@ -20,7 +20,7 @@ type Routes []Route
 
 // AddService registers all the API routes into the provided gin engine.
 // It accepts a Redis client to inject into the WebUI package.
-func AddService(engine *gin.Engine, rdb *database.RedisDB) *gin.RouterGroup {
+func AddService(engine *gin.Engine, rdb database.ResultStore) *gin.RouterGroup {
 	// set package-level DB for handlers
 	DB = rdb
 

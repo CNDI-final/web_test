@@ -31,7 +31,7 @@ func main() {
 	signal.Notify(sigChan, os.Interrupt, syscall.SIGTERM)
 
 	// 初始化依賴
-	redisDB := f.NewRedisDB()
+	database := f.NewDB()
 	taskQueue := f.NewTaskQueue()
 	logger.MainLog.Info("Dependencies initialized")
 
@@ -47,7 +47,7 @@ func main() {
 	wg.Add(1)
 	go func() {
 		defer wg.Done()
-		exec := f.NewTaskExecutor(redisDB, taskQueue)
+		exec := f.NewTaskExecutor(database, taskQueue)
 		logger.MainLog.Info("Executor started")
 		if err := exec.Start(ctx); err != nil && err != context.Canceled {
 			logger.MainLog.Errorf("Executor error: %v", err)
@@ -59,7 +59,7 @@ func main() {
 	wg.Add(1)
 	go func() {
 		defer wg.Done()
-		webServer := f.NewWebServer(redisDB, taskQueue)
+		webServer := f.NewWebServer(database, taskQueue)
 		if err := webServer.Start(ctx); err != nil && err != http.ErrServerClosed {
 			logger.MainLog.Errorf("Server error: %v", err)
 		}

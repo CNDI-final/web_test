@@ -13,25 +13,25 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-var DB *database.RedisDB
+var DB database.ResultStore
 var TaskQ queue.TaskQueue
 
 type WebServer struct {
 	port      string
 	engine    *gin.Engine
 	server    *http.Server
-	redisDB   *database.RedisDB
+	database  database.ResultStore
 	taskQueue queue.TaskQueue
 }
 
-func NewWebServer(port string, redisDB *database.RedisDB, taskQueue queue.TaskQueue) *WebServer {
+func NewWebServer(port string, database database.ResultStore, taskQueue queue.TaskQueue) *WebServer {
 	engine := gin.New()
 	engine.Use(gin.Recovery())
 
 	ws := &WebServer{
 		port:      port,
 		engine:    engine,
-		redisDB:   redisDB,
+		database:  database,
 		taskQueue: taskQueue,
 		server: &http.Server{
 			Addr:    ":" + port,
@@ -40,7 +40,7 @@ func NewWebServer(port string, redisDB *database.RedisDB, taskQueue queue.TaskQu
 	}
 
 	// 設定全局 DB（供 handler 使用）
-	DB = redisDB
+	DB = database
 	TaskQ = taskQueue
 
 	// 註冊路由
@@ -56,7 +56,7 @@ func (ws *WebServer) setupRoutes() {
 	})
 
 	// 使用 AddService 註冊所有 API 路由
-	AddService(ws.engine, ws.redisDB)
+	AddService(ws.engine, ws.database)
 }
 
 // Run 啟動伺服器（使用 sync.WaitGroup）

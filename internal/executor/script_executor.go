@@ -15,10 +15,10 @@ import (
 
 type TaskExecutor struct {
 	queue queue.TaskQueue
-	db    *database.RedisDB
+	db    database.ResultStore
 }
 
-func NewTaskExecutor(db *database.RedisDB, q queue.TaskQueue) *TaskExecutor {
+func NewTaskExecutor(db database.ResultStore, q queue.TaskQueue) *TaskExecutor {
 	return &TaskExecutor{
 		db:    db,
 		queue: q,
