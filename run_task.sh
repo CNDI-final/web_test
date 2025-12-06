@@ -1,5 +1,10 @@
 #!/bin/bash
 
+# ==============================================================================
+# 檔案位置: /home/rs/test/run_ci_task.sh
+# 描述: 智慧型 CI 機器人 (具備 Re-run 與 Release 交叉驗證功能)
+# ==============================================================================
+
 # 1. 設定目標路徑
 #DEFAULT_DIR="/home/rs/ci-test"
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
@@ -12,7 +17,7 @@ SINGLE_TEST_DIR="base/free5gc"
 SINGLE_TEST_CMD="./test"
 
 # 定義需要測試的環境列表
-TEST_ENVS=("ulcl-ti" "ulcl-mp")  
+TEST_ENVS=("ulcl-mp")  #"ulcl-ti" 
 
 # 初始化變數
 CURRENT_ENV=""
@@ -131,7 +136,7 @@ process_line() {
 # ==============================================================================
 smart_failure_handler() {
     local step_name="$1"
-    
+    json_content=$(cat "$SCRIPT_DIR/logs/failures.json")
     if [ ! -s "$FAILED_LIST_FILE" ]; then
         log "${RED}測試失敗，但未能解析出具體的 TestName。無法進行自動修復。${RESET}"
         return 1
@@ -187,12 +192,7 @@ smart_failure_handler() {
     echo -e "${CYAN}🔄 正在切換至 Release 版本進行交叉比對...${RESET}"
     
     # 還原代碼並重新編譯，刪有發PR的NF的image
-    run_quiet $CI_SCRIPT_NAME pull || { log "Release Pull 失敗"; return 1; }
-    for pr_entry in "${PR_LIST[@]}"; do
-        IFS=':' read -r comp id <<< "$pr_entry"
-        run_quiet docker rmi free5gc/${comp}-base:latest || true
-        run_quiet $CI_SCRIPT_NAME build-nf "$comp" || { log "Build $comp 失敗"; return 1; }
-    done
+    restore_and_build
 
     # 再次進入測試目錄
     pushd "$test_dir" > /dev/null || return 1
@@ -236,12 +236,24 @@ run_test_command() {
     # 1. 執行主要的 testAll
     if [ "$VERBOSE" = true ]; then
         "$@"
-        local status=$?
     else
-        pretty_test_runner "$@"
-        local status=$?
+        pretty_test_runner "$@"     
     fi
+    # getlog
+    # scan_logs "$step_name"
+    # local status=$?
+    # if [ $status -ne 0 ] ; then
+    #     # 如果是 testAll 階段失敗，呼叫智慧處理器
+    #     if [[ "$step_name" == "testAll" ]]; then
 
+    #         smart_failure_handler "$step_name"
+    #         # 注意: smart_failure_handler 回傳 0 代表修復成功/Flaky，非 0 代表真的掛了
+    #         return $?
+    #     else
+    #         # 環境測試 (ulcl-ti) 失敗暫時直接報錯 (也可以實作類似邏輯)
+    #         return $status
+    #     fi
+    # fi
     # 2. 如果失敗，啟動機器人介入
     # if [ $status -ne 0 ]; then
     #     # 如果是 testAll 階段失敗，呼叫智慧處理器
@@ -315,9 +327,6 @@ wait_for_log_then_continue_background() {
         # 檢查超時
         local current_time=$(date +%s)
         if (( current_time - start_time > timeout )); then
-            #log "${RED}❌ 等待日誌模式超時 ($timeout 秒)，logs 保存到 ${env}.log${RESET}"
-            #echo "Environment $env setup timed out after $timeout seconds" > "${env}.log"
-            #grep "ERRO" "$log_file" >> "${env}.log"
             # 終止後台命令
             kill "$cmd_pid" 2>/dev/null || true
             exec 3<&-
@@ -341,22 +350,70 @@ cleanup_on_failure() {
         run_quiet $CI_SCRIPT_NAME down "$CURRENT_ENV" || true
     fi
 
-    # 收集失敗日誌
-    log "📋 Collecting failure logs..."
+    log "📋 Collecting logs..."
     mkdir -p "$SCRIPT_DIR/logs"
-    cp -r "$CI_TARGET_DIR/base/free5gc/testing_output" "$SCRIPT_DIR/logs/" 2>/dev/null || true
-    find "$CI_TARGET_DIR" -name "*.log" -exec cp {} "$SCRIPT_DIR/logs/" \; 2>/dev/null || true
-
-    #還原代碼並重新編譯，刪有發PR的NF的image
-    # run_quiet $CI_SCRIPT_NAME pull || { log "Release Pull 失敗"; return 1; }
-    # for pr_entry in "${PR_LIST[@]}"; do
-    #     IFS=':' read -r comp id <<< "$pr_entry"
-    #     run_quiet docker rmi free5gc/${comp}-base:latest || true
-    #     run_quiet $CI_SCRIPT_NAME build-nf "$comp" || { log "Build $comp 失敗"; return 1; }
-    # done
+    find "$CI_TARGET_DIR" -type f -iname "*.log" -exec cp {} "$SCRIPT_DIR/logs/" \; 2>/dev/null || true
+    getlog
+    restore_and_build
     
     rm -f "$FAILED_LIST_FILE"
     exit 1
+}
+
+# 還原代碼並重新編譯，刪有發PR的NF的image
+restore_and_build() {
+    run_quiet $CI_SCRIPT_NAME pull || { log "Release Pull 失敗"; return 1; }
+    for pr_entry in "${PR_LIST[@]}"; do
+        IFS=':' read -r comp id <<< "$pr_entry"
+        run_quiet docker rmi free5gc/${comp}-base:latest || true
+        run_quiet $CI_SCRIPT_NAME build-nf "$comp" || { log "Build $comp 失敗"; return 1; }
+    done
+}
+
+getlog() {
+    log "📋 Collecting logs..."
+    mkdir -p "$SCRIPT_DIR/logs"
+    find "$CI_TARGET_DIR" -type f -iname "*.log" -exec cp {} "$SCRIPT_DIR/logs/" \; 2>/dev/null || true
+}
+# 在 logs 裡掃描是否有 'exit status 1' 的測試紀錄，並輸出 JSON
+scan_logs() {
+    local filter_type="$1"
+    log "🔎 Scanning $SCRIPT_DIR/logs for files containing 'exit status 1'..."
+    
+    # 根據參數過濾文件名
+    local filter_cmd=""
+    if [ "$filter_type" = "ulcl" ]; then
+        filter_cmd="grep ULCL"
+    elif [ "$filter_type" = "testall" ]; then
+        filter_cmd="grep -v ULCL"
+    fi
+    
+    # 抓出所有包含 'exit status 1' 的 .log 檔案名稱，去重
+    local cmd="find \"$SCRIPT_DIR/logs\" -type f -name \"*.log\" -exec grep -l 'exit status 1' {} \; | xargs -n1 basename 2>/dev/null | sort -u"
+    if [ -n "$filter_cmd" ]; then
+        cmd="$cmd | $filter_cmd"
+    fi
+    
+    mapfile -t failed_tests < <(eval "$cmd")
+    
+    #紀錄測試失敗
+    json_file="$SCRIPT_DIR/logs/failures.json"
+    if [ ${#failed_tests[@]} -gt 0 ]; then
+        printf '{"failed_tests": [' > "$json_file"
+        for i in "${!failed_tests[@]}"; do
+            name="${failed_tests[$i]}"
+            esc=$(printf '%s' "$name" | sed 's/"/\\"/g')
+            if [ "$i" -ne 0 ]; then printf ',' >> "$json_file"; fi
+            printf '"%s"' "$esc" >> "$json_file"
+        done
+        printf ']}' >> "$json_file"
+        log "${RED}❌ Files with 'exit status 1': ${#failed_tests[@]} (saved to $json_file)${RESET}"
+        return 1
+    else
+        printf '{"failed_tests": []}\n' > "$json_file"
+        log "${GREEN}✅ All tests passed (no 'exit status 1' found)${RESET}"
+        return 0
+    fi
 }
 
 # 2. 解析參數
@@ -383,7 +440,7 @@ cd "$CI_TARGET_DIR" || exit 1
 
 # ================= 準備階段 =================
 log "🔄 1. Pulling source..."
-# run_quiet $CI_SCRIPT_NAME pull || exit 1
+#run_quiet $CI_SCRIPT_NAME pull || exit 1
 
 # log "📥 2. Fetching PRs..."
 # for pr_entry in "${PR_LIST[@]}"; do
@@ -395,23 +452,20 @@ log "🔄 1. Pulling source..."
 # ================= TestAll 階段 (含機器人邏輯) =================
 log "🧪 3. Pre-build Tests (testAll)..."
 
-
 # 呼叫 run_test_command，如果它回傳 0 (成功或已修復)，才繼續
-if run_test_command "testAll" $CI_SCRIPT_NAME testAll; then
-    log "${GREEN}✅ Pre-build Tests Passed (or Flaky verified)!${RESET}"
-else
-    log "${RED}⛔ Pre-build Tests Failed (Verification confirm regression/env issue).${RESET}"
-    # 這裡直接退出，不執行後面的環境測試
-    # rm -f "$FAILED_LIST_FILE"
-    
-    # # 收集日誌
-    # log "📋 Collecting logs..."
-    # mkdir -p "$SCRIPT_DIR/logs"
-    # cp -r "$CI_TARGET_DIR/base/free5gc/testing_output" "$SCRIPT_DIR/logs/" 2>/dev/null || true
-    # find "$CI_TARGET_DIR" -name "*.log" -exec cp {} "$SCRIPT_DIR/logs/" \; 2>/dev/null || true
+# if run_test_command "testAll" $CI_SCRIPT_NAME testAll; then
+#     log "${GREEN}✅ Pre-build Tests Passed (or Flaky verified)!${RESET}"
+# else
+#     log "${RED}⛔ Pre-build Tests Failed (Verification confirm regression/env issue).${RESET}"
+# fi
 
-    # exit 1
-fi
+# run_test_command "testAll" $CI_SCRIPT_NAME testAll
+# getlog
+# if scan_logs "testall"; then
+#     log "${GREEN}✅ Pre-build Tests Passed!${RESET}"
+# else
+#     log "${RED}⛔ Pre-build Tests Failed.${RESET}"
+# fi
 
 log "🏗️ 5. Building..."
 #run_quiet $CI_SCRIPT_NAME build || { log "Build 失敗"; exit 1; }
@@ -422,6 +476,8 @@ log "🏗️ 5. Building..."
 #     run_quiet $CI_SCRIPT_NAME build-nf "$comp" || { log "Build $comp 失敗"; return 1; }
 # done
 
+
+
 # ================= 循環測試階段 =================
 log "🚀 Starting Test Cycles..."
 
@@ -431,12 +487,10 @@ log "🚀 Starting Test Cycles..."
 #     echo "------------------------------------------------"
 #     log "▶️  Testing Environment: $CURRENT_ENV"
 #     log "🔌 Starting ($CURRENT_ENV)..."
-#     #run_quiet $CI_SCRIPT_NAME up "$CURRENT_ENV" || cleanup_on_failure
 #     # 等待 60 次 handleHeartbeatRequest 日誌，匹配後讓命令繼續在後台運行
 #     wait_for_log_then_continue_background "$CI_SCRIPT_NAME up \"$CURRENT_ENV\"" "handleHeartbeatRequest" || cleanup_on_failure
     
 #     log "⚡ Running tests ($CURRENT_ENV)..."
-    
 #     if run_test_command "$ENV" $CI_SCRIPT_NAME test "$ENV"; then
 #         log "${GREEN}✅ All Tests Passed ($CURRENT_ENV)!${RESET}"
 #     else
@@ -449,42 +503,20 @@ log "🚀 Starting Test Cycles..."
 #     CURRENT_ENV=""
 # done
 
-# 還原代碼並重新編譯，刪有發PR的NF的image
-# run_quiet $CI_SCRIPT_NAME pull || { log "Release Pull 失敗"; return 1; }
-# for pr_entry in "${PR_LIST[@]}"; do
-#     IFS=':' read -r comp id <<< "$pr_entry"
-#     run_quiet docker rmi free5gc/${comp}-base:latest || true
-#     run_quiet $CI_SCRIPT_NAME build-nf "$comp" || { log "Build $comp 失敗"; return 1; }
-# done
+#restore_and_build
 
-# 收集日誌（收集 $CI_TARGET_DIR 底下所有 log）
-log "📋 Collecting logs..."
-mkdir -p "$SCRIPT_DIR/logs"
-# 若存在 testing_output 資料夾，先整個複製過來
-#cp -r "$CI_TARGET_DIR/base/free5gc/testing_output" "$SCRIPT_DIR/logs/" 2>/dev/null || true
-# 複製 CI 目錄下所有 .log 檔（包含各環境/子目錄）
-find "$CI_TARGET_DIR" -type f -iname "*.log" -exec cp {} "$SCRIPT_DIR/logs/" \; 2>/dev/null || true
-
-# 在 logs 裡掃描是否有 'exit status 1' 的測試紀錄，並輸出 JSON
-log "🔎 Scanning $SCRIPT_DIR/logs for files containing 'exit status 1'..."
-# 抓出所有包含 'exit status 1' 的 .log 檔案名稱，去重
-mapfile -t failed_tests < <(find "$SCRIPT_DIR/logs" -type f -name "*.log" -exec grep -l 'exit status 1' {} \; | xargs -n1 basename 2>/dev/null | sort -u)
-
-json_file="$SCRIPT_DIR/logs/failures.json"
-if [ ${#failed_tests[@]} -gt 0 ]; then
-    printf '{"failed_tests": [' > "$json_file"
-    for i in "${!failed_tests[@]}"; do
-        name="${failed_tests[$i]}"
-        esc=$(printf '%s' "$name" | sed 's/"/\\"/g')
-        if [ "$i" -ne 0 ]; then printf ',' >> "$json_file"; fi
-        printf '"%s"' "$esc" >> "$json_file"
-    done
-    printf ']}' >> "$json_file"
-    log "🔔 Files with 'exit status 1': ${#failed_tests[@]} (saved to $json_file)"
-else
-    printf '{"failed_tests": []}\n' > "$json_file"
-    log "✅ No files with 'exit status 1' found; wrote empty $json_file"
-fi
+# ================= 完成階段 =================
+#取得ci-test 內的logs
+getlog
+# 調用函數（這裡可以根據需要傳遞參數，例如從命令行參數獲取）
+# 例如：scan_logs "ulcl" 或 scan_logs "testall" 或 scan_logs
+scan_logs
+final_status=$?
 
 log "🎉 All Tasks Completed!"
 rm -f "$FAILED_LIST_FILE"
+if [ $final_status -ne 0 ]; then
+    exit 1
+else
+    exit 0
+fi
