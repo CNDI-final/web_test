@@ -46,6 +46,7 @@ func GetQueueHandler(c *gin.Context) {
 		taskId, _ := strconv.Atoi(tmp.ID)
 		t := models.InternalMessage{
 			TaskID: taskId,
+			TaskName: fmt.Sprintf("Test Task %s", tmp.ID),
 			Params: params,
 		}
 		return_tasks = append(return_tasks, t)

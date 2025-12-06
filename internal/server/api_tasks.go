@@ -39,7 +39,7 @@ func GetRunningTasksHandler(c *gin.Context) {
 		}
 		var p models.ProgressInfo
 		p.TaskID, _ = strconv.Atoi(tmp.ID)
-		p.TaskName = fmt.Sprintf("task %d running", tmp.ID) // Placeholder status
+		p.TaskName = fmt.Sprintf("Test Task %s running", tmp.ID) // Placeholder status
 		p.Percent = 0                                       // Placeholder percent
 		p.Remaining = 0                                     // Placeholder remaining time
 		running = append(running, p)
