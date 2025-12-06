@@ -13,6 +13,9 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
+var DB *database.RedisDB
+var TaskQ queue.TaskQueue
+
 type WebServer struct {
 	port      string
 	engine    *gin.Engine
@@ -38,6 +41,7 @@ func NewWebServer(port string, redisDB *database.RedisDB, taskQueue queue.TaskQu
 
 	// 設定全局 DB（供 handler 使用）
 	DB = redisDB
+	TaskQ = taskQueue
 
 	// 註冊路由
 	ws.setupRoutes()

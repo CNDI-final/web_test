@@ -8,8 +8,8 @@ import (
 
 	"github.com/gin-gonic/gin"
 
+	"web_test/internal/logger"
 	"web_test/pkg/models"
-	"web_test/pkg/queue"
 )
 
 // 3. 加入 GitHub 抓取任務
@@ -30,7 +30,7 @@ func AddGitHubTaskHandler(c *gin.Context) {
 				TaskName: "GitHub Fetch",
 				Result:   resp.Summary,
 			}
-			DB.SaveHistory(ctx,&rec)
+			DB.SaveHistory(ctx, &rec)
 			// 存快取
 			prsJSON, _ := json.Marshal(resp.PRs)
 			DB.SavePrCache(ctx, prsJSON)
@@ -56,16 +56,19 @@ func GetCachedPRsHandler(c *gin.Context) {
 
 // 5. 執行 PR 任務 (加入佇列)
 func RunPRTaskHandler(c *gin.Context) {
-	if queue.GlobalQueue == nil {
+	if TaskQ == nil {
 		c.JSON(500, gin.H{"error": "task queue is not initialized"})
 		return
 	}
 	ctx := context.Background()
 	var req models.RunPRRequest
 	if err := c.ShouldBindJSON(&req); err != nil {
+		logger.WebLog.Errorf("Failed to bind JSON: %v", err)
 		c.JSON(400, gin.H{"error": "invalid payload"})
 		return
 	}
+	logger.WebLog.Infof("Received request: %+v", req)
+	logger.WebLog.Infof("Params map: %v, length: %d", req.Params, len(req.Params))
 
 	taskID, err := GenerateUniqueTaskID() // Use the new unique ID generator
 	if err != nil {
@@ -73,18 +76,19 @@ func RunPRTaskHandler(c *gin.Context) {
 		return
 	}
 	var params []models.TaskParams
-	for nf, PRNumber := range req.Params {
+	for nf, prVersion := range req.Params {
+		logger.WebLog.Infof("Processing NF: %s, PRVersion: %s", nf, prVersion)
 		params = append(params, models.TaskParams{
-			NF:   nf,
-			PRVersion: PRNumber,
+			NF:        nf,
+			PRVersion: prVersion,
 		})
 	}
 	task := models.Task{
-		ID:   fmt.Sprintf("%d",taskID), // Assign the generated unique TaskID
-		Params:   params, // 轉發參數
+		ID:     fmt.Sprintf("%d", taskID), // Assign the generated unique TaskID
+		Params: params,                    // 轉發參數
 	}
-
-	if err := queue.GlobalQueue.PushTask(ctx, &task); err != nil {
+	logger.WebLog.Infof("Enqueuing PR task %s with params: %v", task.ID, req.Params)
+	if err := TaskQ.PushTask(ctx, &task); err != nil {
 		c.JSON(500, gin.H{"error": fmt.Sprintf("failed to enqueue task: %v", err)})
 		return
 	}

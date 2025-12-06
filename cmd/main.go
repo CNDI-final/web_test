@@ -3,6 +3,7 @@ package main
 import (
 	"context"
 	"flag"
+	"net/http"
 	"os"
 	"os/signal"
 	"sync"
@@ -59,9 +60,10 @@ func main() {
 	go func() {
 		defer wg.Done()
 		webServer := f.NewWebServer(redisDB, taskQueue)
-		if err := webServer.Start(context.Background()); err != nil {
+		if err := webServer.Start(ctx); err != nil && err != http.ErrServerClosed {
 			logger.MainLog.Errorf("Server error: %v", err)
 		}
+		logger.MainLog.Info("Web server stopped")
 	}()
 
 	wg.Wait()

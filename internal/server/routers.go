@@ -8,9 +8,6 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-// DB is the injected Redis client used by handlers.
-var DB *database.RedisDB
-
 // Route is the information for every URI.
 type Route struct {
 	Name        string

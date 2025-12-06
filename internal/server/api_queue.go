@@ -10,18 +10,17 @@ import (
 	"github.com/gin-gonic/gin"
 	"web_test/internal/logger" // Import logger
 	"web_test/pkg/models"
-	"web_test/pkg/queue"
 )
 
 // 1. 取得佇列
 func GetQueueHandler(c *gin.Context) {
-	if queue.GlobalQueue == nil {
+	if TaskQ == nil {
 		c.JSON(500, gin.H{"error": "task queue is not initialized"})
 		return
 	}
 	ctx := context.Background()
 
-	tasks, err := queue.GlobalQueue.GetTasks(ctx)
+	tasks, err := TaskQ.GetTasks(ctx)
 	if err != nil {
 		logger.WebLog.Errorf("GetQueueHandler: Failed to get tasks from queue: %v", err)
 		c.JSON(500, gin.H{"error": "failed to get tasks from queue"})
@@ -44,7 +43,7 @@ func GetQueueHandler(c *gin.Context) {
 		for _, p := range task.Params {
 			params[p.NF] = p.PRVersion
 		}
-		taskId,_ := strconv.Atoi(tmp.ID)
+		taskId, _ := strconv.Atoi(tmp.ID)
 		t := models.InternalMessage{
 			TaskID: taskId,
 			Params: params,
@@ -56,7 +55,7 @@ func GetQueueHandler(c *gin.Context) {
 
 // 2. 刪除佇列任務
 func DeleteFromQueueHandler(c *gin.Context) {
-	if queue.GlobalQueue == nil {
+	if TaskQ == nil {
 		c.JSON(500, gin.H{"error": "task queue is not initialized"})
 		return
 	}
@@ -70,7 +69,7 @@ func DeleteFromQueueHandler(c *gin.Context) {
 	}
 
 	deleted := false
-	if err := queue.GlobalQueue.RemoveTask(ctx, taskIDStr); err == nil {
+	if err := TaskQ.RemoveTask(ctx, taskIDStr); err == nil {
 		deleted = true
 	} else {
 		logger.WebLog.Errorf("DeleteFromQueueHandler: Failed to remove task %d from queue: %v", targetID, err)
