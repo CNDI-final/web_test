@@ -20,13 +20,27 @@ func GetQueueHandler(c *gin.Context) {
 	}
 	ctx := context.Background()
 
+	var return_tasks []models.TaskResult
+	running_tasks,err := DB.GetRunningTasks(ctx)
+	if err != nil {
+		logger.WebLog.Errorf("GetQueueHandler: Failed to get running tasks: %v", err)
+		c.JSON(500, gin.H{"error": "failed to get running tasks"})
+		return
+	}
+	for _, rt := range running_tasks {
+		taskResult := models.TaskResult{
+			TaskID:    rt.TaskID,
+			Status:    "running",
+		}
+		return_tasks = append(return_tasks, taskResult)
+	}
+
 	tasks, err := TaskQ.GetTasks(ctx)
 	if err != nil {
 		logger.WebLog.Errorf("GetQueueHandler: Failed to get tasks from queue: %v", err)
 		c.JSON(500, gin.H{"error": "failed to get tasks from queue"})
 		return
 	}
-	var return_tasks []models.Task
 	for _, task := range tasks {
 		taskBytes, err := json.Marshal(task)
 		if err != nil {
@@ -39,7 +53,11 @@ func GetQueueHandler(c *gin.Context) {
 			logger.WebLog.Warnf("GetQueueHandler: Failed to unmarshal task from queue: %v", err)
 			continue
 		}
-		return_tasks = append(return_tasks, tmp)
+		taskResult := models.TaskResult{
+			TaskID:    tmp.ID,
+			Status:    "queueing", // Placeholder status
+		}
+		return_tasks = append(return_tasks, taskResult)
 	}
 	c.JSON(200, return_tasks)
 }

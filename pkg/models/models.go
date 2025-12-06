@@ -15,7 +15,7 @@ type Task struct {
 // TaskResult 定義回傳給 Web Server 的結果
 type TaskResult struct {
 	TaskID      string   `json:"task_id"`
-	Status      string   `json:"status"` // "success" or "failed or running"
+	Status      string   `json:"status"` // "success" or "failed or running" or "queueing"
 	Logs        []string `json:"logs"`
 	FailedTests []string `json:"failed_tests,omitempty"` // 修改：多個失敗測試名稱
 	Timestamp   int64    `json:"timestamp"`
