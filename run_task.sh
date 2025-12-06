@@ -442,7 +442,7 @@ cd "$CI_TARGET_DIR" || exit 1
 log "🔄 1. Pulling source..."
 #run_quiet $CI_SCRIPT_NAME pull || exit 1
 
-# log "📥 2. Fetching PRs..."
+log "📥 2. Fetching PRs..."
 # for pr_entry in "${PR_LIST[@]}"; do
 #     IFS=':' read -r comp id <<< "$pr_entry"
 #     log "   -> Fetching $comp #$id"
@@ -451,14 +451,6 @@ log "🔄 1. Pulling source..."
 
 # ================= TestAll 階段 (含機器人邏輯) =================
 log "🧪 3. Pre-build Tests (testAll)..."
-
-# 呼叫 run_test_command，如果它回傳 0 (成功或已修復)，才繼續
-# if run_test_command "testAll" $CI_SCRIPT_NAME testAll; then
-#     log "${GREEN}✅ Pre-build Tests Passed (or Flaky verified)!${RESET}"
-# else
-#     log "${RED}⛔ Pre-build Tests Failed (Verification confirm regression/env issue).${RESET}"
-# fi
-
 # run_test_command "testAll" $CI_SCRIPT_NAME testAll
 # getlog
 # if scan_logs "testall"; then
