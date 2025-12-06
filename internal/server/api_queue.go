@@ -26,32 +26,7 @@ func GetQueueHandler(c *gin.Context) {
 		c.JSON(500, gin.H{"error": "failed to get tasks from queue"})
 		return
 	}
-	var return_tasks []models.InternalMessage
-	for _, task := range tasks {
-		taskBytes, err := json.Marshal(task)
-		if err != nil {
-			logger.WebLog.Warnf("序列化失敗: %v", err)
-			c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to encode task"})
-			return
-		}
-		var tmp models.Task
-		if err := json.Unmarshal([]byte(taskBytes), &tmp); err != nil {
-			logger.WebLog.Warnf("GetQueueHandler: Failed to unmarshal task from queue: %v", err)
-			continue
-		}
-		params := make(map[string]string)
-		for _, p := range task.Params {
-			params[p.NF] = p.PRVersion
-		}
-		taskId, _ := strconv.Atoi(tmp.ID)
-		t := models.InternalMessage{
-			TaskID: taskId,
-			TaskName: fmt.Sprintf("Test Task %s", tmp.ID),
-			Params: params,
-		}
-		return_tasks = append(return_tasks, t)
-	}
-	c.JSON(200, return_tasks)
+	c.JSON(200, tasks)
 }
 
 // 2. 刪除佇列任務
