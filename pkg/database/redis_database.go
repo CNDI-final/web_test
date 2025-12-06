@@ -122,16 +122,16 @@ func (r *RedisDB) SaveHistory(ctx context.Context, record *models.HistoryRecord)
 		return err
 	}
 	// Use RPush to add to the end of the list
-	if err := r.client.RPush(ctx, historyListKey, data).Err(); err != nil {
+	if err := r.client.LPush(ctx, historyListKey, data).Err(); err != nil {
 		return err
 	}
 	return nil
 }
 
 // GetHistory retrieves all historical task records from Redis.
-func (r *RedisDB) GetHistory(ctx context.Context) ([]*models.HistoryRecord, error) {
+func (r *RedisDB) GetHistory(ctx context.Context,start, end int64) ([]*models.HistoryRecord, error) {
 	// Use LRange to get all elements from the list
-	data, err := r.client.LRange(ctx, historyListKey, -100, -1).Result()
+	data, err := r.client.LRange(ctx, historyListKey, start, end).Result()
 	if err != nil {
 		return nil, err
 	}
