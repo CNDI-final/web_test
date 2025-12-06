@@ -3,6 +3,8 @@ package server
 import (
 	"context"
 	"encoding/json"
+	"net/http"
+	"strconv"
 
 	"github.com/gin-gonic/gin"
 
@@ -20,8 +22,9 @@ func HistoryHandler(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid page"})
 		return
 	}
-	start := page * 100
-	end := start + 99
+	var start, end int64
+	start = int64(page * 100)
+	end = int64(start + 99)
 	val, err := DB.GetHistory(ctx, start, end)
 	if err != nil {
 		c.JSON(500, gin.H{"error": "failed to retrieve history"})
