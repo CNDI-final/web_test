@@ -4,9 +4,22 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>DevOps 自動化控制台</title>
+
+     <!-- Google Fonts：Sans + Serif 組合 -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700&family=Noto+Serif+TC:wght@400;700&display=swap" rel="stylesheet">
+
     <style>
-        body { font-family: "Microsoft JhengHei", sans-serif; max-width: 1200px; margin: 20px auto; padding: 0 20px; }
+        /* 正文：無襯線 */
+        body { font-family: "Noto Sans TC", "Microsoft JhengHei", sans-serif; max-width: 1200px; margin: 20px auto; padding: 0 20px; }
         
+        /* 標題：襯線體 */
+        h1, h2, h3, h4 { 
+            font-family: "Noto Serif TC", "Noto Sans TC", serif; 
+            font-weight: 700;
+        }
+
         /* 卡片樣式 */
         .card { border: 1px solid #ccc; padding: 20px; border-radius: 8px; margin-bottom: 20px; background: #f9f9f9; }
         
@@ -60,7 +73,7 @@
     <h1>DevOps 自動化控制台</h1>
 
     <div class="card" style="background: #fff3e0; border-color: #ffcc80;">
-        <h3>▶️ Step 1: 選擇與添加任務</h3>
+        <h3>▶️ 選擇與添加任務</h3>
         
         <!-- 上區塊: 選擇 NF 與 PR -->
         <div style="display: flex; gap: 10px; align-items: flex-end; background: #fff; padding: 15px; border-radius: 4px; border: 1px solid #eee;">
@@ -90,17 +103,8 @@
                 </select>
             </div>
 
-            <div style="flex: 0 0 150px;">
-                <label>動作:</label><br>
-                <select id="action-select" style="width: 100%; margin-top: 5px; padding: 8px;">
-                    <option value="CI Build">CI Build</option>
-                    <option value="Unit Test">Unit Test</option>
-                    <option value="Deploy">Deploy</option>
-                </select>
-            </div>
-
-            <div>
-                <button id="add-to-list-btn" class="btn-gh" style="height: 38px;">添加</button>
+            <div style="flex: 0 0 120px; text-align: right;">
+                <button id="add-to-list-btn" class="btn-gh" style="height: 38px; width: 100%;">添加</button>
             </div>
         </div>
 
@@ -113,7 +117,6 @@
                         <tr>
                             <th>NF</th>
                             <th>PR</th>
-                            <th>動作</th>
                             <th>操作</th>
                         </tr>
                     </thead>

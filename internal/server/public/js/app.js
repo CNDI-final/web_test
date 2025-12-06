@@ -2,7 +2,6 @@ document.addEventListener("DOMContentLoaded", () => {
     // === DOM 元素取得 ===
     const nfSelect = document.getElementById("nf-select");
     const prSelect = document.getElementById("pr-select");
-    const actionSelect = document.getElementById("action-select");
     
     const addToListBtn = document.getElementById("add-to-list-btn");
     const selectedTasksBody = document.getElementById("selected-tasks-body");
@@ -50,7 +49,6 @@ document.addEventListener("DOMContentLoaded", () => {
         addToListBtn.addEventListener("click", () => {
             const nf = nfSelect.value;
             const prVal = prSelect.value;
-            const action = actionSelect.value;
             
             if (!nf) return alert("請選擇 NF");
             if (!prVal) return alert("請選擇 PR");
@@ -63,8 +61,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 id: Date.now(), // 暫時 ID
                 nf: nf,
                 prNumber: prNumber,
-                prTitle: prTitle,
-                action: action
+                prTitle: prTitle
             };
 
             selectedTasks.push(task);
@@ -79,7 +76,6 @@ document.addEventListener("DOMContentLoaded", () => {
             tr.innerHTML = `
                 <td>${task.nf}</td>
                 <td>#${task.prNumber}: ${task.prTitle.substring(0, 20)}...</td>
-                <td>${task.action}</td>
                 <td><button class="btn-del" data-local-id="${task.id}">刪除</button></td>
             `;
             selectedTasksBody.appendChild(tr);
@@ -109,15 +105,11 @@ document.addEventListener("DOMContentLoaded", () => {
 
             try {
                 for (const task of selectedTasks) {
+                    const params = { [task.nf]: String(task.prNumber) };
                     await fetch("/api/run-pr", {
                         method: "POST",
                         headers: { "Content-Type": "application/json" },
-                        body: JSON.stringify({
-                            pr_number: task.prNumber,
-                            pr_title: `[${task.nf}] ${task.prTitle}`,
-                            action: task.action,
-                            params: {} // 暫無參數
-                        })
+                        body: JSON.stringify({ params })
                     });
                 }
                 
