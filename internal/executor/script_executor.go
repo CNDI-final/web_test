@@ -1,8 +1,10 @@
 package executor
 
 import (
+	"bytes"
 	"context"
 	"fmt"
+	"io"
 	"os"
 	"os/exec"
 	"path/filepath"
@@ -57,7 +59,6 @@ func (e *TaskExecutor) processNextTask(ctx context.Context) error {
 
 	// 建構日誌訊息
 	var paramStrs []string
-	logger.ExecutorLog.Infof("Processing task %s", task.Params)
 	for _, p := range task.Params {
 		paramStrs = append(paramStrs, fmt.Sprintf("%s:%s", p.NF, p.PRVersion))
 	}
@@ -141,18 +142,37 @@ func (e *TaskExecutor) doActualWork(ctx context.Context, task *models.Task) (str
 	args := []string{"-n"}
 	for _, param := range task.Params {
 		args = append(args, "-p", fmt.Sprintf("%s:%s", param.NF, param.PRVersion))
-		logger.ExecutorLog.Infof("Adding param: NF=%s, PRVersion=%s", param.NF, param.PRVersion)
 	}
 
 	wd, _ := os.Getwd()
-	scriptPath := filepath.Clean(filepath.Join(wd, "..", "..", "run_task.sh"))
+	scriptPath := filepath.Clean(filepath.Join(wd, "run_task.sh"))
 
 	// 執行 run_task.sh，傳遞多個 -p 參數
-	cmd := exec.CommandContext(ctx, scriptPath, args...)
+	cmd := exec.CommandContext(ctx, "sudo", append([]string{scriptPath}, args...)...)
 
-	// 執行命令並捕獲輸出
-	output, err := cmd.CombinedOutput()
-	logs := string(output)
+	result := &models.TaskResult{
+		TaskID:    task.ID,
+		Status:    "running",
+		Logs:      "",
+		Timestamp: time.Now().Unix(),
+	}
+
+	if err := e.db.SaveResult(ctx, result); err != nil {
+		logger.ExecutorLog.Errorf("Failed to save result for task %s: %v", task.ID, err)
+		return "", nil, err
+	}
+
+	var logBuffer bytes.Buffer
+
+	multiWriter := io.MultiWriter(os.Stdout, &logBuffer)
+
+	cmd.Stdout = multiWriter
+	cmd.Stderr = multiWriter
+
+	err := cmd.Run()
+
+	// 7. 從 Buffer 取出完整的 Log 字串
+	logs := logBuffer.String()
 
 	// 解析失敗測試及其對應 logs
 	failedTestLogs := parseFailedTestLogs(logs)
