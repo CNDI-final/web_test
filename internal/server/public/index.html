@@ -64,6 +64,15 @@
         .btn-run { background: #ff9800; }
         .btn-del { background: #dc3545; padding: 4px 8px; font-size: 0.8em; }
         .btn-add-param { background: #795548; font-size: 0.8em; margin-top: 5px; }
+        .btn-download {
+            background: #1976d2;
+            padding: 4px 10px;
+            font-size: 0.8em;
+            border-radius: 4px;
+            color: #fff;
+            text-decoration: none;
+            display: inline-block;
+        }
         
         /* 參數列樣式 */
         .param-row { margin-top: 5px; display: flex; gap: 5px; align-items: center; }
@@ -159,7 +168,7 @@
             <h3>✅ 歷史</h3>
             <div class="scroll-wrapper">
                 <table style="width:100%">
-                    <thead class="sticky-header"><tr><th>時間</th><th>任務</th><th>結果</th></tr></thead>
+                    <thead class="sticky-header"><tr><th>時間</th><th>任務</th><th>結果</th><th>下載</th></tr></thead>
                     <tbody id="history-list"></tbody>
                 </table>
             </div>

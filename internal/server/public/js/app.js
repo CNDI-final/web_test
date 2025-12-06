@@ -302,14 +302,25 @@ document.addEventListener("DOMContentLoaded", () => {
             if (!records) return;
 
             records.forEach(r => {
+                const taskId = extractTaskId(r.task_name);
+                const downloadCell = taskId
+                    ? `<a class="btn-download" href="/api/download/${encodeURIComponent(taskId)}">下載</a>`
+                    : "<span style='color:#aaa'>-</span>";
                 historyList.innerHTML += `
                     <tr>
                         <td>${r.time}</td>
                         <td>${r.task_name}</td>
                         <td style='color:green'>${r.result}</td>
+                        <td>${downloadCell}</td>
                     </tr>`;
             });
         } catch (e) {}
+    }
+
+    function extractTaskId(taskName) {
+        if (!taskName) return null;
+        const match = taskName.match(/(\d+)(?!.*\d)/); // capture last number in string
+        return match ? match[1] : null;
     }
 
     function loadAll() {
