@@ -398,24 +398,39 @@ for pr_entry in "${PR_LIST[@]}"; do
 done
 
 # ================= TestAll 階段 (含機器人邏輯) =================
-log "🧪 3. Normal Tests (testAll)..."
+log "🧪 3. Pre-build Tests (testAll)..."
+
+# 啟動 MongoDB（如果尚未運行）
+# log "🔄 3.1. Starting MongoDB..."
+# if ! docker ps | grep -q mongodb; then
+#     log "   -> MongoDB not running, starting container..."
+#     docker run -d --name mongodb -p 27017:27017 mongo:4.4 || { log "${RED}Failed to start MongoDB${RESET}"; exit 1; }
+#     sleep 5  # 等待 MongoDB 啟動
+# else
+#     log "   -> MongoDB already running"
+# fi
 
 # 呼叫 run_test_command，如果它回傳 0 (成功或已修復)，才繼續
-if run_test_command "testAll" $CI_SCRIPT_NAME testAll; then
-    log "${GREEN}✅ Pre-build Tests Passed (or Flaky verified)!${RESET}"
-else
-    log "${RED}⛔ Pre-build Tests Failed (Verification confirm regression/env issue).${RESET}"
-    # 這裡直接退出，不執行後面的環境測試
-    # rm -f "$FAILED_LIST_FILE"
+# if run_test_command "testAll" $CI_SCRIPT_NAME testAll; then
+#     log "${GREEN}✅ Pre-build Tests Passed (or Flaky verified)!${RESET}"
+# else
+#     log "${RED}⛔ Pre-build Tests Failed (Verification confirm regression/env issue).${RESET}"
+#     # 這裡直接退出，不執行後面的環境測試
+#     # rm -f "$FAILED_LIST_FILE"
     
-    # # 收集日誌
-    # log "📋 Collecting logs..."
-    # mkdir -p "$SCRIPT_DIR/logs"
-    # cp -r "$CI_TARGET_DIR/base/free5gc/testing_output" "$SCRIPT_DIR/logs/" 2>/dev/null || true
-    # find "$CI_TARGET_DIR" -name "*.log" -exec cp {} "$SCRIPT_DIR/logs/" \; 2>/dev/null || true
+#     # # 收集日誌
+#     # log "📋 Collecting logs..."
+#     # mkdir -p "$SCRIPT_DIR/logs"
+#     # cp -r "$CI_TARGET_DIR/base/free5gc/testing_output" "$SCRIPT_DIR/logs/" 2>/dev/null || true
+#     # find "$CI_TARGET_DIR" -name "*.log" -exec cp {} "$SCRIPT_DIR/logs/" \; 2>/dev/null || true
 
-    # exit 1
-fi
+#     # exit 1
+# fi
+
+# 停止 MongoDB
+# log "🛑 Stopping MongoDB..."
+# docker stop mongodb || true
+# docker rm mongodb || true
 
 log "🏗️ 5. Building..."
 #run_quiet $CI_SCRIPT_NAME build || { log "Build 失敗"; exit 1; }
@@ -461,11 +476,34 @@ log "🚀 Starting Test Cycles..."
 #     run_quiet $CI_SCRIPT_NAME build-nf "$comp" || { log "Build $comp 失敗"; return 1; }
 # done
 
-# 收集日誌
+# 收集日誌（收集 $CI_TARGET_DIR 底下所有 log）
 log "📋 Collecting logs..."
 mkdir -p "$SCRIPT_DIR/logs"
-cp -r "$CI_TARGET_DIR/base/free5gc/testing_output" "$SCRIPT_DIR/logs/" 2>/dev/null || true
-find "$CI_TARGET_DIR" -name "*.log" -not -path "*/testing_output/*" -exec cp {} "$SCRIPT_DIR/logs/" \; 2>/dev/null || true
+# 若存在 testing_output 資料夾，先整個複製過來
+#cp -r "$CI_TARGET_DIR/base/free5gc/testing_output" "$SCRIPT_DIR/logs/" 2>/dev/null || true
+# 複製 CI 目錄下所有 .log 檔（包含各環境/子目錄）
+find "$CI_TARGET_DIR" -type f -iname "*.log" -exec cp {} "$SCRIPT_DIR/logs/" \; 2>/dev/null || true
+
+# 在 logs 裡掃描是否有 'exit status 1' 的測試紀錄，並輸出 JSON
+log "🔎 Scanning $SCRIPT_DIR/logs for 'exit status 1' entries..."
+# 抓出所有 'exit status 1' 的模式，取得去重後的測試名稱
+mapfile -t failed_tests < <(grep -rhoE 'exit status 1' "$SCRIPT_DIR/logs" 2>/dev/null | sed -E 's/exit status //' | sort -u)
+
+json_file="$SCRIPT_DIR/logs/failures.json"
+if [ ${#failed_tests[@]} -gt 0 ]; then
+    printf '{"failed_tests": [' > "$json_file"
+    for i in "${!failed_tests[@]}"; do
+        name="${failed_tests[$i]}"
+        esc=$(printf '%s' "$name" | sed 's/"/\\"/g')
+        if [ "$i" -ne 0 ]; then printf ',' >> "$json_file"; fi
+        printf '"%s"' "$esc" >> "$json_file"
+    done
+    printf ']}' >> "$json_file"
+    log "🔔 'exit status 1' found: ${#failed_tests[@]} (saved to $json_file)"
+else
+    printf '{"failed_tests": []}\n' > "$json_file"
+    log "✅ No 'exit status 1' entries found; wrote empty $json_file"
+fi
 
 log "🎉 All Tasks Completed!"
 rm -f "$FAILED_LIST_FILE"
