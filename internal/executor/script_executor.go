@@ -69,7 +69,6 @@ func (e *TaskExecutor) processNextTask(ctx context.Context) error {
 	runningResult := &models.TaskResult{
 		TaskID:    task.ID,
 		Status:    "running",
-		Logs:      []string{"Task is running"},
 		Timestamp: time.Now().Unix(),
 	}
 
@@ -97,7 +96,6 @@ func (e *TaskExecutor) executeTask(ctx context.Context, task *models.Task) {
 		result := &models.TaskResult{
 			TaskID:    task.ID,
 			Status:    "Success",
-			Logs:      []string{"Task executed successfully"},
 			Timestamp: time.Now().Unix(),
 		}
 		e.db.SaveResult(ctx, result)
