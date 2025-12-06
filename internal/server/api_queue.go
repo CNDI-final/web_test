@@ -2,12 +2,14 @@ package server
 
 import (
 	"context"
+	"encoding/json"
 	"fmt"      // Add fmt for Sprintf
 	"net/http" // Add http for status codes
 	"strconv"
 
 	"github.com/gin-gonic/gin"
 	"web_test/internal/logger" // Import logger
+	"web_test/pkg/models"
 )
 
 // 1. 取得佇列
@@ -24,7 +26,22 @@ func GetQueueHandler(c *gin.Context) {
 		c.JSON(500, gin.H{"error": "failed to get tasks from queue"})
 		return
 	}
-	c.JSON(200, tasks)
+	var return_tasks []models.Task
+	for _, task := range tasks {
+		taskBytes, err := json.Marshal(task)
+		if err != nil {
+			logger.WebLog.Warnf("序列化失敗: %v", err)
+			c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to encode task"})
+			return
+		}
+		var tmp models.Task
+		if err := json.Unmarshal([]byte(taskBytes), &tmp); err != nil {
+			logger.WebLog.Warnf("GetQueueHandler: Failed to unmarshal task from queue: %v", err)
+			continue
+		}
+		return_tasks = append(return_tasks, tmp)
+	}
+	c.JSON(200, return_tasks)
 }
 
 // 2. 刪除佇列任務
