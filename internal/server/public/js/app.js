@@ -108,15 +108,17 @@ document.addEventListener("DOMContentLoaded", () => {
             runAllBtn.disabled = true;
 
             try {
-                for (const task of selectedTasks) {
-                    const params = { [task.nf]: String(task.prNumber) };
-                    await fetch("/api/run-pr", {
-                        method: "POST",
-                        headers: { "Content-Type": "application/json" },
-                        body: JSON.stringify({ params })
-                    });
-                }
-                
+                const params = selectedTasks.reduce((acc, task) => {
+                    acc[task.nf] = String(task.prNumber);
+                    return acc;
+                }, {});
+
+                await fetch("/api/run-pr", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ params })
+                });
+
                 runMsg.innerText = `已發送 ${selectedTasks.length} 個任務`;
                 selectedTasks = [];
                 renderSelectedTasks();
@@ -251,20 +253,19 @@ document.addEventListener("DOMContentLoaded", () => {
             
             runningList.innerHTML = "";
             if (!tasks || tasks.length === 0) {
-                runningList.innerHTML = "<tr><td colspan='3' style='color:#999; text-align:center;'>無任務執行中</td></tr>";
+                runningList.innerHTML = "<tr><td style='color:#999; text-align:center;'>無任務執行中</td></tr>";
                 return;
             }
 
             tasks.forEach(t => {
                 runningList.innerHTML += `
                     <tr>
-                        <td><small>${t.task_name}</small></td>
                         <td>
-                            <div style="background:#eee; width:100%; height:8px; border-radius:4px; overflow:hidden;">
-                                <div style="background:#2196f3; width:${t.percent}%; height:100%; transition: width 0.5s;"></div>
+                            <div class="running-task-row">
+                                <small>${t.task_name}</small>
+                                <span class="spinner"></span>
                             </div>
                         </td>
-                        <td style="color:red; font-weight:bold;">${t.remaining}s</td>
                     </tr>`;
             });
         } catch (e) {}
