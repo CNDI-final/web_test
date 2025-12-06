@@ -14,7 +14,7 @@ import (
 	go_redis "github.com/redis/go-redis/v9"
 )
 
-func DownloadTextFileHandler(c *gin.Context) {
+func DownloadAllLogHandler(c *gin.Context) {
 	taskIDStr := c.Param("taskID")
 	taskID, err := strconv.Atoi(taskIDStr)
 	if err != nil {
@@ -106,7 +106,80 @@ func DownloadTextFileHandler(c *gin.Context) {
 	c.Data(http.StatusOK, "application/zip", buf.Bytes())
 }
 
-// 🚀 輔助函式，用於替換檔案名稱中不適合的字元
+func DownloadSingleLogHandler(c *gin.Context) {
+	// 1. 獲取參數
+    taskIDStr := c.Param("taskID")
+    // 注意：這裡需跟你的 Router 定義一致，例如 router.GET("/download/:taskID/:failedTest", ...)
+    targetTestName := c.Param("failedTest") 
+
+    taskID, err := strconv.Atoi(taskIDStr)
+    if err != nil {
+        c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid task ID"})
+        return
+    }
+    if targetTestName == "" {
+        c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid failed test name"})
+        return
+    }
+
+    // 2. 從 Redis (或其他 DB) 獲取資料
+    ctx := context.Background()
+    taskResult, err := DB.GetResult(ctx, taskIDStr) 
+    if err != nil {
+        if err == go_redis.Nil {
+            c.JSON(http.StatusNotFound, gin.H{"error": fmt.Sprintf("Task result for ID %d not found", taskID)})
+        } else {
+            c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to retrieve task result"})
+        }
+        return
+    }
+    
+    if taskResult == nil {
+        c.JSON(http.StatusNotFound, gin.H{"error": "Task result is empty"})
+        return
+    }
+
+    // 3. 搜尋對應的 Log 內容
+    var logContent string
+    found := false
+
+    // 假設 FailedTests 和 Logs 是一一對應的 (Index 相同)
+    for i, testName := range taskResult.FailedTests {
+        // 安全檢查：避免 Logs 陣列比 FailedTests 短導致 panic
+        if i >= len(taskResult.Logs) {
+            break
+        }
+
+        // 比對名稱 (完全符合)
+        if testName == targetTestName {
+            logContent = taskResult.Logs[i]
+            found = true
+            break
+        }
+    }
+
+    if !found {
+        c.JSON(http.StatusNotFound, gin.H{"error": fmt.Sprintf("Log not found for test: %s", targetTestName)})
+        return
+    }
+
+    // 4. 設定檔名與 Header
+    // 使用輔助函式清理檔名 (移除 / \ : 等字元)
+    cleanName := replaceBadChars(targetTestName)
+    fileName := fmt.Sprintf("%s.log", cleanName)
+
+    // 設定瀏覽器下載行為
+    // "attachment" 會強迫瀏覽器跳出下載視窗，而不是直接在瀏覽器開啟
+    c.Header("Content-Disposition", fmt.Sprintf("attachment; filename=\"%s\"", fileName))
+    c.Header("Content-Type", "text/plain; charset=utf-8")
+    // 如果知道長度可以設，不知道也沒關係，Gin 會自動處理
+    c.Header("Content-Length", fmt.Sprintf("%d", len(logContent)))
+
+    // 5. 直接回傳字串內容
+    c.String(http.StatusOK, logContent)
+}
+
+// 輔助函式，用於替換檔案名稱中不適合的字元
 func replaceBadChars(s string) string {
     // 由於 strings 已引入，此處 code 運行正常
     s = strings.ReplaceAll(s, "/", "_")

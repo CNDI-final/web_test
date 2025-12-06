@@ -37,7 +37,8 @@ func AddService(engine *gin.Engine, rdb database.ResultStore) *gin.RouterGroup {
 	group.POST("/prs/clear", ClearPRCacheHandler)
 	group.POST("/run-pr", RunPRTaskHandler)
 	group.GET("/running", GetRunningTasksHandler)
-	group.GET("/download/:taskID", DownloadTextFileHandler) // Route for downloading a text file with a taskID
+	group.GET("/download/:taskID", DownloadAllLogHandler) // Route for downloading a text file with a taskID
+	group.GET("/download/single/:taskID/:failedTest", DownloadSingleLogHandler) // Route for downloading a text file with a taskID
 	group.GET("/task/:taskID", GetTaskResultHandler)
 
 	// serve static assets under a non-conflicting prefix
