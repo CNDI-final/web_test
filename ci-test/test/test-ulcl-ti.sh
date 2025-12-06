@@ -26,6 +26,7 @@ go test -v -vet=off -run $1 | tee ../${1}.log
 go_test_exit_code=$?
 if [ $go_test_exit_code -ne 0 ]; then
     overall_exit_code=$go_test_exit_code
+    echo "exit status 1" >> ../${1}.log
 fi
 cd ..
 
@@ -51,6 +52,7 @@ go test -v -vet=off -run $1 | tee -a ../${1}.log
 go_test_exit_code=$?
 if [ $go_test_exit_code -ne 0 ]; then
     overall_exit_code=$go_test_exit_code
+    echo "exit status 1" >> ../${1}.log
 fi
 cd ..
 

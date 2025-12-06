@@ -39,6 +39,10 @@ cd ..
 
 echo "Logs saved to ../$1.log"
 
+if [ $go_test_exit_code -ne 0 ]; then
+    echo "exit status 1" >> ../$1.log
+fi
+
 # delete ue (ci-test PacketRusher) data from db
 ./api-webconsole-subscribtion-data-action.sh delete $target_webconsole_subscription_data_file
 if [ $? -ne 0 ]; then
