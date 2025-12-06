@@ -440,14 +440,14 @@ cd "$CI_TARGET_DIR" || exit 1
 
 # ================= 準備階段 =================
 log "🔄 1. Pulling source..."
-#run_quiet $CI_SCRIPT_NAME pull || exit 1
+run_quiet $CI_SCRIPT_NAME pull || exit 1
 
 log "📥 2. Fetching PRs..."
-# for pr_entry in "${PR_LIST[@]}"; do
-#     IFS=':' read -r comp id <<< "$pr_entry"
-#     log "   -> Fetching $comp #$id"
-#     run_quiet $CI_SCRIPT_NAME fetch "$comp" "$id" || exit 1
-# done
+for pr_entry in "${PR_LIST[@]}"; do
+    IFS=':' read -r comp id <<< "$pr_entry"
+    log "   -> Fetching $comp #$id"
+    run_quiet $CI_SCRIPT_NAME fetch "$comp" "$id" || exit 1
+done
 
 # ================= TestAll 階段 (含機器人邏輯) =================
 log "🧪 3. Pre-build Tests (testAll)..."
