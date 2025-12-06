@@ -62,3 +62,10 @@ type HistoryRecord struct {
 	TaskName string `json:"task_name"`
 	Result   string `json:"result"`
 }
+
+type HistoryRecordsPerPage struct {
+	Records    []HistoryRecord 	`json:"records"`
+	CurrentPage int             `json:"current_page"`
+	TotalPages int             	`json:"total_pages"`
+	RecordsCount int            `json:"records_count"`
+}

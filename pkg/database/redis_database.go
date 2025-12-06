@@ -34,6 +34,7 @@ const (
 	taskIDCounterKey  = "task_id_counter"
 	historyListKey    = "task_history_list" // Use a list for history to maintain order
 	prCacheKey        = "pr_cache"
+	historyCountKey  = "history_count"
 )
 
 var taipeiLocation = func() *time.Location {
@@ -70,6 +71,7 @@ func (r *RedisDB) SaveResult(ctx context.Context, result *models.TaskResult) err
 			TaskName: fmt.Sprintf("Test Task %s", result.TaskID),
 			Result:   result.Status,
 		})
+		r.incrementHistoryCount(ctx)
 	}
 
 	return nil
@@ -154,6 +156,19 @@ func (r *RedisDB) GetHistory(ctx context.Context,start, end int64) ([]*models.Hi
 		history = append(history, &record)
 	}
 	return history, nil
+}
+
+// GetHistoryCount retrieves the count of historical task records from Redis.
+func (r *RedisDB) GetHistoryCount(ctx context.Context) (int64, error) {
+	count, err := r.client.LLen(ctx, historyListKey).Result()
+	if err != nil {
+		return 0, err
+	}
+	return count, nil
+}
+
+func (r *RedisDB) incrementHistoryCount(ctx context.Context) error {
+	return r.client.Incr(ctx, historyCountKey).Err()
 }
 
 // SavePrCache saves the PRs cache to Redis.

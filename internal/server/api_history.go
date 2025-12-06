@@ -44,5 +44,24 @@ func HistoryHandler(c *gin.Context) {
 		json.Unmarshal([]byte(dataBytes), &rec)
 		records = append(records, rec)
 	}
-	c.JSON(200, records)
+	var totalRecords int64
+	totalRecords, err = DB.GetHistoryCount(ctx)
+	if err != nil {
+		c.JSON(500, gin.H{"error": "failed to retrieve history count"})
+		return
+	}
+	totalPages := int((totalRecords + 99) / 100) // 計算總頁數，向上取整
+	if page > totalPages {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Page number out of range"})
+		return
+	}
+
+	response := models.HistoryRecordsPerPage{
+		Records:      records,
+		CurrentPage:  page,
+		TotalPages:   totalPages,
+		RecordsCount: int(totalRecords),
+	}
+
+	c.JSON(200, response)
 }
