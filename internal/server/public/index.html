@@ -12,7 +12,7 @@
 
     <style>
         /* 正文：無襯線 */
-        body { font-family: "Noto Sans TC", "Microsoft JhengHei", sans-serif; max-width: 1200px; margin: 20px auto; padding: 0 20px; }
+        body { font-family: "Noto Sans TC", "Microsoft JhengHei", sans-serif; max-width: 1200px; margin: 20px auto; padding: 0 20px 160px; min-height: 130vh; }
         
         /* 標題：襯線體 */
         h1, h2, h3, h4 { 
@@ -64,7 +64,8 @@
         .btn-run { background: #ff9800; }
         .btn-del { background: #dc3545; padding: 4px 8px; font-size: 0.8em; }
         .btn-add-param { background: #795548; font-size: 0.8em; margin-top: 5px; }
-        .btn-download {
+        .btn-download,
+        .btn-preview {
             background: #1976d2;
             padding: 4px 10px;
             font-size: 0.8em;
@@ -72,6 +73,9 @@
             color: #fff;
             text-decoration: none;
             display: inline-block;
+        }
+        .btn-preview {
+            background: #5c6bc0;
         }
         .running-task-row {
             display: flex;
@@ -184,7 +188,7 @@
             <h3>✅ 歷史</h3>
             <div class="scroll-wrapper">
                 <table style="width:100%">
-                    <thead class="sticky-header"><tr><th>時間</th><th>任務</th><th>結果</th><th>下載</th></tr></thead>
+                    <thead class="sticky-header"><tr><th>時間</th><th>任務</th><th>結果</th><th>預覽</th><th>下載</th></tr></thead>
                     <tbody id="history-list"></tbody>
                 </table>
             </div>
