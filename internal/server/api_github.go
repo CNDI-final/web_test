@@ -83,15 +83,16 @@ func RunPRTaskHandler(c *gin.Context) {
 		return
 	}
 	var params []models.TaskParams
-	for _, p := range req.Params {
-		if p.NF == "" || p.PRVersion == "" {
-			logger.WebLog.Warnf("Skipping invalid param entry: %+v", p)
-			continue
+	for _, pair := range req.Params {
+		if len(pair) < 2 {
+			continue 
 		}
-		logger.WebLog.Infof("Processing NF: %s, PRVersion: %s", p.NF, p.PRVersion)
+		nf := string(pair[0])
+		prVersion := string(pair[1])
+		logger.WebLog.Infof("Processing NF: %s, PRVersion: %s", nf, prVersion)
 		params = append(params, models.TaskParams{
-			NF:        p.NF,
-			PRVersion: p.PRVersion,
+			NF:        nf,
+			PRVersion: prVersion,
 		})
 	}
 	if len(params) == 0 {
