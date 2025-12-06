@@ -173,6 +173,11 @@ func (r *RedisDB) GetPrCache(ctx context.Context) ([]byte, error) {
 	return data, nil
 }
 
+// ClearPrCache removes the cached PR data.
+func (r *RedisDB) ClearPrCache(ctx context.Context) error {
+	return r.client.Del(ctx, prCacheKey).Err()
+}
+
 func (r *RedisDB) IncrementTaskID(ctx context.Context) (int, error) {
 	result, err := r.client.Incr(ctx, taskIDCounterKey).Result()
 	if err != nil {

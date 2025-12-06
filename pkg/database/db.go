@@ -25,4 +25,6 @@ type ResultStore interface {
 	SavePrCache(ctx context.Context, Prs []byte) error
 	// 取得PR快取
 	GetPrCache(ctx context.Context) ([]byte, error)
+	// 清除PR快取
+	ClearPrCache(ctx context.Context) error
 }
