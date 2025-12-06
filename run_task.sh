@@ -1,5 +1,10 @@
 #!/bin/bash
 
+# ==============================================================================
+# 檔案位置: /home/rs/test/run_ci_task.sh
+# 描述: 智慧型 CI 機器人 (具備 Re-run 與 Release 交叉驗證功能)
+# ==============================================================================
+
 # 1. 設定目標路徑
 #DEFAULT_DIR="/home/rs/ci-test"
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
@@ -9,7 +14,7 @@ CI_SCRIPT_NAME="./ci-operation.sh"
 
 # 定義單獨測試腳本的路徑 (相對 CI_TARGET_DIR)
 SINGLE_TEST_DIR="base/free5gc"
-SINGLE_TEST_CMD="./test"
+SINGLE_TEST_CMD="./test.sh"
 
 # 定義需要測試的環境列表
 TEST_ENVS=("ulcl-mp")  #"ulcl-ti" 
@@ -130,98 +135,82 @@ process_line() {
 # 🤖 智慧型失敗處理器 (Smart Failure Handler)
 # ==============================================================================
 smart_failure_handler() {
-    local step_name="$1"
-    json_content=$(cat "$SCRIPT_DIR/logs/failures.json")
-    if [ ! -s "$FAILED_LIST_FILE" ]; then
-        log "${RED}測試失敗，但未能解析出具體的 TestName。無法進行自動修復。${RESET}"
-        return 1
-    fi
-
-    # 讀取失敗列表
-    local failed_tests=()
-    mapfile -t failed_tests < "$FAILED_LIST_FILE"
-    
-    echo -e "\n${CYAN}======================================================${RESET}"
-    echo -e "${CYAN}🤖 機器人啟動: 偵測到 ${#failed_tests[@]} 個測試失敗${RESET}"
-    echo -e "${CYAN}======================================================${RESET}"
-
-    # ---------------------------------------------------------
-    # 階段一: 單獨重跑 (Local Re-run)
-    # ---------------------------------------------------------
-    local real_failures=()
-    
+    local step_name="$1"  
     # 切換到測試目錄 (ci-test/base/free5gc)
     local test_dir="$CI_TARGET_DIR/$SINGLE_TEST_DIR"
     if [ ! -d "$test_dir" ]; then
         log "${RED}找不到測試目錄: $test_dir${RESET}"
         return 1
     fi
-    
-    pushd "$test_dir" > /dev/null || return 1
 
-    for test_name in "${failed_tests[@]}"; do
-        echo -e "${MAGENTA}🔄 [Re-run] 正在單獨重跑 PR 版本: $test_name ...${RESET}"
-        
-        # 執行單一測試: ./test TestName
-        # 使用 grep -q 靜默檢查輸出中是否有 PASS
-        if $SINGLE_TEST_CMD "$test_name" 2>&1 | grep -q "PASS"; then
-            echo -e "   ${GREEN}✔ 通過 (Flaky Test - 判定為不穩定但本次通過)${RESET}"
+    for phase in 1 2; do
+        # 讀取 JSON 內容
+        json_content=$(cat "$SCRIPT_DIR/logs/failures.json")
+        array_part=$(echo "$json_content" | sed 's/.*"failed_tests": \[\([^]]*\)\].*/\1/')
+        if [ -z "$array_part" ]; then
+            failed_list=()
         else
-            echo -e "   ${RED}✘ 依然失敗${RESET}"
-            real_failures+=("$test_name")
+            IFS=',' read -ra failed_list <<< "$(echo "$array_part" | tr -d '"' | tr -d ' ')"
         fi
-    done
-    
-    popd > /dev/null || return 1
-
-    # 如果所有重跑都通過了
-    if [ ${#real_failures[@]} -eq 0 ]; then
-        echo -e "${GREEN}✨ 恭喜! 所有失敗項目經重跑後均通過 (Flaky)。繼續執行後續流程。${RESET}"
-        return 0
-    fi
-
-    # ---------------------------------------------------------
-    # 階段二: 切換 Release 版本交叉驗證
-    # ---------------------------------------------------------
-    echo -e "\n${CYAN}⚠️  仍有 ${#real_failures[@]} 個測試失敗。${RESET}"
-    echo -e "${CYAN}🔄 正在切換至 Release 版本進行交叉比對...${RESET}"
-    
-    # 還原代碼並重新編譯，刪有發PR的NF的image
-    restore_and_build
-
-    # 再次進入測試目錄
-    pushd "$test_dir" > /dev/null || return 1
-    
-    local pr_broken=false
-    local env_broken=false
-    
-    for test_name in "${real_failures[@]}"; do
-        echo -e "${BLUE}🔍 [Verify] 正在 Release 版本上執行: $test_name ...${RESET}"
-        
-        if $SINGLE_TEST_CMD "$test_name" 2>&1 | grep -q "PASS"; then
-            echo -e "   ${GREEN}✔ Release 版本通過${RESET}"
-            echo -e "   ${RED}🛑 結論: 這是 PR 的問題 (Regression)${RESET}"
-            pr_broken=true
+        if [ $phase -eq 1 ]; then
+                echo -e "\n${CYAN}======================================================${RESET}"
+                echo -e "${CYAN}🤖 機器人啟動: 偵測到 ${#failed_list[@]} 個測試失敗${RESET}"
+                echo -e "${CYAN}======================================================${RESET}"
+            # ---------------------------------------------------------
+            # 階段一: 單獨重跑 (Local Re-run)
+            # ---------------------------------------------------------
         else
-            echo -e "   ${RED}✘ Release 版本也失敗${RESET}"
-            echo -e "   ${YELLOW}⚠️  結論: 這是環境或 Release 本身的問題${RESET}"
-            env_broken=true
+            # ---------------------------------------------------------
+            # 階段二: 切換 Release 版本交叉驗證
+            # ---------------------------------------------------------
+            echo -e "\n${CYAN}⚠️  仍有 ${#failed_list[@]} 個測試失敗。${RESET}"
+            echo -e "${CYAN}🔄 正在切換至 Release 版本進行交叉比對...${RESET}"
+            run_quiet $CI_SCRIPT_NAME pull || exit 1
         fi
+        pushd "$test_dir" > /dev/null || return 1
+        make all
+        ./force_kill.sh
+        mkdir -p testing_output
+        for test_name in "${failed_list[@]}"; do
+            test_name="${test_name%.log}"
+            
+            echo "$test_name"
+            echo "    Output saved to testing_output/$test_name.log"
+            exec $SINGLE_TEST_CMD "$test_name" &> "$test_dir/testing_output/$test_name.log" &
+            wait
+            if [[ "$test_name" == "TestTngf" || "$test_name" == "TestNon3GPP" ]]; then
+                sudo killall -9 n3iwf tngf 2>/dev/null
+                sleep 2
+            fi
+            STATUS=$(grep -a -E "\-\-\-.*:" "$test_dir/testing_output/$test_name.log")
+            if [ ! -z "$STATUS" ]; then
+                echo "$STATUS" | while read -r a; do echo "    ${a:4}"; done
+            else
+                echo "    Failed"
+            fi
+            echo
+        done
+        getlog
+        scan_logs "testall"
+        local status=$?
+        if [ $phase -eq 1 ]; then
+            # 如果所有重跑都通過了
+            if [ $status -eq 0 ]; then
+                echo -e "${GREEN}✨ 恭喜! 所有失敗項目經重跑後均通過 (Flaky)。繼續執行後續流程。${RESET}"
+                return 0
+            fi
+        else
+            echo -e "${CYAN}======================================================${RESET}"
+            if [ $status -ne 0 ]; then
+                log "${YELLOW}⛔ 測試終止: 請檢查 CI 環境或回報 Issue。${RESET}"
+                exit 3
+            else
+                log "${RED}⛔ 測試終止: 請修復您的 PR 代碼。${RESET}"
+                exit 2
+            fi
+        fi
+        popd > /dev/null || return 1
     done
-    
-    popd > /dev/null || return 1
-    
-    echo -e "${CYAN}======================================================${RESET}"
-    
-    if [ "$pr_broken" = true ]; then
-        log "${RED}⛔ 測試終止: 請修復您的 PR 代碼。${RESET}"
-        return 2
-    elif [ "$env_broken" = true ]; then
-        log "${YELLOW}⛔ 測試終止: 請檢查 CI 環境或回報 Issue。${RESET}"
-        return 3
-    else
-        return 0
-    fi
 }
 
 run_test_command() {
@@ -229,38 +218,26 @@ run_test_command() {
     shift
     
     # 1. 執行主要的 testAll
-    if [ "$VERBOSE" = true ]; then
-        "$@"
-    else
-        pretty_test_runner "$@"     
-    fi
-    # getlog
-    # scan_logs "$step_name"
-    # local status=$?
-    # if [ $status -ne 0 ] ; then
-    #     # 如果是 testAll 階段失敗，呼叫智慧處理器
-    #     if [[ "$step_name" == "testAll" ]]; then
+    # if [ "$VERBOSE" = true ]; then
+    #     "$@"
+    # else
+    #     pretty_test_runner "$@"     
+    # fi
+    getlog
+    scan_logs "$step_name"
+    local status=$?
+    if [ $status -ne 0 ] ; then
+        # 如果是 testAll 階段失敗，呼叫智慧處理器
+        if [[ "$step_name" == "testAll" ]]; then
 
-    #         smart_failure_handler "$step_name"
-    #         # 注意: smart_failure_handler 回傳 0 代表修復成功/Flaky，非 0 代表真的掛了
-    #         return $?
-    #     else
-    #         # 環境測試 (ulcl-ti) 失敗暫時直接報錯 (也可以實作類似邏輯)
-    #         return $status
-    #     fi
-    # fi
-    # 2. 如果失敗，啟動機器人介入
-    # if [ $status -ne 0 ]; then
-    #     # 如果是 testAll 階段失敗，呼叫智慧處理器
-    #     if [[ "$step_name" == "testAll" ]]; then
-    #         smart_failure_handler "$step_name"
-    #         # 注意: smart_failure_handler 回傳 0 代表修復成功/Flaky，非 0 代表真的掛了
-    #         return $?
-    #     else
-    #         # 環境測試 (ulcl-ti) 失敗暫時直接報錯 (也可以實作類似邏輯)
-    #         return $status
-    #     fi
-    # fi
+            smart_failure_handler "$step_name"
+            # 注意: smart_failure_handler 回傳 0 代表修復成功/Flaky，非 0 代表真的掛了
+            return $?
+        else
+            # 環境測試 (ulcl-ti) 失敗暫時直接報錯 (也可以實作類似邏輯)
+            return $status
+        fi
+    fi
     return $status
 }
 
@@ -446,13 +423,13 @@ done
 
 # ================= TestAll 階段 (含機器人邏輯) =================
 log "🧪 3. Pre-build Tests (testAll)..."
-# run_test_command "testAll" $CI_SCRIPT_NAME testAll
-# getlog
-# if scan_logs "testall"; then
-#     log "${GREEN}✅ Pre-build Tests Passed!${RESET}"
-# else
-#     log "${RED}⛔ Pre-build Tests Failed.${RESET}"
-# fi
+run_test_command "testAll" $CI_SCRIPT_NAME testAll
+getlog
+if scan_logs "testall"; then
+    log "${GREEN}✅ Pre-build Tests Passed!${RESET}"
+else
+    log "${RED}⛔ Pre-build Tests Failed.${RESET}"
+fi
 
 log "🏗️ 5. Building..."
 #run_quiet $CI_SCRIPT_NAME build || { log "Build 失敗"; exit 1; }
