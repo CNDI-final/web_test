@@ -4,7 +4,6 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
-	"time"
 
 	"github.com/gin-gonic/gin"
 
@@ -24,13 +23,6 @@ func AddGitHubTaskHandler(c *gin.Context) {
 	defer func() {
 		resp, err := FetchGitHubInfo(req.Owner, req.Repo)
 		if err == nil {
-			// 存歷史
-			rec := models.HistoryRecord{
-				Time:     time.Now().Format("15:04:05"),
-				TaskName: "GitHub Fetch",
-				Result:   resp.Summary,
-			}
-			DB.SaveHistory(ctx, &rec)
 			// 存快取
 			prsJSON, _ := json.Marshal(resp.PRs)
 			DB.SavePrCache(ctx, prsJSON)
