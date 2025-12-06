@@ -69,7 +69,7 @@ func (e *TaskExecutor) processNextTask(ctx context.Context) error {
 	runningResult := &models.TaskResult{
 		TaskID:    task.ID,
 		Status:    "running",
-		Logs:      fmt.Sprintf("Task started processing at %s", time.Now().Format(time.RFC3339)),
+		Logs:      []string{"Task is running"},
 		Timestamp: time.Now().Unix(),
 	}
 
@@ -97,7 +97,7 @@ func (e *TaskExecutor) executeTask(ctx context.Context, task *models.Task) {
 		result := &models.TaskResult{
 			TaskID:    task.ID,
 			Status:    "Success",
-			Logs:      "Task executed successfully",
+			Logs:      []string{"Task executed successfully"},
 			Timestamp: time.Now().Unix(),
 		}
 		e.db.SaveResult(ctx, result)
@@ -149,10 +149,11 @@ func (e *TaskExecutor) handleFailedTests(ctx context.Context, task *models.Task)
 		logger.ExecutorLog.Errorf("Failed to read failures.json: %v", err)
 		// 如果找不到 failures.json，存儲通用失敗結果
 		result := &models.TaskResult{
-			TaskID:    task.ID,
-			Status:    "Failed",
-			Logs:      "Task execution failed, but failures.json not found",
-			Timestamp: time.Now().Unix(),
+			TaskID:      task.ID,
+			Status:      "Failed",
+			Logs:        []string{"Task execution failed, but failures.json not found"},
+			FailedTests: []string{"JsonNotFound"},
+			Timestamp:   time.Now().Unix(),
 		}
 		e.db.SaveResult(ctx, result)
 		return
@@ -169,6 +170,9 @@ func (e *TaskExecutor) handleFailedTests(ctx context.Context, task *models.Task)
 
 	logger.ExecutorLog.Infof("Found %d failed tests", len(failureData.FailedTests))
 
+	var allLogs []string
+	var failedTestNames []string
+
 	// 為每個失敗的測試讀取 log 檔案並存儲
 	logsDir := filepath.Clean(filepath.Join(wd, "logs"))
 	for _, testLogFile := range failureData.FailedTests {
@@ -180,26 +184,32 @@ func (e *TaskExecutor) handleFailedTests(ctx context.Context, task *models.Task)
 		logContent, err := os.ReadFile(logFilePath)
 		if err != nil {
 			logger.ExecutorLog.Errorf("Failed to read log file %s: %v", logFilePath, err)
+			allLogs = append(allLogs, fmt.Sprintf("Failed to read log file %s: %v", logFilePath, err))
 			continue
 		}
 
-		// ✅ 取出測試名稱（移除 .log 副檔名）
+		// 取出測試名稱（移除 .log 副檔名）
 		testName := strings.TrimSuffix(testLogFile, ".log")
+		failedTestNames = append(failedTestNames, testName)
 
-		// 存儲失敗的測試結果
-		result := &models.TaskResult{
-			TaskID:     task.ID,
-			Status:     "Failed",
-			FailedTest: testName,
-			Logs:       string(logContent),
-			Timestamp:  time.Now().Unix(),
-		}
+		allLogs = append(allLogs, string(logContent))
 
-		if err := e.db.SaveResult(ctx, result); err != nil {
-			logger.ExecutorLog.Errorf("Failed to save result for test %s: %v", testName, err)
-			continue
-		}
-
-		logger.ExecutorLog.Infof("Successfully saved result for failed test: %s", testName)
+		logger.ExecutorLog.Infof("Successfully read log file for failed test: %s", testName)
 	}
+
+	result := &models.TaskResult{
+		TaskID:      task.ID,
+		Status:      "Failed",
+		Logs:        allLogs,
+		FailedTests: failedTestNames,
+		Timestamp:   time.Now().Unix(),
+	}
+
+	if err := e.db.SaveResult(ctx, result); err != nil {
+		logger.ExecutorLog.Errorf("Failed to save result for task %s: %v", task.ID, err)
+		return
+	}
+
+	logger.ExecutorLog.Infof("Successfully saved result for task %s with %d failed tests", task.ID, len(failedTestNames))
+
 }
