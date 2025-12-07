@@ -630,7 +630,7 @@ fi
 log "🏗️ 5. Building..."
 #run_quiet $CI_SCRIPT_NAME build || { log "Build 失敗"; exit 4; }
 
-build有發PR的NF的image
+#build有發PR的NF的image
 for pr_entry in "${PR_LIST[@]}"; do
     IFS=':' read -r comp id <<< "$pr_entry"
     run_quiet $CI_SCRIPT_NAME build-nf "$comp" || { log "Build $comp 失敗"; exit 4; }
