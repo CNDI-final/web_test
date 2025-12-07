@@ -18,13 +18,38 @@ document.addEventListener("DOMContentLoaded", () => {
     // 儲存任務資料
     let currentTaskData = null; 
 
+    function extractTaskParams(task) {
+        if (!task) return [];
+        if (Array.isArray(task.params)) return task.params;
+        if (Array.isArray(task.Params)) return task.Params;
+        if (Array.isArray(task.task_params)) return task.task_params;
+        if (Array.isArray(task.TaskParams)) return task.TaskParams;
+        return [];
+    }
+
+    function formatTaskLine(param) {
+        if (!param) return "- [#-]";
+        const nf = param.nf || param.NF || "-";
+        const pr = param.pr_version || param.prVersion || param.PRVersion || param.pr_number || param.prNumber || param.PRNumber || "-";
+        return `${nf} [#${pr}]`;
+    }
+
+    function buildTaskLabel(task) {
+        const params = extractTaskParams(task);
+        if (params.length) {
+            return params.map(formatTaskLine).join("\n");
+        }
+        const fallbackId = task?.task_id || task?.taskId || taskId || "-";
+        return `任務 #${fallbackId}`;
+    }
+
     if (!taskId) {
         showError("缺少任務 ID");
         logsEl.textContent = "無法載入";
         return;
     }
 
-    idEl.textContent = taskId;
+    idEl.textContent = "載入中...";
     document.title = `任務 #${taskId}`;
 
     fetchTask(taskId);
@@ -78,6 +103,7 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     function applyTask(task) {
+        idEl.textContent = buildTaskLabel(task);
         const status = task.status || "-";
         const normalized = status.toLowerCase();
         

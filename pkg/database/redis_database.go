@@ -19,11 +19,11 @@ type RedisDB struct {
 // It takes the Redis server address (e.g., "localhost:6379") and password.
 func NewRedisDB(addr, password string, db int) *RedisDB {
 	rdb := redis.NewClient(&redis.Options{
-		Addr:     addr,
-		Password: password, // no password set
-		DB:       db,       // use default DB
-        DisableIndentity: true, // Disable RESP3 identity feature
-        Protocol: 2,	
+		Addr:             addr,
+		Password:         password, // no password set
+		DB:               db,       // use default DB
+		DisableIndentity: true,     // Disable RESP3 identity feature
+		Protocol:         2,
 	})
 	return &RedisDB{client: rdb}
 }
@@ -31,9 +31,9 @@ func NewRedisDB(addr, password string, db int) *RedisDB {
 const (
 	taskResultsHashKey = "task_results"
 	runningTasksSetKey = "running_tasks"
-	taskIDCounterKey  = "task_id_counter"
-	historyListKey    = "task_history_list" // Use a list for history to maintain order
-	prCacheKey        = "pr_cache"
+	taskIDCounterKey   = "task_id_counter"
+	historyListKey     = "task_history_list" // Use a list for history to maintain order
+	prCacheKey         = "pr_cache"
 )
 
 var taipeiLocation = func() *time.Location {
@@ -67,6 +67,7 @@ func (r *RedisDB) SaveResult(ctx context.Context, result *models.TaskResult) err
 		}
 		r.SaveHistory(ctx, &models.HistoryRecord{
 			Time:     time.Unix(result.Timestamp, 0).In(taipeiLocation).Format("2006-01-02 15:04:05"),
+			TaskName: fmt.Sprintf("Test Task %s", result.TaskID),
 			Params:   result.Params,
 			TaskName: fmt.Sprintf("Test Task %s", result.TaskID),
 			Result:   result.Status,
@@ -138,7 +139,7 @@ func (r *RedisDB) SaveHistory(ctx context.Context, record *models.HistoryRecord)
 }
 
 // GetHistory retrieves all historical task records from Redis.
-func (r *RedisDB) GetHistory(ctx context.Context,start, end int64) ([]*models.HistoryRecord, error) {
+func (r *RedisDB) GetHistory(ctx context.Context, start, end int64) ([]*models.HistoryRecord, error) {
 	// Use LRange to get all elements from the list
 	data, err := r.client.LRange(ctx, historyListKey, start, end).Result()
 	if err != nil {

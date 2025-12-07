@@ -355,6 +355,10 @@ document.addEventListener("DOMContentLoaded", () => {
 
             records.forEach(r => {
                 const taskId = extractTaskId(r.task_name);
+                const params = extractTaskParams(r);
+                const taskLabel = params.length
+                    ? params.map(formatTaskLine).join("<br>")
+                    : (r.task_name || "-");
                 const resultText = r.result || "-";
                 const lowerResult = resultText.toLowerCase();
                 const showDownload = taskId && lowerResult !== "success";
@@ -369,7 +373,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 historyList.innerHTML += `
                     <tr>
                         <td>${r.time}</td>
-                        <td>${r.task_name}</td>
+                        <td class="history-task-cell">${taskLabel}</td>
                         <td style='color:${resultColor}'>${resultText}</td>
                         <td>${previewCell}</td>
                         <td>${downloadCell}</td>

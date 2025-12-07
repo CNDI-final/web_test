@@ -59,8 +59,8 @@ type RunPRRequest struct {
 }
 
 type HistoryRecord struct {
-	Time     string `json:"time"`
-	Params []TaskParams `json:"params"`
-	TaskName string `json:"task_name"`
-	Result   string `json:"result"`
+	Time     string       `json:"time"`
+	Params   []TaskParams `json:"params"`
+	TaskName string       `json:"task_name"`
+	Result   string       `json:"result"`
 }
