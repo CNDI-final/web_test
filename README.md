@@ -5,13 +5,20 @@
 sudo visudo
 ```
 
-在檔案最後加入（替換 rs 為你的實際使用者名）：
+## 在檔案最後加入（替換 rs 為你的實際使用者名）：
 ```bash
 rs ALL=(ALL) NOPASSWD: /home/rs/web_test/run_task.sh
 ```
 
+## 第一次跑
+```bash
+cd web_test/ci-test
+./ci-operation.sh pull
+make ulcl
+```
 ### 啟動 KVRocks 容器
 ```bash
+cd ..
 make
 ```
 
