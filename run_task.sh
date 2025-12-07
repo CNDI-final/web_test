@@ -412,7 +412,7 @@ wait_for_log_then_continue_background() {
             rm -f "$fifo"
             rm -f "$log_file"
             cleanup_on_failure
-            return 1
+            return 4
         fi
     done
     
@@ -587,7 +587,7 @@ while getopts "e:p:d:nh:r" opt; do
     esac
 done
 
-if [ ${#PR_LIST[@]} -eq 0 ]; then echo -e "⚠️  未偵測到 PR，停止執行。"; exit 0; fi
+# if [ ${#PR_LIST[@]} -eq 0 ]; then echo -e "⚠️  未偵測到 PR，停止執行。"; exit 0; fi
 
 echo "=========================================="
 echo "🤖 CI Smart Bot (Auto-Verification)"
@@ -600,7 +600,7 @@ cd "$CI_TARGET_DIR" || exit 1
 
 # ================= 準備階段 =================
 log "🔄 1. Pulling source..."
-run_quiet $CI_SCRIPT_NAME pull || exit 1
+run_quiet $CI_SCRIPT_NAME pull || exit 4
 
 log "📥 2. Fetching PRs..."
 for pr_entry in "${PR_LIST[@]}"; do
@@ -610,10 +610,10 @@ for pr_entry in "${PR_LIST[@]}"; do
 done
 
 # ================= TestAll 階段 (含機器人邏輯) =================
-log "🧹 Cleaning up old logs..."
-rm -fv "$SCRIPT_DIR/logs/*.log"
-rm -fv "$CI_TARGET_DIR/test/*.log"
 
+log "🧹 Cleaning up old logs..."
+rm -fv "$SCRIPT_DIR/logs"/*.log
+rm -fv "$CI_TARGET_DIR/test"/*.log
 log "🧪 3. Pre-build Tests (testAll)..."
 run_test_command "testAll" $CI_SCRIPT_NAME testAll
 final_status=$?
@@ -629,7 +629,8 @@ fi
 
 log "🏗️ 5. Building..."
 #run_quiet $CI_SCRIPT_NAME build || { log "Build 失敗"; exit 4; }
-#build有發PR的NF的image
+
+build有發PR的NF的image
 for pr_entry in "${PR_LIST[@]}"; do
     IFS=':' read -r comp id <<< "$pr_entry"
     run_quiet $CI_SCRIPT_NAME build-nf "$comp" || { log "Build $comp 失敗"; exit 4; }
@@ -639,18 +640,16 @@ done
 
 # ================= 循環測試階段 =================
 log "🚀 Starting Test Cycles..."
-#restore_and_build
+restore_and_build
 for ENV in "${TEST_ENVS[@]}"; do
     ulcl_test_cycle "$ENV"
 done
 
-restore_and_build
+# restore_and_build
 
 # ================= 完成階段 =================
 #取得ci-test 內的logs
 getlog
-# 調用函數（這裡可以根據需要傳遞參數，例如從命令行參數獲取）
-# 例如：scan_logs "ulcl" 或 scan_logs "testall" 或 scan_logs
 scan_logs
 final_status=$?
 
