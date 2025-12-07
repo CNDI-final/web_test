@@ -3,7 +3,6 @@ package server
 import (
 	"context"
 	"net/http"
-	"sync"
 	"time"
 
 	"web_test/internal/logger"
@@ -57,23 +56,6 @@ func (ws *WebServer) setupRoutes() {
 
 	// 使用 AddService 註冊所有 API 路由
 	AddService(ws.engine, ws.database)
-}
-
-// Run 啟動伺服器（使用 sync.WaitGroup）
-func (ws *WebServer) Run(wg *sync.WaitGroup) error {
-	wg.Add(1)
-	go ws.startServer(wg)
-	logger.MainLog.Infof("Web server started on port %s", ws.port)
-	return nil
-}
-
-func (ws *WebServer) startServer(wg *sync.WaitGroup) {
-	defer wg.Done()
-
-	if err := ws.server.ListenAndServe(); err != nil && err != http.ErrServerClosed {
-		logger.MainLog.Errorf("Web server error: %v", err)
-	}
-	logger.MainLog.Infof("Web server (listen on %s) stopped", ws.server.Addr)
 }
 
 // Start 啟動伺服器（使用 context）
