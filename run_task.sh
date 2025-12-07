@@ -1,6 +1,5 @@
 #!/bin/bash
 
-exit 1
 # ==============================================================================
 # 檔案位置: /home/rs/test/run_ci_task.sh
 # 描述: 智慧型 CI 機器人 (具備 Re-run 與 Release 交叉驗證功能)
@@ -19,12 +18,13 @@ SINGLE_TEST_CMD="./test.sh"
 
 # 定義需要測試的環境列表
 TEST_ENVS=("ulcl-ti" ) #"ulcl-mp"
-TEST_POOL="TestRegistration|TestGUTIRegistration|TestServiceRequest"
-#|TestXnHandover|TestN2Handover|TestDeregistration|TestPDUSessionReleaseRequest|TestPaging|TestNon3GPP|TestReSynchronization|TestDuplicateRegistration|TestEAPAKAPrimeAuthentication|TestMultiAmfRegistration|TestNasReroute|TestTngf|TestDC|TestDynamicDC|TestXnDCHandover"
+TEST_POOL="TestRegistration|TestGUTIRegistration"
+#|TestServiceRequest|TestXnHandover|TestN2Handover|TestDeregistration|TestPDUSessionReleaseRequest|TestPaging|TestNon3GPP|TestReSynchronization|TestDuplicateRegistration|TestEAPAKAPrimeAuthentication|TestMultiAmfRegistration|TestNasReroute|TestTngf|TestDC|TestDynamicDC|TestXnDCHandover"
 # 初始化變數
 CURRENT_ENV=""
 PR_LIST=()
 VERBOSE=false
+REGRESS=false
 FAILED_LIST_FILE=$(mktemp)
 
 # 定義顏色
@@ -114,6 +114,16 @@ process_line() {
         i=0
         printf "${CLEAR_LINE} ${YELLOW}${spin_chars:$i:1}${RESET} Running: ${current_test}"
     
+    elif [[ "$line" =~ ^[[:space:]]*---[[:space:]]+FAIL:[[:space:]]+(.+) ]]; then
+        local sub_test="${BASH_REMATCH[1]}"
+        local sub_name="${sub_test#*/}"
+        printf "${CLEAR_LINE} ${RED}FAIL:${RESET} ${sub_name}\n"
+    
+    elif [[ "$line" =~ ^[[:space:]]*---[[:space:]]+PASS:[[:space:]]+(.+) ]]; then
+        local sub_test="${BASH_REMATCH[1]}"
+        local sub_name="${sub_test#*/}"
+        printf "${CLEAR_LINE} ${GREEN}PASS:${RESET} ${sub_name}\n"
+    
     elif [[ "$line" =~ PASS:[[:space:]]*(Test[a-zA-Z0-9_]+) ]]; then
         local test_name="${BASH_REMATCH[1]}"
         
@@ -193,8 +203,11 @@ smart_failure_handler() {
             fi
             echo
         done
-        getlog
-        scan_logs "testall"
+        if [ $phase -eq 1 ]; then
+            getlog
+            scan_logs "testall"
+        fi
+        scan_logs "testall" "$test_dir"
         local status=$?
         if [ $phase -eq 1 ]; then
             # 如果所有重跑都通過了
@@ -209,7 +222,7 @@ smart_failure_handler() {
                 log "${YELLOW}⛔ 測試終止: 請檢查 CI 環境或回報 Issue。${RESET}"
                 exit 3
             else
-                log "${RED}⛔ 測試終止: 請修復您的 PR 代碼。${RESET}"
+                log "${RED}⛔ 測試終止: 請修復您的 PR。${RESET}"
                 exit 2
             fi
         fi
@@ -226,21 +239,63 @@ smart_failure_handler_ulcl() {
             echo -e "${CYAN}🤖 機器人啟動: $env 測試失敗，重試中${RESET}"
             echo -e "${CYAN}======================================================${RESET}"
             # 階段一: 本地重試
-            if ulcl_test_cycle "$env"; then
-                log "${GREEN}✨ 恭喜! $env 環境測試經重試後通過。繼續執行後續流程。${RESET}"
-                return 0
+            CURRENT_ENV="$env"
+            
+            echo "------------------------------------------------"
+            log "▶️  Testing Environment: $CURRENT_ENV"
+            log "🔌 Starting ($CURRENT_ENV)..."
+            # 等待 60 次 handleHeartbeatRequest 日誌，匹配後讓命令繼續在後台運行
+            wait_for_log_then_continue_background "$CI_SCRIPT_NAME up \"$CURRENT_ENV\"" "handleHeartbeatRequest" || cleanup_on_failure
+            
+            log "⚡ Running tests ($CURRENT_ENV)..."
+            if [ "$VERBOSE" = true ]; then
+                $CI_SCRIPT_NAME test "$CURRENT_ENV"
+            else
+                pretty_test_runner $CI_SCRIPT_NAME test "$CURRENT_ENV"
             fi
+            log "🛑 Shutting down ($CURRENT_ENV)..."
+            run_quiet $CI_SCRIPT_NAME down "$CURRENT_ENV" || cleanup_on_failure
+            getlog
+            scan_logs "$CURRENT_ENV"
+            local status=$?
+            if [ $status -eq 0 ] ; then
+                log "${GREEN}✨ 恭喜! $env 環境測試經重試後通過。繼續執行後續流程。${RESET}"
+                CURRENT_ENV=""
+                return 0
+            else
+                log "${RED}❌[$CURRENT_ENV]Some Tests Failed ${RESET}"
+            fi
+            CURRENT_ENV=""
         else
             # 階段二: 切換 Release 版本交叉驗證
             echo -e "\n${CYAN}⚠️  仍有環境測試失敗。${RESET}"
             echo -e "${CYAN}🔄 正在切換至 Release 版本進行交叉比對...${RESET}"
             restore_and_build
-            if ulcl_test_cycle "$env"; then
-                log "${RED}⛔ 測試終止: 請修復您的 PR 代碼。${RESET}"
-                exit 2
+            CURRENT_ENV="$env"
+            
+            echo "------------------------------------------------"
+            log "▶️  Testing Environment: $CURRENT_ENV"
+            log "🔌 Starting ($CURRENT_ENV)..."
+            # 等待 60 次 handleHeartbeatRequest 日誌，匹配後讓命令繼續在後台運行
+            wait_for_log_then_continue_background "$CI_SCRIPT_NAME up \"$CURRENT_ENV\"" "handleHeartbeatRequest" || cleanup_on_failure
+            
+            log "⚡ Running tests ($CURRENT_ENV)..."
+            if [ "$VERBOSE" = true ]; then
+                $CI_SCRIPT_NAME test "$CURRENT_ENV"
             else
-                log "${YELLOW}⛔ 測試終止: 請檢查 CI 環境或回報 Issue。${RESET}"
-                exit 3 
+                pretty_test_runner $CI_SCRIPT_NAME test "$CURRENT_ENV"
+            fi
+            log "🛑 Shutting down ($CURRENT_ENV)..."
+            run_quiet $CI_SCRIPT_NAME down "$CURRENT_ENV" || cleanup_on_failure       
+            scan_logs "$CURRENT_ENV" "$CI_TARGET_DIR"
+            CURRENT_ENV="" 
+            local status=$?
+            if [ $status -eq 0 ]; then
+                log "${RED}⛔ 測試終止: 請修復您的 PR。${RESET}"
+                return 2
+            else
+                log "${RED}⛔ 測試終止: 請檢查 CI 環境或回報 Issue。${RESET}"
+                return 3
             fi
         fi
     done
@@ -260,22 +315,23 @@ run_test_command() {
             pretty_test_runner "$@"
         fi
     fi
-    # getlog
-    # scan_logs "$step_name"
-    # local status=$?
-    # if [ $status -ne 0 ] ; then
-    #     # 如果是 testAll 階段失敗，呼叫智慧處理器
-    #     if [[ "$step_name" == "testAll" ]]; then
-
-    #         smart_failure_handler "$step_name"
-    #         # 注意: smart_failure_handler 回傳 0 代表修復成功/Flaky，非 0 代表真的掛了
-    #         return $?
-    #     else
-    #         # 環境測試 (ulcl-ti) 失敗暫時直接報錯 (也可以實作類似邏輯)
-    #         smart_failure_handler_ulcl "$step_name"
-    #         return $status
-    #     fi
-    # fi
+    if [ $REGRESS = true ]; then
+        getlog
+        scan_logs "$step_name"
+        local status=$?
+        if [ $status -ne 0 ] ; then
+            # 如果是 testAll 階段失敗，呼叫智慧處理器
+            if [[ "$step_name" == "testAll" ]]; then
+                # 注意: smart_failure_handler 回傳 0 代表修復成功/Flaky，非 0 代表真的掛了
+                smart_failure_handler "$step_name"
+                return $?
+            else
+                # 環境測試 (ulcl-ti)
+                smart_failure_handler_ulcl "$step_name"
+                return $?
+            fi
+        fi
+    fi
     return $status
 }
 
@@ -300,8 +356,11 @@ wait_for_log_then_continue_background() {
     local counter=0
     local log_file=$(mktemp)
     local env=$(echo "$command" | awk -F'"' '{print $2}')
+    local spin_chars='⠋⠙⠹⠸⠼⠴⠦⠧⠇⠏'
+    local spin_len=${#spin_chars}
+    local i=0
     
-    log "⏳ 啟動命令並等待日誌模式: $pattern，匹配 60 次後讓命令繼續在後台運行"
+    log "⏳ 啟動命令並等待日誌模式: $pattern，匹配 35 次後讓命令繼續在後台運行"
     
     # 創建命名管道來捕獲命令輸出
     local fifo=$(mktemp -u)
@@ -316,15 +375,25 @@ wait_for_log_then_continue_background() {
     exec 3< "$fifo"
     
     while read -r line <&3; do
-        echo "$line"  # 輸出到終端
+        if [ "$VERBOSE" = true ]; then
+            echo "$line"
+        fi
         echo "$line" >> "$log_file"  # 保存到日誌文件
         
         # 檢查是否匹配模式
         if [[ "$line" =~ $pattern ]]; then
             counter=$((counter + 1))
-            log "🎯 檢測到目標日誌模式: $pattern ($counter/35)"
-            if [ $counter -eq 35 ]; then
-                log "🎯 已檢測到 35 次目標日誌模式，命令將繼續在後台運行 (PID: $cmd_pid)"
+            if [ "$VERBOSE" = false ]; then
+                i=$(( (i+1) % spin_len ))
+                printf "\r\033[K${YELLOW}${spin_chars:$i:1} 檢測到目標日誌模式: $pattern ($counter/15)${RESET}"
+            else
+                log "🎯 檢測到目標日誌模式: $pattern ($counter/15)${RESET}"
+            fi
+            if [ $counter -eq 15 ]; then
+                if [ "$VERBOSE" = false ]; then
+                    printf "\n"
+                fi
+                log "🎯 已檢測到 15 次目標日誌模式，命令將繼續在後台運行 (PID: $cmd_pid)"
                 # 注意：這裡不終止命令，讓它繼續在後台運行
                 # 關閉文件描述符，但命令會繼續運行
                 exec 3<&-
@@ -342,6 +411,7 @@ wait_for_log_then_continue_background() {
             exec 3<&-
             rm -f "$fifo"
             rm -f "$log_file"
+            cleanup_on_failure
             return 1
         fi
     done
@@ -373,27 +443,43 @@ cleanup_on_failure() {
 test_all() {
     local test_dir="$CI_TARGET_DIR/$SINGLE_TEST_DIR"
     pushd "$test_dir" > /dev/null || return 1
+    run_quiet make all
+    run_quiet ./force_kill.sh
     echo "Running All Tests"
-    echo
     mkdir -p testing_output
     IFS='|' read -ra ADDR <<< "$TEST_POOL"
+    local spin_chars='⠋⠙⠹⠸⠼⠴⠦⠧⠇⠏'
+    local spin_len=${#spin_chars}
+    local i=0
     for test_name in "${ADDR[@]}"; do
-        echo "$test_name"
-        echo "    Output saved to testing_output/$test_name.log"
         exec $SINGLE_TEST_CMD "$test_name" &> "$test_dir/testing_output/$test_name.log" &
-        wait
+        local PID=$!
+        while kill -0 $PID 2>/dev/null; do
+            i=$(( (i+1) % spin_len ))
+            printf "${CLEAR_LINE} ${YELLOW}${spin_chars:$i:1}${RESET} Running: ${test_name}"
+            sleep 0.1
+        done
+        wait $PID
+        printf "${CLEAR_LINE}"
         if [[ "$test_name" == "TestTngf" || "$test_name" == "TestNon3GPP" ]]; then
             sudo killall -9 n3iwf tngf 2>/dev/null
             sleep 2
         fi
         STATUS=$(grep -a -E "\-\-\-.*:" "$test_dir/testing_output/$test_name.log")
         if [ ! -z "$STATUS" ]; then
-            echo "$STATUS" | while read -r a; do echo "    ${a:4}"; done
+            echo "$STATUS" | while read -r a; do 
+                if [[ "$a" =~ PASS ]]; then
+                    echo -e "    ${GREEN}✔ ${a:4}${RESET}"
+                elif [[ "$a" =~ FAIL ]]; then
+                    echo -e "    ${RED}✘ ${a:4}${RESET}"
+                else
+                    echo "    ${a:4}"
+                fi
+            done
         else
-            echo "    Failed"
+            echo -e "${RED}✘ FAIL:"$test_name"${RESET}"
             echo "exit status 1" >> "$test_dir/testing_output/$test_name.log"
         fi
-        echo
     done
     popd > /dev/null || return 1
 }
@@ -408,13 +494,16 @@ ulcl_test_cycle() {
     wait_for_log_then_continue_background "$CI_SCRIPT_NAME up \"$CURRENT_ENV\"" "handleHeartbeatRequest" || cleanup_on_failure
     
     log "⚡ Running tests ($CURRENT_ENV)..."
-    if run_test_command "$CURRENT_ENV" $CI_SCRIPT_NAME test "$CURRENT_ENV"; then
-        log "${GREEN}✅ All Tests Passed ($CURRENT_ENV)!${RESET}"
-        local status=0
+    run_test_command "$CURRENT_ENV" $CI_SCRIPT_NAME test "$CURRENT_ENV"
+    local status=$?
+    if [ $status -eq 2 ] || [ $status -eq 3 ] ; then
+        exit $status
+    fi
+    getlog
+    if scan_logs "$CURRENT_ENV"; then
+        log "${GREEN}✅ [$CURRENT_ENV] Tests Passed!${RESET}"
     else
-        log "${RED}❌ Tests Failed ($CURRENT_ENV)${RESET}"
-        cleanup_on_failure
-        local status=1
+        log "${RED}⛔ [$CURRENT_ENV] Tests Failed.${RESET}"
     fi
 
     log "🛑 Shutting down ($CURRENT_ENV)..."
@@ -425,11 +514,10 @@ ulcl_test_cycle() {
 
 # 還原代碼並重新編譯，刪有發PR的NF的image
 restore_and_build() {
-    run_quiet $CI_SCRIPT_NAME pull || { log "Release Pull 失敗"; return 1; }
+    run_quiet $CI_SCRIPT_NAME pull || { log "Release Pull 失敗"; exit 5; }
     for pr_entry in "${PR_LIST[@]}"; do
         IFS=':' read -r comp id <<< "$pr_entry"
-        run_quiet docker rmi free5gc/${comp}-base:latest || true
-        run_quiet $CI_SCRIPT_NAME build-nf "$comp" || { log "Build $comp 失敗"; return 1; }
+        run_quiet $CI_SCRIPT_NAME build-nf "$comp" || { log "Build $comp 失敗"; exit 4; }
     done
 }
 
@@ -441,18 +529,26 @@ getlog() {
 # 在 logs 裡掃描是否有 'exit status 1' 的測試紀錄，並輸出 JSON
 scan_logs() {
     local filter_type="$1"
-    log "🔎 Scanning $SCRIPT_DIR/logs for files containing 'exit status 1'..."
+    local log_dir="${2:-$SCRIPT_DIR/logs}"
+    log "🔎 Scanning $log_dir for files containing 'exit status 1'..."
     
+    if [ "$filter_type" = "" ]; then
+        filter_type="All"
+    fi
     # 根據參數過濾文件名
     local filter_cmd=""
     if [ "$filter_type" = "ulcl" ]; then
         filter_cmd="grep ULCL"
+    elif [ "$filter_type" = "ulcl-mp" ]; then
+        filter_cmd="grep ULCLM"
+    elif [ "$filter_type" = "ulcl-ti" ]; then
+        filter_cmd="grep ULCLT"
     elif [ "$filter_type" = "testall" ]; then
         filter_cmd="grep -v ULCL"
     fi
     
     # 抓出所有包含 'exit status 1' 的 .log 檔案名稱，去重
-    local cmd="find \"$SCRIPT_DIR/logs\" -type f -name \"*.log\" -exec grep -l 'exit status 1' {} \; | xargs -n1 basename 2>/dev/null | sort -u"
+    local cmd="find \"$log_dir\" -type f -name \"*.log\" -exec grep -l 'exit status 1' {} \; | xargs -n1 basename 2>/dev/null | sort -u"
     if [ -n "$filter_cmd" ]; then
         cmd="$cmd | $filter_cmd"
     fi
@@ -460,7 +556,7 @@ scan_logs() {
     mapfile -t failed_tests < <(eval "$cmd")
     
     #紀錄測試失敗
-    json_file="$SCRIPT_DIR/logs/failures.json"
+    json_file="$log_dir/failures.json"
     if [ ${#failed_tests[@]} -gt 0 ]; then
         printf '{"failed_tests": [' > "$json_file"
         for i in "${!failed_tests[@]}"; do
@@ -470,22 +566,23 @@ scan_logs() {
             printf '"%s"' "$esc" >> "$json_file"
         done
         printf ']}' >> "$json_file"
-        log "${RED}❌ Files with 'exit status 1': ${#failed_tests[@]} (saved to $json_file)${RESET}"
+        log "${RED}❌ [$filter_type] ${#failed_tests[@]} failed tests${RESET}(saved to $json_file)"
         return 1
     else
         printf '{"failed_tests": []}\n' > "$json_file"
-        log "${GREEN}✅ All tests passed (no 'exit status 1' found)${RESET}"
+        log "${GREEN}✅ [$filter_type] All tests passed ${RESET}"
         return 0
     fi
 }
 
 # 2. 解析參數
-while getopts "e:p:d:nh" opt; do
+while getopts "e:p:d:nh:r" opt; do
     case $opt in
         e) ;;
         p) PR_LIST+=("$OPTARG") ;;
         d) CI_TARGET_DIR="$OPTARG" ;;
         n) VERBOSE=true ;; 
+        r) REGRESS=true ;;
         *) echo "Usage: $0 -p <comp:id> [-n] [-d <dir>]"; exit 1 ;;
     esac
 done
@@ -514,36 +611,40 @@ done
 
 # ================= TestAll 階段 (含機器人邏輯) =================
 log "🧹 Cleaning up old logs..."
-rm -f "$SCRIPT_DIR/logs/*.log"
+rm -fv "$SCRIPT_DIR/logs/*.log"
+rm -fv "$CI_TARGET_DIR/test/*.log"
 
 log "🧪 3. Pre-build Tests (testAll)..."
-run_test_command "testAll" $CI_SCRIPT_NAME testAll
-# getlog
-# if scan_logs "testall"; then
-#     log "${GREEN}✅ Pre-build Tests Passed!${RESET}"
-# else
-#     log "${RED}⛔ Pre-build Tests Failed.${RESET}"
-# fi
+#run_test_command "testAll" $CI_SCRIPT_NAME testAll
+final_status=$?
+if [ $final_status -eq 2 ] || [ $final_status -eq 3 ] ; then
+    exit $final_status
+fi
+getlog
+if scan_logs "testall"; then
+    log "${GREEN}✅ Pre-build Tests Passed!${RESET}"
+else
+    log "${RED}⛔ Pre-build Tests Failed.${RESET}"
+fi
 
 log "🏗️ 5. Building..."
-#run_quiet $CI_SCRIPT_NAME build || { log "Build 失敗"; exit 1; }
-# build有發PR的NF的image
-# for pr_entry in "${PR_LIST[@]}"; do
-#     IFS=':' read -r comp id <<< "$pr_entry"
-#     run_quiet docker rmi free5gc/${comp}-base:latest || true
-#     run_quiet $CI_SCRIPT_NAME build-nf "$comp" || { log "Build $comp 失敗"; return 1; }
-# done
+#run_quiet $CI_SCRIPT_NAME build || { log "Build 失敗"; exit 4; }
+#build有發PR的NF的image
+for pr_entry in "${PR_LIST[@]}"; do
+    IFS=':' read -r comp id <<< "$pr_entry"
+    run_quiet $CI_SCRIPT_NAME build-nf "$comp" || { log "Build $comp 失敗"; exit 4; }
+done
 
 
 
 # ================= 循環測試階段 =================
 log "🚀 Starting Test Cycles..."
-
+#restore_and_build
 for ENV in "${TEST_ENVS[@]}"; do
     ulcl_test_cycle "$ENV"
 done
 
-#restore_and_build
+restore_and_build
 
 # ================= 完成階段 =================
 #取得ci-test 內的logs
