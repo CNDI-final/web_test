@@ -62,7 +62,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     async function fetchTask(id) {
         try {
-            const response = await fetch(`/api/task/${encodeURIComponent(id)}`);
+            const response = await fetch(`/api/download/task/${encodeURIComponent(id)}`);
             const payload = await response.json().catch(() => null);
 
             if (!response.ok) {
