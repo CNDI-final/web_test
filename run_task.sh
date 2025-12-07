@@ -17,14 +17,13 @@ SINGLE_TEST_DIR="base/free5gc"
 SINGLE_TEST_CMD="./test.sh"
 
 # 定義需要測試的環境列表
-TEST_ENVS=("ulcl-ti" ) #"ulcl-mp"
-TEST_POOL="TestRegistration|TestGUTIRegistration"
-#|TestServiceRequest|TestXnHandover|TestN2Handover|TestDeregistration|TestPDUSessionReleaseRequest|TestPaging|TestNon3GPP|TestReSynchronization|TestDuplicateRegistration|TestEAPAKAPrimeAuthentication|TestMultiAmfRegistration|TestNasReroute|TestTngf|TestDC|TestDynamicDC|TestXnDCHandover"
+TEST_ENVS=("ulcl-ti" "ulcl-mp")
+TEST_POOL="TestRegistration|TestGUTIRegistration|TestServiceRequest|TestXnHandover|TestN2Handover|TestDeregistration|TestPDUSessionReleaseRequest|TestPaging|TestNon3GPP|TestReSynchronization|TestDuplicateRegistration|TestEAPAKAPrimeAuthentication|TestMultiAmfRegistration|TestNasReroute|TestTngf|TestDC|TestDynamicDC|TestXnDCHandover"
 # 初始化變數
 CURRENT_ENV=""
 PR_LIST=()
 VERBOSE=false
-REGRESS=false
+REGRESS=true
 FAILED_LIST_FILE=$(mktemp)
 
 # 定義顏色
@@ -177,9 +176,9 @@ smart_failure_handler() {
             # ---------------------------------------------------------
             echo -e "\n${CYAN}⚠️  仍有 ${#failed_list[@]} 個測試失敗。${RESET}"
             echo -e "${CYAN}🔄 正在切換至 Release 版本進行交叉比對...${RESET}"
-            run_quiet $CI_SCRIPT_NAME pull || exit 1
+            run_quiet $CI_SCRIPT_NAME pull || exit 5
         fi
-        pushd "$test_dir" > /dev/null || return 1
+        pushd "$test_dir" > /dev/null || exit 6
         make all
         ./force_kill.sh
         mkdir -p testing_output
@@ -213,20 +212,20 @@ smart_failure_handler() {
             # 如果所有重跑都通過了
             if [ $status -eq 0 ]; then
                 echo -e "${GREEN}✨ 恭喜! 所有失敗項目經重跑後均通過 (Flaky)。繼續執行後續流程。${RESET}"
-                popd > /dev/null || return 1
+                popd > /dev/null || exit 6
                 return 0
             fi
         else
             echo -e "${CYAN}======================================================${RESET}"
             if [ $status -ne 0 ]; then
                 log "${YELLOW}⛔ 測試終止: 請檢查 CI 環境或回報 Issue。${RESET}"
-                exit 3
+                exit 2
             else
                 log "${RED}⛔ 測試終止: 請修復您的 PR。${RESET}"
-                exit 2
+                exit 3
             fi
         fi
-        popd > /dev/null || return 1
+        popd > /dev/null || exit 6
     done
 }
 
@@ -292,10 +291,10 @@ smart_failure_handler_ulcl() {
             local status=$?
             if [ $status -eq 0 ]; then
                 log "${RED}⛔ 測試終止: 請修復您的 PR。${RESET}"
-                return 2
+                return 3
             else
                 log "${RED}⛔ 測試終止: 請檢查 CI 環境或回報 Issue。${RESET}"
-                return 3
+                return 2
             fi
         fi
     done
@@ -600,7 +599,7 @@ cd "$CI_TARGET_DIR" || exit 1
 
 # ================= 準備階段 =================
 log "🔄 1. Pulling source..."
-run_quiet $CI_SCRIPT_NAME pull || exit 4
+run_quiet $CI_SCRIPT_NAME pull || exit 5
 
 log "📥 2. Fetching PRs..."
 for pr_entry in "${PR_LIST[@]}"; do
@@ -613,6 +612,7 @@ done
 
 log "🧹 Cleaning up old logs..."
 rm -fv "$SCRIPT_DIR/logs"/*.log
+rm -fv "$SCRIPT_DIR/logs"/*.json
 rm -fv "$CI_TARGET_DIR/test"/*.log
 log "🧪 3. Pre-build Tests (testAll)..."
 run_test_command "testAll" $CI_SCRIPT_NAME testAll
