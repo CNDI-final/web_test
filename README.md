@@ -10,7 +10,7 @@ sudo visudo
 rs ALL=(ALL) NOPASSWD: /home/rs/web_test/run_task.sh
 ```
 
-### 1. 啟動 KVRocks 容器
+### 啟動 KVRocks 容器
 ```bash
 make
 ```
