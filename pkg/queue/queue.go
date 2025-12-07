@@ -5,7 +5,6 @@ import (
 	"web_test/pkg/models"
 )
 
-var runningTasks models.Task
 var GlobalQueue TaskQueue
 
 // TaskQueue 定義任務佇列介面

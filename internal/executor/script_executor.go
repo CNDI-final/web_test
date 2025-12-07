@@ -79,13 +79,14 @@ func (e *TaskExecutor) processNextTask(ctx context.Context) error {
 	// 執行任務，獲取多個結果
 	e.executeTask(ctx, task)
 
-	// 刪除 running 狀態記錄，因為任務已經完成
-	if err := e.db.DeleteResult(ctx, task.ID, "running"); err != nil {
-		logger.ExecutorLog.Warnf("Failed to delete running status for task %s: %v", task.ID, err)
-		return err
-	}
+	defer func() {
+		if err := e.db.DeleteResult(context.Background(), task.ID, "running"); err != nil {
+			logger.ExecutorLog.Errorf("Failed to delete running status for task %s: %v", task.ID, err)
+		} else {
+			logger.ExecutorLog.Infof("Task %s completed, running status deleted", task.ID)
+		}
+	}()
 
-	logger.ExecutorLog.Infof("Task %s completed", task.ID)
 	return nil
 }
 
