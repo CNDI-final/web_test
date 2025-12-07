@@ -274,17 +274,11 @@ document.addEventListener("DOMContentLoaded", () => {
         return [];
     }
 
-    function formatParamLabel(param) {
-        if (Array.isArray(param)) {
-            const [nf, pr] = param;
-            return `${nf || "-"} #${pr || "-"}`;
-        }
-        if (param && typeof param === "object") {
-            const nf = param.nf || param.NF || "-";
-            const pr = param.pr_number || param.prNumber || param.PRNumber || param.pr_version || param.prVersion || param.PRVersion || "-";
-            return `${nf} #${pr}`;
-        }
-        return String(param ?? "-");
+    function formatTaskLine(param) {
+        if (!param) return `- [#-]`;
+        const nf = param.nf || param.NF || "-";
+        const pr = param.pr_number || param.prNumber || param.PRNumber || param.pr_version || param.prVersion || param.PRVersion || "-";
+        return `${nf} [#${pr}]`;
     }
 
     // 更新排隊列表
@@ -293,10 +287,16 @@ document.addEventListener("DOMContentLoaded", () => {
             const res = await fetch("/api/queue/list");
             const tasks = await res.json();
 
-            // if (!Array.isArray(tasks)) {
-            //     queueBody.innerHTML = "<tr><td colspan='3' style='color:#d32f2f; text-align:center;'>讀取排隊資料失敗</td></tr>";
-            //     return;
-            // }
+            if (tasks === null) {
+                queueBody.innerHTML = "<tr><td colspan='3' style='color:#d32f2f; text-align:center;'>無任務執行中</td></tr>";
+                console.log("載入排隊資料: 無任務");
+                return;
+            }
+            if (!Array.isArray(tasks)) {
+                queueBody.innerHTML = "<tr><td colspan='3' style='color:#d32f2f; text-align:center;'>讀取排隊資料失敗</td></tr>";
+                console.error("載入排隊資料失敗", tasks);
+                return;
+            }
 
             const activeTasks = tasks.filter(task => {
                 const rawStatus = (task.status || "").toLowerCase();
@@ -305,16 +305,16 @@ document.addEventListener("DOMContentLoaded", () => {
 
             queueBody.innerHTML = "";
             if (activeTasks.length === 0) {
-                queueBody.innerHTML = "<tr><td colspan='3' style='color:#999; text-align:center;'>目前空閒</td></tr>";
+                queueBody.innerHTML = "<tr><td colspan='3' style='color:#999; text-align:center;'>無任務執行中</td></tr>";
                 return;
             }
 
             activeTasks.forEach((task) => {
                 const taskId = task.task_id || task.taskId || task.TaskID || task.id || "-";
                 const params = extractTaskParams(task);
-                // const taskLabel = params.length
-                //     ? params.map(formatParamLabel).join("<br>")
-                //     : (task.task_name || task.taskName || "-");
+                const taskLabel = params.length
+                    ? params.map(formatTaskLine).join("<br>")
+                    : (task.task_name || task.taskName || "-");
 
                 const rawStatus = (task.status || "").toLowerCase();
                 const statusLabel = rawStatus === "running"
@@ -330,7 +330,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
                 queueBody.innerHTML += `
                     <tr>
-                        <td>${taskId}</td>
+                        <td>${taskLabel}</td>
                         <td>
                             ${canDelete
                                 ? `<button class="btn-del" data-id="${taskId}">移除</button>`
@@ -355,14 +355,16 @@ document.addEventListener("DOMContentLoaded", () => {
 
             records.forEach(r => {
                 const taskId = extractTaskId(r.task_name);
-                const downloadCell = taskId
-                    ? `<a class="btn-download" href="/api/download/${encodeURIComponent(taskId)}">下載</a>`
-                    : "<span style='color:#aaa'>-</span>";
-                const previewCell = taskId
-                    ? `<a class="btn-preview" href="/static/preview.html?taskId=${encodeURIComponent(taskId)}" target="_blank" rel="noopener">預覽</a>`
-                    : "<span style='color:#aaa'>-</span>";
                 const resultText = r.result || "-";
                 const lowerResult = resultText.toLowerCase();
+                const showDownload = taskId && lowerResult !== "success";
+                const downloadCell = showDownload
+                    ? `<a class="btn-download" href="/api/download/${encodeURIComponent(taskId)}">下載</a>`
+                    : "<span style='color:#aaa'>-</span>";
+                const showPreview = taskId && lowerResult !== "success";
+                const previewCell = showPreview
+                    ? `<a class="btn-preview" href="/static/preview.html?taskId=${encodeURIComponent(taskId)}" target="_blank" rel="noopener">預覽</a>`
+                    : "<span style='color:#aaa'>-</span>";
                 const resultColor = lowerResult === "failed" ? "#c62828" : (lowerResult === "running" ? "#fb8c00" : "green");
                 historyList.innerHTML += `
                     <tr>
