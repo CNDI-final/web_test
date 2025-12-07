@@ -256,8 +256,8 @@ smart_failure_handler_ulcl() {
             run_quiet $CI_SCRIPT_NAME down "$CURRENT_ENV" || cleanup_on_failure
             getlog
             scan_logs "$CURRENT_ENV"
-            local status=$?
-            if [ $status -eq 0 ] ; then
+            local status1=$?
+            if [ $status1 -eq 0 ] ; then
                 log "${GREEN}✨ 恭喜! $env 環境測試經重試後通過。繼續執行後續流程。${RESET}"
                 CURRENT_ENV=""
                 return 0
@@ -287,9 +287,12 @@ smart_failure_handler_ulcl() {
             log "🛑 Shutting down ($CURRENT_ENV)..."
             run_quiet $CI_SCRIPT_NAME down "$CURRENT_ENV" || cleanup_on_failure       
             scan_logs "$CURRENT_ENV" "$CI_TARGET_DIR"
+            local status2=$?
+            echo "------------------------------------------------"
+            echo $status2
+            echo "------------------------------------------------"
             CURRENT_ENV="" 
-            local status=$?
-            if [ $status -eq 0 ]; then
+            if [ $status2 -eq 0 ]; then
                 log "${RED}⛔ 測試終止: 請修復您的 PR。${RESET}"
                 return 3
             else
@@ -323,11 +326,11 @@ run_test_command() {
             if [[ "$step_name" == "testAll" ]]; then
                 # 注意: smart_failure_handler 回傳 0 代表修復成功/Flaky，非 0 代表真的掛了
                 smart_failure_handler "$step_name"
-                return $?
+                return $status
             else
                 # 環境測試 (ulcl-ti)
                 smart_failure_handler_ulcl "$step_name"
-                return $?
+                return $status
             fi
         fi
     fi
@@ -480,7 +483,7 @@ test_all() {
             echo "exit status 1" >> "$test_dir/testing_output/$test_name.log"
         fi
     done
-    popd > /dev/null || return 1
+    popd > /dev/null || exit 6
 }
 
 ulcl_test_cycle() {
@@ -582,7 +585,7 @@ while getopts "e:p:d:nh:r" opt; do
         d) CI_TARGET_DIR="$OPTARG" ;;
         n) VERBOSE=true ;; 
         r) REGRESS=true ;;
-        *) echo "Usage: $0 -p <comp:id> [-n] [-d <dir>]"; exit 1 ;;
+        *) echo "Usage: $0 -p <comp:id> [-n] [-d <dir>]"; exit 7 ;;
     esac
 done
 
