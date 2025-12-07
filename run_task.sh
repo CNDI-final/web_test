@@ -615,7 +615,7 @@ rm -fv "$SCRIPT_DIR/logs/*.log"
 rm -fv "$CI_TARGET_DIR/test/*.log"
 
 log "🧪 3. Pre-build Tests (testAll)..."
-#run_test_command "testAll" $CI_SCRIPT_NAME testAll
+run_test_command "testAll" $CI_SCRIPT_NAME testAll
 final_status=$?
 if [ $final_status -eq 2 ] || [ $final_status -eq 3 ] ; then
     exit $final_status
