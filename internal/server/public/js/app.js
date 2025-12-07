@@ -23,7 +23,10 @@ document.addEventListener("DOMContentLoaded", () => {
     // ==========================================
     if (nfSelect) {
         nfSelect.addEventListener("change", async () => {
-            const repo = nfSelect.value;
+            let repo = nfSelect.value;
+            if (repo === "upf") {
+                repo = "go-upf";
+            }
             const owner = "free5gc";
             lastNfChangeAt = Date.now();
             
