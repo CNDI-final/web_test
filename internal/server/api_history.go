@@ -3,12 +3,24 @@ package server
 import (
 	"context"
 	"encoding/json"
+	"net/http"
 
 	"github.com/gin-gonic/gin"
 
 	"web_test/pkg/models"
 	"web_test/internal/logger"
 )
+
+func HistoryRoute() []Route {
+    return []Route{
+		{
+			Name:    "get history",
+			Method:  http.MethodGet,
+			Pattern: "/",
+			HandlerFunc: HistoryHandler,
+		},
+	}
+}
 
 // 7. 歷史紀錄
 func HistoryHandler(c *gin.Context) {

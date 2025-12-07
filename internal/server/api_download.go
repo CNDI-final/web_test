@@ -14,6 +14,29 @@ import (
 	go_redis "github.com/redis/go-redis/v9"
 )
 
+func DownloadRoute() []Route {
+    return []Route{
+		{
+			Name:    "download all logs",
+			Method:  http.MethodGet,
+			Pattern: "/:taskID",
+			HandlerFunc: DownloadAllLogHandler,
+		},
+		{
+			Name:    "download single log",
+			Method:  http.MethodGet,
+			Pattern: "/single/:taskID/:failedTest",
+			HandlerFunc: DownloadSingleLogHandler,
+		},
+        {
+			Name:    "get task result",
+			Method:  http.MethodGet,
+			Pattern: "/task/:taskID",
+			HandlerFunc: GetTaskResultHandler,
+		},
+	}
+}
+
 func DownloadAllLogHandler(c *gin.Context) {
 	taskIDStr := c.Param("taskID")
 	taskID, err := strconv.Atoi(taskIDStr)

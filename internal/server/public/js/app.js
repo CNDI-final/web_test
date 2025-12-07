@@ -32,7 +32,7 @@ document.addEventListener("DOMContentLoaded", () => {
             try {
                 await fetch("/api/prs/clear", { method: "POST" });
                 // 呼叫後端抓取 (Worker 2)
-                await fetch("/api/queue/add_github", {
+                await fetch("/api/prs/add_github", {
                     method: "POST",
                     headers: { "Content-Type": "application/json" },
                     body: JSON.stringify({ owner, repo })
@@ -129,7 +129,7 @@ document.addEventListener("DOMContentLoaded", () => {
                     String(task.prNumber)
                 ]);
 
-                await fetch("/api/run-pr", {
+                await fetch("/api/queue/run-pr", {
                     method: "POST",
                     headers: { "Content-Type": "application/json" },
                     body: JSON.stringify({ params })
