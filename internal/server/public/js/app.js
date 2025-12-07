@@ -138,7 +138,7 @@ document.addEventListener("DOMContentLoaded", () => {
                     body: JSON.stringify({ params })
                 });
 
-                runMsg.innerText = `已發送 ${selectedTasks.length} 個任務`;
+                runMsg.innerText = `已發送 ${selectedTasks.length} 個PR`;
                 selectedTasks = [];
                 renderSelectedTasks();
                 loadAll(); // 刷新佇列
