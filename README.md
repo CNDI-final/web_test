@@ -1,12 +1,14 @@
 # web-test
 
 ## Build
-
+```bash
 sudo visudo
+```
 
 在檔案最後加入（替換 rs 為你的實際使用者名）：
+```bash
 rs ALL=(ALL) NOPASSWD: /home/rs/web_test/run_task.sh
-
+```
 
 ### 1. 創建數據目錄
 ```bash
