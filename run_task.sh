@@ -202,22 +202,22 @@ smart_failure_handler() {
             fi
             echo
         done
-        if [ $phase -eq 1 ]; then
-            getlog
-            scan_logs "testall"
-        fi
-        scan_logs "testall" "$test_dir"
         local status=$?
         if [ $phase -eq 1 ]; then
             # 如果所有重跑都通過了
-            if [ $status -eq 0 ]; then
+            getlog
+            scan_logs "testall"
+            local status1=$?
+            if [ $status1 -eq 0 ]; then
                 echo -e "${GREEN}✨ 恭喜! 所有失敗項目經重跑後均通過 (Flaky)。繼續執行後續流程。${RESET}"
                 popd > /dev/null || exit 6
                 return 0
             fi
         else
             echo -e "${CYAN}======================================================${RESET}"
-            if [ $status -ne 0 ]; then
+            scan_logs "testall" "$CI_TARGET_DIR"
+            local status2=$?
+            if [ $status2 -ne 0 ]; then
                 log "${YELLOW}⛔ 測試終止: 請檢查 CI 環境或回報 Issue。${RESET}"
                 exit 2
             else
@@ -292,12 +292,13 @@ smart_failure_handler_ulcl() {
             echo $status2
             echo "------------------------------------------------"
             CURRENT_ENV="" 
+            restore_and_build
             if [ $status2 -eq 0 ]; then
                 log "${RED}⛔ 測試終止: 請修復您的 PR。${RESET}"
-                return 3
+                exit 3
             else
                 log "${RED}⛔ 測試終止: 請檢查 CI 環境或回報 Issue。${RESET}"
-                return 2
+                exit 2
             fi
         fi
     done
