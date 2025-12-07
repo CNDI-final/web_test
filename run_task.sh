@@ -605,6 +605,8 @@ cd "$CI_TARGET_DIR" || exit 1
 log "🔄 1. Pulling source..."
 run_quiet $CI_SCRIPT_NAME pull || exit 5
 
+docker builder prune -a
+
 log "📥 2. Fetching PRs..."
 for pr_entry in "${PR_LIST[@]}"; do
     IFS=':' read -r comp id <<< "$pr_entry"
@@ -645,12 +647,12 @@ done
 
 # ================= 循環測試階段 =================
 log "🚀 Starting Test Cycles..."
-restore_and_build
+#restore_and_build
 for ENV in "${TEST_ENVS[@]}"; do
     ulcl_test_cycle "$ENV"
 done
 
-# restore_and_build
+restore_and_build
 
 # ================= 完成階段 =================
 #取得ci-test 內的logs
