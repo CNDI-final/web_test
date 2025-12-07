@@ -32,6 +32,7 @@ func GetQueueHandler(c *gin.Context) {
 		taskResult := models.TaskResult{
 			TaskID: rt.TaskID,
 			Status: "running",
+			Params: rt.Params,
 		}
 		return_tasks = append(return_tasks, taskResult)
 	}
@@ -57,6 +58,7 @@ func GetQueueHandler(c *gin.Context) {
 		taskResult := models.TaskResult{
 			TaskID: tmp.ID,
 			Status: "queueing", // Placeholder status
+			Params: tmp.Params,
 		}
 		return_tasks = append(return_tasks, taskResult)
 	}
