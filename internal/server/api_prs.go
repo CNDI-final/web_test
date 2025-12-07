@@ -11,23 +11,23 @@ import (
 )
 
 func PrsRoute() []Route {
-    return []Route{
+	return []Route{
 		{
-			Name:    "add github PRs",
-			Method:  http.MethodPost,
-			Pattern: "/add_github",
+			Name:        "add github PRs",
+			Method:      http.MethodPost,
+			Pattern:     "/add_github",
 			HandlerFunc: AddGitHubTaskHandler,
 		},
 		{
-			Name:    "get cached PRs",
-			Method:  http.MethodGet,
-			Pattern: "/",
+			Name:        "get cached PRs",
+			Method:      http.MethodGet,
+			Pattern:     "/",
 			HandlerFunc: GetCachedPRsHandler,
 		},
-        {
-			Name:    "clear PR cache",
-			Method:  http.MethodPost,
-			Pattern: "/clear",
+		{
+			Name:        "clear PR cache",
+			Method:      http.MethodPost,
+			Pattern:     "/clear",
 			HandlerFunc: ClearPRCacheHandler,
 		},
 	}

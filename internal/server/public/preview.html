@@ -84,6 +84,10 @@
             font-weight: 600;
             word-break: break-all;
         }
+        .value.multiline {
+            white-space: pre-line;
+            line-height: 1.4;
+        }
 
         /* ================= 選單與下載按鈕區塊 (新功能) ================= */
         #failed-test-selector-container {
@@ -193,8 +197,8 @@
             <h2>任務資訊</h2>
             <div class="meta-grid">
                 <div class="meta-item">
-                    <span class="label">任務 ID</span>
-                    <span class="value" id="task-id">-</span>
+                    <span class="label">任務</span>
+                    <span class="value multiline" id="task-id">-</span>
                 </div>
                 <div class="meta-item">
                     <span class="label">結果狀態</span>
