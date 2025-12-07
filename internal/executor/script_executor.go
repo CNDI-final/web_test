@@ -69,6 +69,7 @@ func (e *TaskExecutor) processNextTask(ctx context.Context) error {
 	runningResult := &models.TaskResult{
 		TaskID:    task.ID,
 		Status:    "running",
+		Params:    task.Params,
 		Timestamp: time.Now().Unix(),
 	}
 
@@ -97,6 +98,7 @@ func (e *TaskExecutor) executeTask(ctx context.Context, task *models.Task) {
 		result := &models.TaskResult{
 			TaskID:    task.ID,
 			Status:    "Success",
+			Params:    task.Params,
 			Timestamp: time.Now().Unix(),
 		}
 		e.db.SaveResult(ctx, result)
@@ -150,6 +152,7 @@ func (e *TaskExecutor) handleFailedTests(ctx context.Context, task *models.Task)
 		result := &models.TaskResult{
 			TaskID:      task.ID,
 			Status:      "Failed",
+			Params:      task.Params,
 			Logs:        []string{"Task execution failed, but failures.json not found"},
 			FailedTests: []string{"JsonNotFound"},
 			Timestamp:   time.Now().Unix(),
@@ -199,6 +202,7 @@ func (e *TaskExecutor) handleFailedTests(ctx context.Context, task *models.Task)
 	result := &models.TaskResult{
 		TaskID:      task.ID,
 		Status:      "Failed",
+		Params:      task.Params,
 		Logs:        allLogs,
 		FailedTests: failedTestNames,
 		Timestamp:   time.Now().Unix(),
