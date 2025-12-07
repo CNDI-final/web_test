@@ -3,22 +3,27 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>任務</title>
+    <title>任務詳情</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700&display=swap" rel="stylesheet">
+    
     <style>
+        /* ================= 基礎樣式 ================= */
         body {
             margin: 0;
             padding: 40px 20px 80px;
             font-family: "Noto Sans TC", "Microsoft JhengHei", sans-serif;
             background: radial-gradient(circle at top, #f7f0ff, #fdfbff);
             min-height: 100vh;
+            color: #333;
         }
         .page {
             max-width: 960px;
             margin: 0 auto;
         }
+        
+        /* ================= 標題區塊 ================= */
         header h1 {
             margin: 10px 0 5px;
             font-size: 2rem;
@@ -33,6 +38,11 @@
             text-decoration: none;
             font-weight: 600;
         }
+        .breadcrumb a:hover {
+            text-decoration: underline;
+        }
+
+        /* ================= 卡片容器 ================= */
         .card {
             background: #fff;
             border-radius: 18px;
@@ -45,12 +55,16 @@
             margin-top: 0;
             font-size: 1.2rem;
             color: #311b92;
+            border-bottom: 2px solid #f0f0f0;
+            padding-bottom: 12px;
+            margin-bottom: 20px;
         }
+
+        /* ================= 資訊 Grid ================= */
         .meta-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
             gap: 16px;
-            margin-top: 20px;
         }
         .meta-item {
             padding: 12px 16px;
@@ -68,7 +82,80 @@
             font-size: 1.1rem;
             color: #311b92;
             font-weight: 600;
+            word-break: break-all;
         }
+
+        /* ================= 選單與下載按鈕區塊 (新功能) ================= */
+        #failed-test-selector-container {
+             display: none; /* 預設隱藏，由 JS 控制顯示 */
+             margin-bottom: 15px;
+             padding: 16px;
+             background-color: #fafafa;
+             border-radius: 12px;
+             border: 1px solid #eee;
+        }
+
+        /* 讓選單與按鈕橫向排列 */
+        .control-row {
+            display: flex;
+            gap: 12px;         /* 兩者之間的間距 */
+            align-items: center;
+            width: 100%;
+            flex-wrap: wrap;   /* 手機版自動換行 */
+        }
+
+        /* 選單樣式優化 */
+        #failed-test-selector {
+            padding: 10px 12px;
+            border-radius: 8px;
+            border: 1px solid #ccc;
+            font-size: 1rem;
+            background-color: #fff;
+            flex-grow: 1;      /* 讓選單佔據剩餘空間 */
+            min-width: 200px;
+            cursor: pointer;
+        }
+
+        /* 下載按鈕樣式 */
+        .btn-download {
+            background-color: #311b92;
+            color: #ffffff;
+            border: none;
+            border-radius: 8px;
+            padding: 10px 20px;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            white-space: nowrap; /* 防止文字換行 */
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-weight: 500;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .btn-download:hover {
+            background-color: #4a148c;
+            transform: translateY(-1px);
+            box-shadow: 0 4px 8px rgba(74, 20, 140, 0.2);
+        }
+
+        .btn-download:active {
+            transform: scale(0.98);
+        }
+
+        .btn-download:disabled {
+            background-color: #9e9e9e;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+
+        .icon {
+            font-style: normal;
+        }
+
+        /* ================= Log 顯示區塊 ================= */
         pre {
             background: #111028;
             color: #e3e8ff;
@@ -78,15 +165,19 @@
             line-height: 1.6;
             font-size: 0.9rem;
             min-height: 200px;
+            font-family: "Consolas", "Monaco", monospace;
+            white-space: pre-wrap; /* 自動換行 */
         }
+        
         #error-banner {
             display: none;
-            margin-top: 20px;
+            margin-bottom: 20px;
             padding: 12px 16px;
             border-radius: 8px;
             background: #ffebee;
             color: #c62828;
             border: 1px solid #ffcdd2;
+            font-weight: 500;
         }
     </style>
 </head>
@@ -95,7 +186,7 @@
         <header>
             <div class="breadcrumb"><a href="/">← 返回控制台</a></div>
             <h1>任務詳情</h1>
-            <p class="subtitle">檢視單一任務的狀態與輸出</p>
+            <p class="subtitle">檢視單一任務的執行狀態、Log 與詳細報告</p>
         </header>
 
         <section class="card">
@@ -106,7 +197,7 @@
                     <span class="value" id="task-id">-</span>
                 </div>
                 <div class="meta-item">
-                    <span class="label">結果</span>
+                    <span class="label">結果狀態</span>
                     <span class="value" id="task-status">-</span>
                 </div>
                 <div class="meta-item">
@@ -114,7 +205,7 @@
                     <span class="value" id="task-time">-</span>
                 </div>
                 <div class="meta-item">
-                    <span class="label">Failed Test</span>
+                    <span class="label">Failed Test (Summary)</span>
                     <span class="value" id="task-failed">-</span>
                 </div>
             </div>
@@ -122,7 +213,24 @@
 
         <section class="card">
             <h2>Log 內容</h2>
+            
             <div id="error-banner"></div>
+            
+            <div id="failed-test-selector-container">
+                <label for="failed-test-selector" style="font-weight: 500; color: #311b92; display:block; margin-bottom: 8px;">
+                    選擇失敗測試項目：
+                </label>
+                
+                <div class="control-row">
+                    <select id="failed-test-selector">
+                        </select>
+                    
+                    <button id="download-btn" type="button" class="btn-download">
+                        <span class="icon">📥</span> 下載log
+                    </button>
+                </div>
+            </div>
+            
             <pre id="task-logs">載入中...</pre>
         </section>
     </div>
