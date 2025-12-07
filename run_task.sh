@@ -605,7 +605,7 @@ cd "$CI_TARGET_DIR" || exit 1
 log "🔄 1. Pulling source..."
 run_quiet $CI_SCRIPT_NAME pull || exit 5
 
-docker builder prune -a
+#docker builder prune -a
 
 log "📥 2. Fetching PRs..."
 for pr_entry in "${PR_LIST[@]}"; do
