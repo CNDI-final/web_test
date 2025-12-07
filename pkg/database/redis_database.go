@@ -3,6 +3,7 @@ package database
 import (
 	"context"
 	"encoding/json"
+	"fmt"
 	"time"
 	"web_test/pkg/models"
 
@@ -67,6 +68,7 @@ func (r *RedisDB) SaveResult(ctx context.Context, result *models.TaskResult) err
 		r.SaveHistory(ctx, &models.HistoryRecord{
 			Time:     time.Unix(result.Timestamp, 0).In(taipeiLocation).Format("2006-01-02 15:04:05"),
 			Params:   result.Params,
+			TaskName: fmt.Sprintf("Test Task %s", result.TaskID),
 			Result:   result.Status,
 		})
 	}
